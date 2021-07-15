@@ -29,6 +29,7 @@ class SevenSegment:
         num_per_segment=MAX7219_DIGITS,
         baudrate=DEFAULT_BAUDRATE,
         cs_num=0,
+        brightness=7,
     ):
         """Constructor
 
@@ -42,6 +43,7 @@ class SevenSegment:
         self.num_per_segment = num_per_segment
         self.baudrate = baudrate
         self._buf = [0] * self.num_digits
+        self._display_buf = [0] * self.num_digits
         self._spi = spidev.SpiDev()
         self._spi.open(0, cs_num)
         self._spi.max_speed_hz = self.baudrate
@@ -53,7 +55,7 @@ class SevenSegment:
         )  # 0x01, 0x0F, 0xFF for different Code B modes
         self.command(MAX7219_REG_SCANLIMIT, self.num_per_segment - 1)
         self.command(MAX7219_REG_DISPLAYTEST, 0)
-        self.brightness(7)
+        self.brightness(brightness)
         self.clear()
 
     def command(self, register_num, value):
@@ -93,12 +95,32 @@ class SevenSegment:
         for seg in range(self.num_segments):
             for pos in range(self.num_per_segment):
                 self._write(
-                    [
+                    ([MAX7219_REG_NOOP, 0] * (self.num_segments - seg))
+                    + [
                         pos + MAX7219_REG_DIGIT0,
                         self._buf[pos + (seg * self.num_per_segment)],
                     ]
                     + ([MAX7219_REG_NOOP, 0] * seg)
                 )
+
+    def _check_buf(self):
+        indices = []
+        for pos in range(len(self._buf)):
+            if self._buf[pos] != self._display_buf[pos]:
+                indices.append(pos)
+        return indices
+
+    def flush2(self):
+        indices = self._check_buf()
+        # Check if anything has changed
+        if len(indices) == 0:
+            return
+        end = [MAX7219_REG_NOOP, 0] * (indices[0] / self.num_per_segment)
+        middle = []
+        for pos in range(len(indices)):
+
+            middle.append(MAX7219_REG_DIGIT0 + indices[pos] % 8)
+            middle.append(self._buf[indices[pos]])
 
     def letter(self, position, char, dot=False, flush=False):
         """Outputs ascii letter as close as it can, working letters/symbols found in symbols.py"""
@@ -123,8 +145,27 @@ class SevenSegment:
         if flush:
             self.flush()
 
-    def close(self, shutdown=True):
+    def close(self, clear=True, shutdown=True):
         """Close the spi connection"""
+        if clear:
+            self.clear()
         if shutdown:
             self.command(MAX7219_REG_SHUTDOWN, 0)
         self._spi.close()
+
+
+temp = SevenSegment(96, brightness=1)
+
+temp.text("ASHTON PALACIOS", 16)
+temp.text("IS", 32)
+temp.text("THE", 48)
+temp.text("BEST", 64)
+temp.flush()
+for bright in range(15):
+    temp.brightness(bright + 1)
+    time.sleep(0.1)
+for bright in range(16):
+    temp.brightness(15 - bright)
+    time.sleep(0.1)
+
+temp.close(True)
