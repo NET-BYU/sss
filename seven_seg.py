@@ -57,6 +57,14 @@ class SevenSegment:
         self.command(MAX7219_REG_DISPLAYTEST, 0)
         self.brightness(brightness)
         self.clear()
+        self.display = [[1,2],[3,4],[5,6],[7,8],[9,10],[11,12]]
+
+    def _create_buf(self):
+        self._display_bytes = bytearray(self.num_digits*2)
+        for x in range(self.num_digits):
+            self._display_bytes[x*2] = MAX7219_REG_DIGIT0+(x%self.num_per_segment)
+            self._display_bytes[x*2+1] = 0
+        return self._display_bytes
 
     def command(self, register_num, value):
         """Sets control registers for each segment in the display"""
@@ -115,12 +123,18 @@ class SevenSegment:
         # Check if anything has changed
         if len(indices) == 0:
             return
-        end = [MAX7219_REG_NOOP, 0] * (indices[0] / self.num_per_segment)
-        middle = []
-        for pos in range(len(indices)):
+        for pos in indices:
+            self._display_bytes[pos*2+1] = self._buf[pos]
+            self._display_buf[pos] = self._buf[pos]
+        self._write(self._display_bytes)
+        
+        # end = [MAX7219_REG_NOOP, 0] * (indices[0] / self.num_per_segment)
+        # middle = []
+        # for pos in range(len(indices)):
 
-            middle.append(MAX7219_REG_DIGIT0 + indices[pos] % 8)
-            middle.append(self._buf[indices[pos]])
+        #     middle.append(MAX7219_REG_DIGIT0 + indices[pos] % 8)
+        #     middle.append(self._buf[indices[pos]])
+
 
     def letter(self, position, char, dot=False, flush=False):
         """Outputs ascii letter as close as it can, working letters/symbols found in symbols.py"""
@@ -155,17 +169,17 @@ class SevenSegment:
 
 
 temp = SevenSegment(96, brightness=1)
-
-temp.text("ASHTON PALACIOS", 16)
-temp.text("IS", 32)
-temp.text("THE", 48)
-temp.text("BEST", 64)
-temp.flush()
-for bright in range(15):
-    temp.brightness(bright + 1)
-    time.sleep(0.1)
-for bright in range(16):
-    temp.brightness(15 - bright)
-    time.sleep(0.1)
+print(temp._create_buf())
+# temp.text("ASHTON PALACIOS", 16)
+# temp.text("IS", 32)
+# temp.text("THE", 48)
+# temp.text("BEST", 64)
+# temp.flush()
+# for bright in range(15):
+#     temp.brightness(bright + 1)
+#     time.sleep(0.1)
+# for bright in range(16):
+#     temp.brightness(15 - bright)
+#     time.sleep(0.1)
 
 temp.close(True)
