@@ -100,77 +100,31 @@ class SevenSegment:
                     + ([MAX7219_REG_NOOP, 0] * seg)
                 )
 
-    def letter(self, position, char, dot=False, flush=True):
-        """Outputs ascii letter has close as it can, working letters found in symbols.py"""
+    def letter(self, position, char, dot=False, flush=False):
+        """Outputs ascii letter as close as it can, working letters/symbols found in symbols.py"""
         value = get_char2(char) | (dot << 7)
         self._buf[position] = value
         if flush:
             self.flush()
 
-    def close(self):
+    def text(self, txt, start_position=0, flush=False):
+        """Output text on the display at the start position if possible"""
+        # Check if txt is going to overflow buffer
+        if start_position + len(txt.replace(".", "")) > self.num_digits:
+            raise OverflowError("Message would overflow spi buffer")
+
+        for pos, char in enumerate(txt):
+            # Check if current char is a dot and append to previous letter
+            if char == ".":
+                self.letter(pos + start_position - 1, txt[pos - 1], dot=True)
+            else:
+                self.letter(start_position + pos, char)
+
+        if flush:
+            self.flush()
+
+    def close(self, shutdown=True):
         """Close the spi connection"""
-        self.command(MAX7219_REG_SHUTDOWN, 0)
+        if shutdown:
+            self.command(MAX7219_REG_SHUTDOWN, 0)
         self._spi.close()
-
-
-temp = SevenSegment(96)
-# print(list(bytes([MAX7219_REG_DIGIT7, 0x37] + [MAX7219_REG_NOOP, 0] * 11)))
-# temp._write(bytes([MAX7219_REG_DIGIT7, 0x00] + [MAX7219_REG_NOOP, 0] * 11))
-
-temp.letter(0, "A", flush=False)
-temp.letter(1, "S", flush=False)
-temp.letter(2, "H", flush=False)
-temp.letter(3, "T", flush=False)
-temp.letter(4, "O", flush=False)
-temp.letter(5, "N", flush=False)
-temp.letter(16, "P", flush=False)
-temp.letter(17, "A", flush=False)
-temp.letter(18, "L", flush=False)
-temp.letter(19, "A", flush=False)
-temp.letter(20, "C", flush=False)
-temp.letter(21, "I", flush=False)
-temp.letter(22, "O", flush=False)
-temp.letter(23, "S", flush=True)
-# temp._write(bytes([MAX7219_REG_DIGIT1, 0x7F, MAX7219_REG_DIGIT2, 0x37]))
-# temp._write(bytes([MAX7219_REG_DIGIT2, 0x37, MAX7219_REG_NOOP, 0]))
-time.sleep(6)
-# temp.clear()
-temp.close()
-# temp.command(10, 1)
-
-# spi = spidev.SpiDev()
-# spi.open(0, 0)
-# # print(spi.mode)
-# spi.max_speed_hz = 100000
-
-# spi.writebytes(bytes([MAX7219_REG_SHUTDOWN, 1]))
-# (spi.writebytes2(bytes([MAX7219_REG_SCANLIMIT, 7])))
-# (spi.writebytes2(bytes([MAX7219_REG_DECODEMODE, 0])))
-# (spi.writebytes2(bytes([MAX7219_REG_DISPLAYTEST, 0])))
-# (spi.writebytes2(bytes([MAX7219_REG_INTENSITY, 7])))
-# # (spi.writebytes2(bytes([MAX7219_REG_DIGIT0, 0xFF] * 12)))
-# # spi.xfer(bytes([MAX7219_REG_DISPLAYTEST,1]))
-# spi.writebytes2(
-#     bytes(
-#         [
-#             MAX7219_REG_DIGIT0,
-#             0x37,
-#             MAX7219_REG_DIGIT1,
-#             0x4F,
-#             MAX7219_REG_DIGIT2,
-#             0x0E,
-#             MAX7219_REG_DIGIT3,
-#             0x0E,
-#             MAX7219_REG_DIGIT4,
-#             0x7E,
-#         ]
-#         * 12
-#     )
-# )
-# for x in range(MAX7219_DIGITS):
-#     spi.writebytes(bytes([x + 1, 0x37]))
-
-
-# time.sleep(5)
-# spi.writebytes(bytes([MAX7219_REG_SHUTDOWN, 0] * 12))
-# spi.close()
