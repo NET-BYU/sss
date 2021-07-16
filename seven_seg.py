@@ -58,6 +58,7 @@ class SevenSegment:
         self.brightness(brightness)
         self.clear()
         self.display = [[1,2],[3,4],[5,6],[7,8],[9,10],[11,12]]
+        self._display_y_len = len(self.display)
 
     def _create_buf(self):
         self._display_bytes = bytearray(self.num_digits*2)
@@ -127,21 +128,37 @@ class SevenSegment:
             self._display_bytes[pos*2+1] = self._buf[pos]
             self._display_buf[pos] = self._buf[pos]
         self._write(self._display_bytes)
-        
-        # end = [MAX7219_REG_NOOP, 0] * (indices[0] / self.num_per_segment)
-        # middle = []
-        # for pos in range(len(indices)):
-
-        #     middle.append(MAX7219_REG_DIGIT0 + indices[pos] % 8)
-        #     middle.append(self._buf[indices[pos]])
-
 
     def letter(self, position, char, dot=False, flush=False):
         """Outputs ascii letter as close as it can, working letters/symbols found in symbols.py"""
+        # Check if position is valid
+        if not isinstance(position,(int)) or position < 0 or position >= self.num_digits:
+            raise ValueError("position is not a valid number")
         value = get_char2(char) | (dot << 7)
         self._buf[position] = value
         if flush:
             self.flush()
+
+    def _get_pos(self, x, y):
+        # Check y is within bounds
+        if not isinstance(y, (int)) or y < 0 or y >= self._display_y_len:
+            return ValueError("y value is not a valid number")
+
+        # Check if x is an int
+        if not isinstance(x, (int)):
+            return ValueError("x value is not an integer")
+        x_seg = x / self.num_per_segment
+
+        # check if x is within bounds of y row
+        if x_seg >= len(self.display[y]):
+            raise ValueError("x value is out of range")
+
+        return (self.display[y][x_seg] - 1) * self.num_per_segment + (x % self.num_per_segment)
+
+        
+
+    def letter2(self, x, y, char, dot=False, flush=False):
+        pos = self._get_pos(x,y)
 
     def text(self, txt, start_position=0, flush=False):
         """Output text on the display at the start position if possible"""
@@ -169,7 +186,7 @@ class SevenSegment:
 
 
 temp = SevenSegment(96, brightness=1)
-print(temp._create_buf())
+print(temp._get_pos(0,4))
 # temp.text("ASHTON PALACIOS", 16)
 # temp.text("IS", 32)
 # temp.text("THE", 48)
