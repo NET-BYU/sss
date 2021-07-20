@@ -42,7 +42,7 @@ class SevenSegment:
         clear -- clear the screen on initialization (default True)
         segment_orientation_array -- a 2d array of where the MAX7219 segments are located, one indexed (default None)
             : example [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]] (height is 6 and width is 16)
-            : this needs to be populated to use coordinate grid style functions i.e. letter2
+            : this needs to be populated to use coordinate grid style functions i.e. letter2 (default None)
         """
         self.num_digits = num_digits
         self.num_segments = num_digits // num_per_segment
