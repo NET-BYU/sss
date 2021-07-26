@@ -1,1 +1,4 @@
 *.pyc
+.vscode
+.vscode/*
+pico-go.json
