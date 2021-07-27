@@ -1,0 +1,7 @@
+# udev rules for pico boards for the seven segment display
+
+# udev rule for pico 0
+SUBSYSTEM=="tty",KERNEL=="ttyACM[0-15]", ATTRS{serial}=="e660583883618f39", SYMLINK+="/pico/pico0"
+
+# udev rule for pico 1
+SUBSYSTEM=="tty",KERNEL=="ttyACM[0-15]", ATTRS{serial}=="000000000000", SYMLINK+="/pico/pico1"
