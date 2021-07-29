@@ -29,7 +29,7 @@ class Display:
             self.board_object.raw2(location[0],location[1],self.display_buf[location[0]][location[1]])
         self.board_object.flush()
 
-    def draw_vline(self,start_x,start_y,length,top=True,combine=True,push=False):
+    def draw_hline(self,start_x,start_y,length,top=True,combine=True,push=False):
         half_height = y / 2
         if y % 2:
             for x in range(length):
@@ -55,6 +55,36 @@ class Display:
                         self.display_buf[x+start_x][half_height] = self.display_buf[x+start_x][half_height] | 0x01
                     else:
                         self.display_buf[x+start_x][half_height] = 0x01
+        self.changed_list.append((x+start_x,half_height))
+        if push:
+            self.push()
+
+    def draw_vline(self,start_x,start_y,length,left=True,combine=True,push=False):
+        half_height = y / 2
+        if y % 2:
+            for x in range(length):
+                if left:
+                    if combine:
+                        self.display_buf[x+start_x][half_height] = self.display_buf[x+start_x][half_height] | 0x04
+                    else:
+                        self.display_buf[x+start_x][half_height] = 0x04
+                else:
+                    if combine:
+                        self.display_buf[x+start_x][half_height] = self.display_buf[x+start_x][half_height] | 0x10
+                    else:
+                        self.display_buf[x+start_x][half_height] = 0x10  
+        else:
+            for x in range(length):
+                if left:
+                    if combine:
+                        self.display_buf[x+start_x][half_height] = self.display_buf[x+start_x][half_height] | 0x02
+                    else:
+                        self.display_buf[x+start_x][half_height] = 0x02
+                else:
+                    if combine:
+                        self.display_buf[x+start_x][half_height] = self.display_buf[x+start_x][half_height] | 0x20
+                    else:
+                        self.display_buf[x+start_x][half_height] = 0x20
         self.changed_list.append((x+start_x,half_height))
         if push:
             self.push()
