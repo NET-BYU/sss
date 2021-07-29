@@ -18,7 +18,7 @@ class Display:
                 | (value & 8) << 1
             )
         else:
-            value = (value & 3) | (value & 4) >> 4 | (value & 8) << 2
+            value = (value & 3) | (value & 4) << 4 | (value & 8) << 2
         if combine:
             value = self.display_buf[half_height][x] | value
         self.display_buf[half_height][x] = value
