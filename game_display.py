@@ -1,6 +1,6 @@
 class Display:
-    def __init__(self, board_object, x_width, y_height):
-        self.board_object = board_object
+    def __init__(self, x_width, y_height, board_objects):
+        self.board_objects = board_objects
         self.x_width = int(x_width)
         self.y_height = int(y_height)
         self.display_buf = [
@@ -28,10 +28,14 @@ class Display:
 
     def push(self):
         for location in self.changed_list:
-            self.board_object.raw2(
-                location[0], location[1], self.display_buf[location[1]][location[0]]
+            self.board_objects[location[1] // 6][location[0] // 16].raw2(
+                location[0] % 16,
+                location[1] % 6,
+                self.display_buf[location[1]][location[0]],
             )
-        self.board_object.flush()
+        for row in self.board_objects:
+            for board in row:
+                board.flush()
 
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
         half_height = start_y // 2
