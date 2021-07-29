@@ -3,7 +3,9 @@ class Display:
         self.board_object = board_object
         self.x_width = int(x_width)
         self.y_height = int(y_height)
-        self.display_buf = [[0 for x in range(self.x_width)] for y in range(self.y_height // 2)]
+        self.display_buf = [
+            [0 for x in range(self.x_width)] for y in range(self.y_height // 2)
+        ]
         self.changed_list = []
 
     def draw_pixel(self, x, y, value, combine=True, push=False):
@@ -33,7 +35,7 @@ class Display:
 
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
         half_height = start_y // 2
-        if y % 2:
+        if start_y % 2:
             for x in range(length):
                 if top:
                     if combine:
@@ -71,7 +73,7 @@ class Display:
 
     def draw_vline(self, start_x, start_y, length, left=True, combine=True, push=False):
         half_height = start_y // 2
-        if y % 2:
+        if start_y % 2:
             for x in range(length):
                 if left:
                     if combine:
