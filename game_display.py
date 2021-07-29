@@ -88,3 +88,8 @@ class Display:
         self.changed_list.append((x+start_x,half_height))
         if push:
             self.push()
+        
+        def fill_box(self, start_x,start_y, x_len,y_len,push=False):
+
+            if push:
+                self.push()
