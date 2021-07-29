@@ -13,7 +13,7 @@ class Display:
                 (value & 1) << 3
                 | (value & 2) << 1
                 | (value & 4) >> 2
-                | (value & 8) << 4
+                | (value & 8) << 1
             )
         else:
             value = (value & 3) | (value & 4) >> 4 | (value & 8) << 2
