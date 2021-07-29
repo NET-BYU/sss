@@ -1,5 +1,5 @@
 class Display:
-    def __init__(self, x_width, y_height, board_objects):
+    def __init__(self, board_objects, x_width, y_height):
         self.board_objects = board_objects
         self.x_width = int(x_width)
         self.y_height = int(y_height)
@@ -36,6 +36,7 @@ class Display:
         for row in self.board_objects:
             for board in row:
                 board.flush()
+        self.changed_list.clear()
 
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
         half_height = start_y // 2
