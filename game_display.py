@@ -29,7 +29,7 @@ class Display:
             self.board_object.raw2(location[0],location[1],self.display_buf[location[0]][location[1]])
         self.board_object.flush()
 
-    def draw_hline(self,start_x,start_y,length,top=True,combine=True,push=False):
+    def draw_vline(self,start_x,start_y,length,top=True,combine=True,push=False):
         half_height = y / 2
         if y % 2:
             for x in range(length):
