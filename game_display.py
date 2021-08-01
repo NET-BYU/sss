@@ -38,6 +38,15 @@ class Display:
                 board.flush()
         self.changed_list.clear()
 
+    def clear(self):
+        self.display_buf = [
+            [0 for x in range(self.x_width)] for y in range(self.y_height // 2)
+        ]
+        for row in self.board_objects:
+            for board in row:
+                board.clear()
+        self.changed_list.clear()
+
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
         half_height = start_y // 2
         if start_y % 2:
@@ -56,6 +65,7 @@ class Display:
                         )
                     else:
                         self.display_buf[half_height][x + start_x] = 0x08
+                self.changed_list.append((x + start_x, half_height))
         else:
             for x in range(length):
                 if top:
@@ -72,49 +82,59 @@ class Display:
                         )
                     else:
                         self.display_buf[half_height][x + start_x] = 0x01
-        self.changed_list.append((x + start_x, half_height))
+                self.changed_list.append((x + start_x, half_height))
         if push:
             self.push()
 
     def draw_vline(self, start_x, start_y, length, left=True, combine=True, push=False):
-        half_height = start_y // 2
-        if start_y % 2:
-            for x in range(length):
+
+        for y in range(length):
+            y_loc = start_y + y
+            y_half = y_loc // 2
+            if y_loc % 2:              
                 if left:
                     if combine:
-                        self.display_buf[half_height][x + start_x] = (
-                            self.display_buf[half_height][x + start_x] | 0x04
-                        )
+                        self.display_buf[y_half][start_x] = self.display_buf[y_half][start_x] | 0x04
                     else:
-                        self.display_buf[half_height][x + start_x] = 0x04
+                        self.display_buf[y_half][start_x] = 0x04
                 else:
                     if combine:
-                        self.display_buf[half_height][x + start_x] = (
-                            self.display_buf[half_height][x + start_x] | 0x10
-                        )
+                        self.display_buf[y_half][start_x] = self.display_buf[y_half][start_x] | 0x10
                     else:
-                        self.display_buf[half_height][x + start_x] = 0x10
+                        self.display_buf[y_half][start_x] = 0x10
+            else:
+                if left:
+                    if combine:
+                        self.display_buf[y_half][start_x] = self.display_buf[y_half][start_x] | 0x02
+                    else:
+                        self.display_buf[y_half][start_x] = 0x02
+                else:
+                    if combine:
+                        self.display_buf[y_half][start_x] = self.display_buf[y_half][start_x] | 0x20
+                    else:
+                        self.display_buf[y_half][start_x] = 0x20
+            self.changed_list.append((start_x,y_half))
+
+    def draw_box_line(self,start_x,start_y,end_x,end_y,combine=True,push=False):
+        
+        if start_x != end_x:
+            slope = (end_y-start_y) / (end_x-start_x)
+            if start_x < end_x:
+                for x in range(start_x,end_x+1):
+                    self.draw_pixel(x,round(x*slope),15,combine)
+            else:
+                for x in range(end_x,start_x+1):
+                    self.draw_pixel(x,round(x*slope),15,combine)
         else:
-            for x in range(length):
-                if left:
-                    if combine:
-                        self.display_buf[half_height][x + start_x] = (
-                            self.display_buf[half_height][x + start_x] | 0x02
-                        )
-                    else:
-                        self.display_buf[half_height][x + start_x] = 0x02
-                else:
-                    if combine:
-                        self.display_buf[half_height][x + start_x] = (
-                            self.display_buf[half_height][x + start_x] | 0x20
-                        )
-                    else:
-                        self.display_buf[half_height][x + start_x] = 0x20
-        self.changed_list.append((x + start_x, half_height))
+            if start_y < end_y:
+                for y in range(start_y,end_y+1):
+                    self.draw_pixel(start_x,y,15,combine)
+            else:
+                for y in range(end_y,start_y+1):
+                    self.draw_pixel(start_x,y,15,combine)
         if push:
             self.push()
 
-        def fill_box(self, start_x, start_y, x_len, y_len, push=False):
-
+    def fill_box(self, start_x, start_y, x_len, y_len, push=False):
             if push:
                 self.push()
