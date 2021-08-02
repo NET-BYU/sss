@@ -11,14 +11,17 @@ class Display:
     def draw_pixel(self, x, y, value, combine=True, push=False):
         half_height = y // 2
         if value == 0 and combine:
+            current_value = self.display_buf[half_height][x]
             if y % 2:
-                self.display_buf[half_height][x] = (
-                    self.display_buf[half_height][x] & 0x63
-                )
+                if current_value & 0x62:
+                    self.display_buf[half_height][x] = current_value & 0x63
+                else:
+                    self.display_buf[half_height][x] = current_value & 0x62
             else:
-                self.display_buf[half_height][x] = (
-                    self.display_buf[half_height][x] & 0x1D
-                )
+                if current_value & 0x1C:
+                    self.display_buf[half_height][x] = current_value & 0x1D
+                else:
+                    self.display_buf[half_height][x] = current_value & 0x1C
             self.changed_list.append((x, y // 2))
             return
 
