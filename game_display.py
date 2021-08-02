@@ -13,11 +13,11 @@ class Display:
         if value == 0 and combine:
             if y % 2:
                 self.display_buf[half_height][x] = (
-                    self.display_buf[half_height][x] & 0x1D
+                    self.display_buf[half_height][x] & 0x63
                 )
             else:
                 self.display_buf[half_height][x] = (
-                    self.display_buf[half_height][x] & 0x63
+                    self.display_buf[half_height][x] & 0x1D
                 )
             self.changed_list.append((x, y // 2))
             return

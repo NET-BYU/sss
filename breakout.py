@@ -227,13 +227,13 @@ def breakout(speed=500):
                     if ball[0] in bricks[row]  :
                         isDown = True
                         bricks[row].remove(ball[0])
-                        screen.draw_pixel(ball[0], row, 0x0, combine=False)
+                        screen.draw_pixel(ball[0], row, 0x0)
                         if ball[0] % 2 == 0:
                             bricks[row].remove(ball[0] + 1)
-                            screen.draw_pixel(ball[0] + 1, row, 0x0, combine=False)
+                            screen.draw_pixel(ball[0] + 1, row, 0x0)
                         else:
                             bricks[row].remove(ball[0] - 1)
-                            screen.draw_pixel(ball[0] - 1, row, 0x0, combine=False)
+                            screen.draw_pixel(ball[0] - 1, row, 0x0)
                 
                 
                 screen.draw_pixel(ball[0], ball[1], 0x0, combine=False)
