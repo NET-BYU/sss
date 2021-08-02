@@ -9,8 +9,6 @@ LEFT_KEY = 0x61
 RIGHT_KEY = 0x64
 QUIT_KEY = 0x71
 
-a = ""
-
 # panel = SevenSegment(
 #     num_digits=288,
 #     cs_num=2,
@@ -145,8 +143,6 @@ def fill_bricks(level=1):
         for brick in range(SCREEN_X):
             bricks[row].append(brick)
     
-    print(bricks)
-
     for row in bricks.keys():
         for brick in bricks[row]:
             if brick % 2 == 0:
@@ -199,10 +195,40 @@ def breakout(speed=500):
                     break
             
             counter += 1
-            if counter == speed:
-                print(bricks)
+            if counter >= speed:
 
                 counter = 0
+
+                if ball[1] <= level + 2:
+                    if not isDown:
+                        row = ball[1]
+                        if row in bricks.keys():
+                            if ball[0] in bricks[row]:
+                                isDown = True
+                                bricks[row].remove(ball[0])
+                                screen.draw_pixel(ball[0], row, 0x0)
+                                if ball[0] % 2 == 0:
+                                    bricks[row].remove(ball[0] + 1)
+                                    screen.draw_pixel(ball[0] + 1, row, 0x0)
+                                else:
+                                    bricks[row].remove(ball[0] - 1)
+                                    screen.draw_pixel(ball[0] - 1, row, 0x0)
+                    else:
+                        row = ball[1]
+                        if row in bricks.keys():
+                            if ball[0] in bricks[row]:
+                                isDown = False
+                                bricks[row].remove(ball[0])
+                                screen.draw_pixel(ball[0], row, 0x0)
+                                if ball[0] % 2 == 0:
+                                    bricks[row].remove(ball[0] + 1)
+                                    screen.draw_pixel(ball[0] + 1, row, 0x0)
+                                else:
+                                    bricks[row].remove(ball[0] - 1)
+                                    screen.draw_pixel(ball[0] - 1, row, 0x0)
+                
+                
+                screen.draw_pixel(ball[0], ball[1], 0x0)
 
                 # Bounds check for ball
                 if ball[0] == 0:
@@ -222,21 +248,6 @@ def breakout(speed=500):
                     #     break
                     # ball[0] = SCREEN_X // 2
                     # ball[1] = SCREEN_Y // 2
-                if ball[1] <= level + 3:
-                    row = ball[1] - 2
-                    if ball[0] in bricks[row]  :
-                        isDown = True
-                        bricks[row].remove(ball[0])
-                        screen.draw_pixel(ball[0], row, 0x0)
-                        if ball[0] % 2 == 0:
-                            bricks[row].remove(ball[0] + 1)
-                            screen.draw_pixel(ball[0] + 1, row, 0x0)
-                        else:
-                            bricks[row].remove(ball[0] - 1)
-                            screen.draw_pixel(ball[0] - 1, row, 0x0)
-                
-                
-                screen.draw_pixel(ball[0], ball[1], 0x0, combine=False)
 
                 if isLeft:
                     ball[0] -= 1
@@ -258,7 +269,7 @@ def breakout(speed=500):
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 def main():
-    breakout()
+    breakout(500)
 
 if __name__ == "__main__":
     main()
