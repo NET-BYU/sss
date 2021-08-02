@@ -1,21 +1,13 @@
 from seven_seg import SevenSegment
 from game_display import Display
 from time import sleep
-import tty, sys, termios
+import tty, sys, termios, select
 
-# filedescriptor = termios.tcgetattr(sys.stdin)
-# tty.setcbreak(sys.stdin)
-# x = 0
-# while 1:
-#     x=sys.stdin.read(1)[0]
-#     print("You pressed", x)
-#     if x == "r":
-#         print("If condition met")
-#         break
-# termios.tcsetattr(sys.stdin, termios.TCSADRAIN,filedescriptor)
-
-SCREEN_Y = 12
+SCREEN_Y = 24
 SCREEN_X = 48
+LEFT_KEY = 0x61
+RIGHT_KEY = 0x64
+QUIT_KEY = 0x71
 
 a = ""
 
@@ -127,183 +119,146 @@ screen = Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
 
 
 paddle = [23, 24, 25]
-ball = (SCREEN_X / 2, SCREEN_Y / 2)
-bricks = []
+ball = [SCREEN_X // 2, SCREEN_Y // 2]
+bricks = {}
 score = 0
+counter = 0
+isLeft = True
+isDown = True
+level = 1
+lives = 3
+
+def isData():
+    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 def clear_screen():
-    for y in range(screen.y_height):
-        screen.draw_hline(0, y, screen.x_width - 1, combine=False, push=True)
+    for board in screen.board_objects:
+        board.clear()
 
+def fill_bricks(level=1):
 
-def checkboard_screensaver():
+    if level < 1:
+        raise ValueError("level must be greater than 1")
 
-    clear_screen()
-
-    while True:
-        # screen.board_object.clear()
-        for x in range(screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2 == 0:
-                    if x % 2:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-        screen.push()
-        sleep(.1)
-        # screen.board_object.clear()
-        for x in range(screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2:
-                    if x % 2:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-        screen.push()
-        sleep(.1)
-
-
-def byu_netlab():
-    clear_screen()
-    screen.draw_pixel(23, 2, 0xf, combine=False)
-    screen.draw_pixel(24, 2, 0xf, combine=False)
-
-    screen.draw_pixel(23, 22, 0xf, combine=False)
-    screen.draw_pixel(24, 22, 0xf, combine=False)
-
-    screen.draw_pixel(21, 3, 0xf, combine=False)
-    screen.draw_pixel(19, 4, 0xf, combine=False)
-    screen.draw_pixel(17, 5, 0xf, combine=False)
-    screen.draw_pixel(15, 6, 0xf, combine=False)
-
-    screen.draw_pixel(26, 3, 0xf, combine=False)
-    screen.draw_pixel(28, 4, 0xf, combine=False)
-    screen.draw_pixel(30, 5, 0xf, combine=False)
-    screen.draw_pixel(32, 6, 0xf, combine=False)
-
-    screen.draw_pixel(21, 21, 0xf, combine=False)
-    screen.draw_pixel(19, 20, 0xf, combine=False)
-    screen.draw_pixel(17, 19, 0xf, combine=False)
-    screen.draw_pixel(15, 18, 0xf, combine=False)
-
-    screen.draw_pixel(26, 21, 0xf, combine=False)
-    screen.draw_pixel(28, 20, 0xf, combine=False)
-    screen.draw_pixel(30, 19, 0xf, combine=False)
-    screen.draw_pixel(32, 18, 0xf, combine=False)
-
-    for line in range(11):
-        screen.draw_pixel(15, 6 + line, 0xf, combine=True)
-        screen.draw_pixel(32, 6 + line, 0xf, combine=True)
-
-    # Text
-
-    for n in range(5):
-        screen.draw_pixel(17, 7 + n, 0xf, combine=True)
-        screen.draw_pixel(20, 7 + n, 0xf, combine=True)
-    screen.draw_pixel(18, 8, 0xf, combine=True)
-    screen.draw_pixel(19, 9, 0xf, combine=True)
-
-    for e in range(5):
-        screen.draw_pixel(22, 7 + e, 0xf, combine=True)
+    for row in range(level + 2):
+        bricks[row] = []
+        for brick in range(SCREEN_X):
+            bricks[row].append(brick)
     
-    for ee in range(3):
-        screen.draw_pixel(23 + ee, 7, 0xf, combine=True)
-        screen.draw_pixel(23 + ee, 9, 0xf, combine=True)
-        screen.draw_pixel(23 + ee, 11, 0xf, combine=True)
+    print(bricks)
 
-    for t in range(4):
-        screen.draw_pixel(27 + t, 7, 0xf, combine=True)
-        screen.draw_pixel(28, 8 + t, 0xf, combine=True)
-
-    for l in range(5):
-        screen.draw_pixel(17, 13 + l, 0xf, combine=True)
-
-    for ll in range(3):
-        screen.draw_pixel(18 + ll, 17, 0xf, combine=True)
-
-    for a in range(5):
-        screen.draw_pixel(22, 13 + a, 0xf, combine=True)
-        screen.draw_pixel(25, 13 + a, 0xf, combine=True)
-
-    for aa in range(2):
-        screen.draw_pixel(23 + aa, 13, 0xf, combine=True)
-        screen.draw_pixel(23 + aa, 15, 0xf, combine=True)
-
-    for b in range(5):
-        screen.draw_pixel(27, 13 + b, 0xf, combine=True)
-
-    for bb in range(3):
-        screen.draw_pixel(28 + bb, 15, 0xf, combine=True)
-        screen.draw_pixel(28 + bb, 17, 0xf, combine=True)
-
-    for bbb in range(2):
-        screen.draw_pixel(28 + bbb, 13, 0xf, combine=True)    
-    screen.draw_pixel(30, 16, 0xf)
-    screen.draw_pixel(30, 14, 0xf)
-
-    while True:
-        for x in range(13):
-            for y in range(screen.y_height):
-                if y % 2 == 0:
-                    if x % 3:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 3 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-
-        for x in range(35, screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2 == 0:
-                    if x % 3:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 3 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-        screen.push()
-        sleep(.1)
-        # screen.board_object.clear()
-        for x in range(13):
-            for y in range(screen.y_height):
-                if y % 2:
-                    if x % 3:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 3 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-
-        for x in range(35, screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2:
-                    if x % 3:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-                else:
-                    if x % 3 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
-        screen.push()
-        sleep(.1)
+    for row in bricks.keys():
+        for brick in bricks[row]:
+            if brick % 2 == 0:
+                screen.draw_pixel(brick, row, 0x7, combine=True)
+            else:
+                screen.draw_pixel(brick, row, 0xd, combine=True)
 
     screen.push()
 
 
-def breakout():
-    pass
-    
+def breakout(speed=500):
+    global isLeft, isDown, counter, lives
 
-    # while True:
-    #     if keyboard.read_key() == "p":
-    #         print("You pressed p")
-    #         break
+    fill_bricks()
+
+    screen.draw_pixel(ball[0], ball[1], 0xf, combine=False)
+    for val in paddle:
+        screen.draw_pixel(val, 23, 0xf, combine=False)
+
+    screen.push()
+
+
+    old_settings = termios.tcgetattr(sys.stdin)
+    try:
+        tty.setcbreak(sys.stdin.fileno())
+
+        while True:
+
+            if isData():
+                c = sys.stdin.read(1)
+                
+                if c == "a":
+                    if paddle[0] == 0:
+                        continue
+                    for val in range(len(paddle)):
+                        paddle[val] -= 1
+                    screen.draw_pixel(paddle[0], 23, 0xf, combine=False)
+                    screen.draw_pixel(paddle[2] + 1, 23, 0x0, combine=False)
+
+                if c == "d":
+                    if paddle[2] == 47:
+                        continue
+                    for val in range(len(paddle)):
+                        paddle[val] += 1
+                    screen.draw_pixel(paddle[0] - 1, 23, 0x0, combine=False)
+                    screen.draw_pixel(paddle[2], 23, 0xf, combine=False)
+
+                if c == "q":
+                    print("Bye felisha")
+                    break
+            
+            counter += 1
+            if counter == speed:
+                print(bricks)
+
+                counter = 0
+
+                # Bounds check for ball
+                if ball[0] == 0:
+                    isLeft = False
+                if ball[0] == 47:
+                    isLeft = True
+                if ball[1] == 0:
+                    isDown = True
+                if ball[1] == 22:
+                    if ball[0] in paddle:
+                        isDown = False
+                if ball[1] == 23:
+                    isDown = False
+                    # lives -= 1
+                    # screen.draw_pixel(ball[0], ball[1], 0x0, combine=False)
+                    # if lives == 0:
+                    #     break
+                    # ball[0] = SCREEN_X // 2
+                    # ball[1] = SCREEN_Y // 2
+                if ball[1] <= level + 3:
+                    row = ball[1] - 2
+                    if ball[0] in bricks[row]  :
+                        isDown = True
+                        bricks[row].remove(ball[0])
+                        screen.draw_pixel(ball[0], row, 0x0, combine=False)
+                        if ball[0] % 2 == 0:
+                            bricks[row].remove(ball[0] + 1)
+                            screen.draw_pixel(ball[0] + 1, row, 0x0, combine=False)
+                        else:
+                            bricks[row].remove(ball[0] - 1)
+                            screen.draw_pixel(ball[0] - 1, row, 0x0, combine=False)
+                
+                
+                screen.draw_pixel(ball[0], ball[1], 0x0, combine=False)
+
+                if isLeft:
+                    ball[0] -= 1
+                else:
+                    ball[0] += 1
+                if isDown:
+                    ball[1] += 1
+                else:
+                    ball[1] -= 1
+
+            # Handle the ball
+            screen.draw_pixel(ball[0], ball[1], 0xf)
+
+            screen.push()
+
+
+
+    finally:
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 def main():
-    # breakout()
-    # checkboard_screensaver()
-    byu_netlab()
-    pass
-
+    breakout()
 
 if __name__ == "__main__":
     main()
-# while True:
-#     keyboard.on_press_key("p", lambda _:print("You pressed p"))
