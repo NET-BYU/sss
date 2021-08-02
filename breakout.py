@@ -8,20 +8,10 @@ SCREEN_X = 48
 LEFT_KEY = 0x61
 RIGHT_KEY = 0x64
 QUIT_KEY = 0x71
-
-# panel = SevenSegment(
-#     num_digits=288,
-#     cs_num=2,
-#     brightness=2,
-#     segment_orientation_array=[
-#         [1, 2, 13, 14, 25, 26],
-#         [3, 4, 15, 16, 27, 28],
-#         [5, 6, 17, 18, 29, 30],
-#         [7, 8, 19, 20, 31, 32],
-#         [9, 10, 21, 22, 33, 34],
-#         [11, 12, 23, 24, 35, 36],
-#     ],
-# )
+LEFT_BRICK = 0x7
+RIGHT_BRICK = 0xd
+PIXEL_ON = 0xf
+PIXEL_OFF = 0x0
 
 panel = SevenSegment(
     num_digits=96,
@@ -107,12 +97,6 @@ panel4 = SevenSegment(
     ],
 )
 
-# screen = Display([[panel]], 16, 12)
-# screen = Display([[panel, panel2]], 32, 12)
-# screen = Display([[panel, panel2, panel3]], 48, 12)
-# screen = Display([[panel, panel2, panel3, panel4]], 64, 12)
-# screen = Display([[panel, panel2, panel3, panel4, panel5]], 80, 12)
-# screen = Display([[panel, panel2, panel3, panel4, panel5, panel6]], 96, 12)
 screen = Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
 
 
@@ -145,10 +129,10 @@ def fill_bricks(level=1):
     
     for row in bricks.keys():
         for brick in bricks[row]:
-            if brick % 2 == 0:
-                screen.draw_pixel(brick, row, 0x7, combine=True)
+            if not brick % 2:
+                screen.draw_pixel(brick, row, LEFT_BRICK)
             else:
-                screen.draw_pixel(brick, row, 0xd, combine=True)
+                screen.draw_pixel(brick, row, RIGHT_BRICK)
 
     screen.push()
 
@@ -158,9 +142,9 @@ def breakout(speed=500):
 
     fill_bricks()
 
-    screen.draw_pixel(ball[0], ball[1], 0xf, combine=False)
+    screen.draw_pixel(ball[0], ball[1], PIXEL_ON, combine=False)
     for val in paddle:
-        screen.draw_pixel(val, 23, 0xf, combine=False)
+        screen.draw_pixel(val, 23, PIXEL_ON, combine=False)
 
     screen.push()
 
@@ -179,16 +163,16 @@ def breakout(speed=500):
                         continue
                     for val in range(len(paddle)):
                         paddle[val] -= 1
-                    screen.draw_pixel(paddle[0], 23, 0xf, combine=False)
-                    screen.draw_pixel(paddle[2] + 1, 23, 0x0, combine=False)
+                    screen.draw_pixel(paddle[0], 23, PIXEL_ON, combine=False)
+                    screen.draw_pixel(paddle[-1] + 1, 23, PIXEL_OFF, combine=False)
 
                 if c == "d":
-                    if paddle[2] == 47:
+                    if paddle[-1] == 47:
                         continue
                     for val in range(len(paddle)):
                         paddle[val] += 1
-                    screen.draw_pixel(paddle[0] - 1, 23, 0x0, combine=False)
-                    screen.draw_pixel(paddle[2], 23, 0xf, combine=False)
+                    screen.draw_pixel(paddle[0] - 1, 23, PIXEL_OFF, combine=False)
+                    screen.draw_pixel(paddle[-1], 23, PIXEL_ON, combine=False)
 
                 if c == "q":
                     print("Bye felisha")
@@ -205,15 +189,15 @@ def breakout(speed=500):
                         if ball[0] in bricks[row]:
                             isDown = not isDown
                             bricks[row].remove(ball[0])
-                            screen.draw_pixel(ball[0], row, 0x0)
-                            if ball[0] % 2 == 0:
+                            screen.draw_pixel(ball[0], row, PIXEL_OFF)
+                            if not ball[0] % 2:
                                 bricks[row].remove(ball[0] + 1)
-                                screen.draw_pixel(ball[0] + 1, row, 0x0)
+                                screen.draw_pixel(ball[0] + 1, row, PIXEL_OFF)
                             else:
                                 bricks[row].remove(ball[0] - 1)
-                                screen.draw_pixel(ball[0] - 1, row, 0x0)                
+                                screen.draw_pixel(ball[0] - 1, row, PIXEL_OFF)                
                 
-                screen.draw_pixel(ball[0], ball[1], 0x0)
+                screen.draw_pixel(ball[0], ball[1], PIXEL_OFF)
 
                 # Bounds check for ball
                 if ball[0] == 0:
@@ -228,7 +212,7 @@ def breakout(speed=500):
                 if ball[1] == 23:
                     isDown = False
                     # lives -= 1
-                    # screen.draw_pixel(ball[0], ball[1], 0x0, combine=False)
+                    # screen.draw_pixel(ball[0], ball[1], PIXEL_OFF, combine=False)
                     # if lives == 0:
                     #     break
                     # ball[0] = SCREEN_X // 2
@@ -244,7 +228,7 @@ def breakout(speed=500):
                     ball[1] -= 1
 
             # Handle the ball
-            screen.draw_pixel(ball[0], ball[1], 0xf)
+            screen.draw_pixel(ball[0], ball[1], PIXEL_ON)
 
             screen.push()
 
@@ -253,6 +237,7 @@ def breakout(speed=500):
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
+# Test comment
 def main():
     breakout(500)
 
