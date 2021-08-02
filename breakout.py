@@ -200,33 +200,18 @@ def breakout(speed=500):
                 counter = 0
 
                 if ball[1] <= level + 2:
-                    if not isDown:
-                        row = ball[1]
-                        if row in bricks.keys():
-                            if ball[0] in bricks[row]:
-                                isDown = True
-                                bricks[row].remove(ball[0])
-                                screen.draw_pixel(ball[0], row, 0x0)
-                                if ball[0] % 2 == 0:
-                                    bricks[row].remove(ball[0] + 1)
-                                    screen.draw_pixel(ball[0] + 1, row, 0x0)
-                                else:
-                                    bricks[row].remove(ball[0] - 1)
-                                    screen.draw_pixel(ball[0] - 1, row, 0x0)
-                    else:
-                        row = ball[1]
-                        if row in bricks.keys():
-                            if ball[0] in bricks[row]:
-                                isDown = False
-                                bricks[row].remove(ball[0])
-                                screen.draw_pixel(ball[0], row, 0x0)
-                                if ball[0] % 2 == 0:
-                                    bricks[row].remove(ball[0] + 1)
-                                    screen.draw_pixel(ball[0] + 1, row, 0x0)
-                                else:
-                                    bricks[row].remove(ball[0] - 1)
-                                    screen.draw_pixel(ball[0] - 1, row, 0x0)
-                
+                    row = ball[1]
+                    if row in bricks.keys():
+                        if ball[0] in bricks[row]:
+                            isDown = not isDown
+                            bricks[row].remove(ball[0])
+                            screen.draw_pixel(ball[0], row, 0x0)
+                            if ball[0] % 2 == 0:
+                                bricks[row].remove(ball[0] + 1)
+                                screen.draw_pixel(ball[0] + 1, row, 0x0)
+                            else:
+                                bricks[row].remove(ball[0] - 1)
+                                screen.draw_pixel(ball[0] - 1, row, 0x0)                
                 
                 screen.draw_pixel(ball[0], ball[1], 0x0)
 
