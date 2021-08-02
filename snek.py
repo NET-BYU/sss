@@ -17,8 +17,9 @@ def frameRate(period):
         yield i, nextTime
 
 
-def snek_game(display):
+def snek_game(display, period):
     game_over = False
+    tick = frameRate(period)
     current_location = [display.x_width // 2, display.y_height // 2]
     snek_list = [current_location]
     snek_length = 1
@@ -68,3 +69,4 @@ def snek_game(display):
         if len(snek_list) > snek_length:
             display.draw_pixel(snek_list[0][0], snek_list[0][1], 0)
             snek_list.pop(0)
+        next(tick)
