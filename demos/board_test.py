@@ -1,8 +1,12 @@
-from game_display import Display
-from seven_seg import SevenSegment
+ 
+import sys
+sys.path.append('..')
+
+from lib import game_display as gd
+from lib import seven_seg as ss
 import time
 
-panel = SevenSegment(
+panel = ss.SevenSegment(
     num_digits=96,
     cs_num=0,
     brightness=2,
@@ -18,7 +22,7 @@ panel = SevenSegment(
 
 panel.clear()
 
-display = Display([[panel]],16,12)
+display = gd.Display([[panel]],16,12)
 
 def check_pixel_drawing():
     for x in range(16):

@@ -1,5 +1,8 @@
-from seven_seg import SevenSegment
-from game_display import Display
+import sys
+sys.path.append('../..')
+
+from lib import seven_seg as ss # import SevenSegment
+from lib import game_display as gd # import Display
 from time import sleep
 import tty, sys, termios, select
 
@@ -13,7 +16,7 @@ RIGHT_BRICK = 0xd
 PIXEL_ON = 0xf
 PIXEL_OFF = 0x0
 
-panel = SevenSegment(
+panel = ss.SevenSegment(
     num_digits=96,
     cs_num=2,
     brightness=2,
@@ -27,7 +30,7 @@ panel = SevenSegment(
     ],
 )
 
-panel2 = SevenSegment(
+panel2 = ss.SevenSegment(
     num_digits=96,
     cs_num=3,
     brightness=2,
@@ -41,7 +44,7 @@ panel2 = SevenSegment(
     ],
 )
 
-panel3 = SevenSegment(
+panel3 = ss.SevenSegment(
     num_digits=96,
     cs_num=4,
     brightness=2,
@@ -55,7 +58,7 @@ panel3 = SevenSegment(
     ],
 )
 
-panel6 = SevenSegment(
+panel6 = ss.SevenSegment(
     num_digits=96,
     cs_num=5,
     brightness=2,
@@ -69,7 +72,7 @@ panel6 = SevenSegment(
     ],
 )
 
-panel5 = SevenSegment(
+panel5 = ss.SevenSegment(
     num_digits=96,
     cs_num=9,
     brightness=2,
@@ -83,7 +86,7 @@ panel5 = SevenSegment(
     ],
 )
 
-panel4 = SevenSegment(
+panel4 = ss.SevenSegment(
     num_digits=96,
     cs_num=10,
     brightness=2,
@@ -97,7 +100,7 @@ panel4 = SevenSegment(
     ],
 )
 
-screen = Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
+screen = gd.Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
 
 
 paddle = [23, 24, 25]

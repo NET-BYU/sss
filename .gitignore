@@ -1,4 +1,4 @@
 *.pyc
 .vscode
-.vscode/*
 pico-go.json
+__pycache__
