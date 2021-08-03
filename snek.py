@@ -93,7 +93,8 @@ panel4 = SevenSegment(
 screen = Display([[panel, panel2, panel3], [panel4, panel5, panel6]], 48, 24)
 
 
-def frameRate(period):
+def frameRate(fps):
+    period = 1.0 / fps
     nextTime = time.time() + period
     for i in count():
         now = time.time()
@@ -112,6 +113,7 @@ def isData():
 
 def snek_game(display, period):
     game_over = False
+    display.clear()
     tick = frameRate(period)
     current_location = [display.x_width // 2, display.y_height // 2]
     snek_list = [current_location]
@@ -120,12 +122,12 @@ def snek_game(display, period):
     def get_new_food_location():
         food_location = [
             round(random.randrange(0, display.x_width)),
-            round(random.randrange(0, display.x_width)),
+            round(random.randrange(0, display.y_height)),
         ]
         while food_location in snek_list:
             food_location = [
                 round(random.randrange(0, display.x_width)),
-                round(random.randrange(0, display.x_width)),
+                round(random.randrange(0, display.y_height)),
             ]
         return food_location
 
@@ -134,7 +136,9 @@ def snek_game(display, period):
     # draw snek part
     display.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
     # draw food
-    display.draw_pixel(current_food_location[0], current_food_location[1])
+    display.draw_pixel(
+        current_food_location[0], current_food_location[1], 15, push=True
+    )
     direction = None
     old_settings = termios.tcgetattr(sys.stdin)
     try:
@@ -144,23 +148,41 @@ def snek_game(display, period):
             # check keyboard press and generate new snake part
             if isData():
                 c = sys.stdin.read(1)
+                while c == direction and isData():
+                    c = sys.stdin.read(1)
                 if c == "a":
-                    direction = "left"
+                    direction = "a"
                 if c == "w":
-                    direction = "up"
+                    direction = "w"
                 if c == "d":
-                    direction = "right"
+                    direction = "d"
                 if c == "s":
-                    direction = "down"
+                    direction = "s"
             if direction is None:
+                print("press key to start game")
+                next(tick)
                 continue
-            print(direction)
+
+            current_location = [
+                current_location[0] - 1
+                if direction == "a"
+                else current_location[0] + 1
+                if direction == "d"
+                else current_location[0],
+                current_location[1] + 1
+                if direction == "s"
+                else current_location[1] - 1
+                if direction == "w"
+                else current_location[1],
+            ]
+            print(direction, current_location)
             # check to make sure snek isn't in the weeds
             if (
                 current_location[0] >= display.x_width
                 or current_location[0] < 0
                 or current_location[1] >= display.y_height
                 or current_location[1] < 0
+                or current_location in snek_list
             ):
                 game_over = True
                 continue
@@ -170,18 +192,21 @@ def snek_game(display, period):
                 snek_length += 1
                 current_food_location = get_new_food_location()
                 # draw food
-                display.draw_pixel(current_food_location[0], current_food_location[1])
+                display.draw_pixel(
+                    current_food_location[0], current_food_location[1], 15
+                )
 
             # draw snek part
-            display.draw_pixel(current_food_location[0], current_food_location[1])
+            display.draw_pixel(current_location[0], current_location[1], 15)
             snek_list.append(current_location)
             if len(snek_list) > snek_length:
                 display.draw_pixel(snek_list[0][0], snek_list[0][1], 0)
                 snek_list.pop(0)
+            display.push()
             next(tick)
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 
 if __name__ == "__main__":
-    snek_game(screen, 1)
+    snek_game(screen, 4)
