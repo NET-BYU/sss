@@ -1,5 +1,6 @@
 from lib import symbols
 
+
 class Display:
     def __init__(self, board_objects, x_width, y_height):
         self.board_objects = board_objects
@@ -44,6 +45,27 @@ class Display:
         self.changed_list.append((x, y // 2))
         if push:
             self.push()
+
+    def get_pixel(self, x, y):
+        half_height = y // 2
+        value = self.display_buf[half_height][x]
+
+        if y % 2:
+            half_value = (
+                bool(value & 32) << 3
+                | bool(value & 64) << 2
+                | bool(value & 2) << 1
+                | bool(value & 1)
+            )
+        else:
+            half_value = (
+                bool(value & 16) << 3
+                | bool(value & 1) << 2
+                | bool(value & 4) << 1
+                | bool(value & 8)
+            )
+
+        return half_value
 
     def push(self):
         for location in self.changed_list:
@@ -142,31 +164,48 @@ class Display:
                         self.display_buf[y_half][start_x] = 0x20
             self.changed_list.append((start_x, y_half))
 
-    def draw_box_line(self, start_x, start_y, end_x, end_y, combine=True, push=False):
+    def draw_shape_line(
+        self, start_x, start_y, end_x, end_y, value, combine=True, push=False
+    ):
 
         if start_x != end_x:
             slope = (end_y - start_y) / (end_x - start_x)
             if start_x < end_x:
                 for x in range(start_x, end_x + 1):
-                    self.draw_pixel(x, round(x * slope), 15, combine)
+                    self.draw_pixel(x, round(x * slope), value, combine)
             else:
                 for x in range(end_x, start_x + 1):
-                    self.draw_pixel(x, round(x * slope), 15, combine)
+                    self.draw_pixel(x, round(x * slope), value, combine)
         else:
             if start_y < end_y:
                 for y in range(start_y, end_y + 1):
-                    self.draw_pixel(start_x, y, 15, combine)
+                    self.draw_pixel(start_x, y, value, combine)
             else:
                 for y in range(end_y, start_y + 1):
-                    self.draw_pixel(start_x, y, 15, combine)
+                    self.draw_pixel(start_x, y, value, combine)
         if push:
             self.push()
 
-    def draw_text(self,x,y,msg,combine=True,push=False):
+    def draw_text(self, x, y, msg, combine=True, push=False):
         if y % 2:
-            for char, pos in enumerate(msg):
+            for pos, char in enumerate(msg):
                 value = symbols.get_char2(char)
                 # get top and bottom values out of value
+                top_value = (value & 0x20) >> 2 | (value & 0x40) >> 4 | (value & 0x02)
+                bottom_value = (
+                    (value & 0x04) >> 1
+                    | (value & 0x08) >> 3
+                    | (value & 0x10) >> 1
+                    | (value & 0x01) << 2
+                )
+                self.draw_pixel(x + pos, y, top_value, combine=combine)
+                self.draw_pixel(x + pos, y + 1, bottom_value, combine=combine)
+        else:
+            half_y = y // 2
+            for pos, char in enumerate(msg):
+                value = symbols.get_char2(char)
+                self.display_buf[half_y][x + pos] = value
+                self.changed_list.append((x + pos, half_y))
         if push:
             self.push()
 
