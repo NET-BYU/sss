@@ -5,10 +5,12 @@ from lib import seven_seg as ss # import SevenSegment
 from lib import game_display as gd # import Display
 from time import sleep
 
+bright = 1
+
 panel = ss.SevenSegment(
     num_digits=96,
     cs_num=2,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
@@ -22,7 +24,7 @@ panel = ss.SevenSegment(
 panel2 = ss.SevenSegment(
     num_digits=96,
     cs_num=3,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
@@ -36,7 +38,7 @@ panel2 = ss.SevenSegment(
 panel3 = ss.SevenSegment(
     num_digits=96,
     cs_num=4,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
@@ -50,7 +52,7 @@ panel3 = ss.SevenSegment(
 panel6 = ss.SevenSegment(
     num_digits=96,
     cs_num=5,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
@@ -64,7 +66,7 @@ panel6 = ss.SevenSegment(
 panel5 = ss.SevenSegment(
     num_digits=96,
     cs_num=9,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
@@ -78,7 +80,7 @@ panel5 = ss.SevenSegment(
 panel4 = ss.SevenSegment(
     num_digits=96,
     cs_num=10,
-    brightness=2,
+    brightness=bright,
     segment_orientation_array=[
         [1, 2],
         [3, 4],
