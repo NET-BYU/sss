@@ -1,3 +1,5 @@
+from lib import symbols
+
 class Display:
     def __init__(self, board_objects, x_width, y_height):
         self.board_objects = board_objects
@@ -157,6 +159,14 @@ class Display:
             else:
                 for y in range(end_y, start_y + 1):
                     self.draw_pixel(start_x, y, 15, combine)
+        if push:
+            self.push()
+
+    def draw_text(self,x,y,msg,combine=True,push=False):
+        if y % 2:
+            for char, pos in enumerate(msg):
+                value = symbols.get_char2(char)
+                # get top and bottom values out of value
         if push:
             self.push()
 
