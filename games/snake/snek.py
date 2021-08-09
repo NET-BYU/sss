@@ -8,6 +8,7 @@ from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
 import random
 import time
+from copy import deepcopy
 from itertools import count
 import tty, sys, termios, select
 
@@ -167,7 +168,14 @@ def snek_game(display, period, ai=False):
         )
         direction = "ai"
         # print(current_location, current_food_location)
-        snek_path = snek_ai.run_Search(
+        # snek_path = snek_ai.run_Search(
+        #     current_location[0],
+        #     current_location[1],
+        #     current_food_location,
+        #     game_state,
+        #     snek_length,
+        # )
+        snek_path = snek_ai.run_Search2(
             current_location[0],
             current_location[1],
             current_food_location,
@@ -236,7 +244,7 @@ def snek_game(display, period, ai=False):
                 # check food situation
                 if current_food_location == current_location:
                     snek_length += 1
-                    temp = current_food_location
+                    # temp = current_food_location
                     current_food_location = get_new_food_location()
                     # print("new food location", current_food_location)
                     # draw food
@@ -258,6 +266,8 @@ def snek_game(display, period, ai=False):
                         #     game_state,
                         #     snek_length,
                         # )
+                        game_state.snek_parts = deepcopy(snek_list)
+                        # print("list:", snek_list)
                         snek_path = snek_ai.run_Search2(
                             current_location[0],
                             current_location[1],
@@ -265,6 +275,9 @@ def snek_game(display, period, ai=False):
                             game_state,
                             snek_length,
                         )
+                        # print(
+                        #     "brand new path:", snek_path, "\nwith snake at:", snek_list
+                        # )
                         if snek_path is None or len(snek_path) == 0:
                             game_over = True
 
@@ -272,8 +285,9 @@ def snek_game(display, period, ai=False):
                 if len(snek_list) > snek_length:
                     display.draw_pixel(snek_list[0][0], snek_list[0][1], 0)
                     temp = snek_list.pop(0)
-                    if ai:
-                        game_state.del_snake_part(temp)
+                    # if ai:
+                    #     # game_state.del_snake_part(temp)
+                    #     game_state.del_snake_part2()
 
                 # print(direction, current_location)
                 # check to make sure snek isn't in the weeds
@@ -284,6 +298,15 @@ def snek_game(display, period, ai=False):
                     or current_location[1] < 3
                     or current_location in snek_list[:-1]
                 ):
+                    print(
+                        "\nSnake:",
+                        snek_list,
+                        "\nPATH:",
+                        snek_path,
+                        "\nCurrent location:",
+                        current_location,
+                    )
+                    print("killed itself")
                     game_over = True
                     continue
 
@@ -322,6 +345,7 @@ def snek_game(display, period, ai=False):
             )
         display.push()
         time.sleep(5)
+        print("\n\n\nNEW GAME")
         start_sweep_x = display.x_width // 2 - 1
         for i in range(start_sweep_x + 1):
             display.draw_shape_line(
@@ -379,7 +403,14 @@ def snek_game(display, period, ai=False):
             )
             direction = "ai"
             # print(current_location, current_food_location)
-            snek_path = snek_ai.run_Search(
+            # snek_path = snek_ai.run_Search(
+            #     current_location[0],
+            #     current_location[1],
+            #     current_food_location,
+            #     game_state,
+            #     snek_length,
+            # )
+            snek_path = snek_ai.run_Search2(
                 current_location[0],
                 current_location[1],
                 current_food_location,
