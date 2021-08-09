@@ -24,7 +24,7 @@ def run_Search(x, y, dst, state, len):
         # Reverse the path
         path.reverse()
         del path[0]
-        print("PATH FOUND! Cost = ", goal.actual_cost)
+        # print("PATH FOUND! Cost = ", goal.actual_cost)
 
         return path
     else:
@@ -229,7 +229,7 @@ def getChildren3(node,state,goal):
 
 
 def A_Star(state, fringe, goal):
-    print("Goal:", goal)
+    # print("Goal:", goal)
     # List to store the expanded states on this search
     expanded = []
     inFringe = []
