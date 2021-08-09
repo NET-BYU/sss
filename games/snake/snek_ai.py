@@ -124,6 +124,109 @@ def getChildren2(node, state, goal):
 
     return children
 
+def run_Search2(x, y, dst, state, len):
+    root = snek_state.snek_Node(x, y, heuristic((x, y), dst), None, state.snek_parts 0.0)
+    fringe = PriorityQueue()
+    fringe.put((root.cost, root))
+    if len < 200:
+        goal = A_Star_Revised(state, fringe)
+    else:
+        print("gone long enough")
+        return []
+    if goal:
+        cur = goal
+        path = []
+        # Extract the path and print it out
+        while cur is not None:
+            path.append(cur.loc)
+            cur = cur.prev
+
+        # Reverse the path
+        path.reverse()
+        del path[0]
+        print("PATH FOUND! Cost = ", goal.actual_cost)
+
+        return path
+    else:
+        print("NO PATH FOUND!")
+        return []
+
+def A_Star_Revised(state,fringe):
+    print("Goal:",state.food_locs)
+    # List to store the expanded states on this search
+    expanded = []
+
+    # Continue until the fringe is empty
+    while not fringe.empty():
+        test = fringe.get()
+        curNode = test[1]
+        # print(test[0], curNode.loc)
+
+        if curNode.loc == state.food_locs:
+            return curNode
+
+        expanded.append(curNode.loc)
+        curNode.current_snake.pop(0)
+        curNode.current_snake.append(curNode.loc)
+        successors = getChildren3(curNode, state, state.food_locs)
+        for i in successors:
+            if i.loc in expanded:
+                continue
+            fringe.put((i.cost, i))
+
+    # If no path found, return none
+    return None
+
+def getChildren3(node,state,goal):
+    children = []
+    x = int(node.loc[0])
+    y = int(node.loc[1])
+
+    if ((x + 1) < state.width) and (x+1,y) not in node.current_snake):
+        children.append(
+            snek_state.snek_Node(
+                (x + 1),
+                y,
+                heuristic(((x + 1), y), goal),
+                node,
+                node.actual_cost + 1,
+            )
+        )
+
+    if (x - 1) >= 0 and (x-1,y) not in node.current_snake:
+        children.append(
+            snek_state.snek_Node(
+                (x - 1),
+                y,
+                heuristic(((x - 1), y), goal),
+                node,
+                node.actual_cost + 1,
+            )
+        )
+
+    if (y + 1) < state.height and (x,y+1) not in node.current_snake:
+        children.append(
+            snek_state.snek_Node(
+                x,
+                (y + 1),
+                heuristic((x, y + 1), goal),
+                node,
+                node.actual_cost + 1,
+            )
+        )
+
+    if (y - 1) >= 4 and (x,y-1) not in node.current_snake:
+        children.append(
+            snek_state.snek_Node(
+                x,
+                y - 1,
+                heuristic((x, y - 1), goal),
+                node,
+                node.actual_cost + 1,
+            )
+        )
+    return children
+
 
 def A_Star(state, fringe, goal):
     print("Goal:", goal)

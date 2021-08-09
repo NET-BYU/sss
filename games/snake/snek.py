@@ -125,12 +125,17 @@ def generate_game_state(width, height, start_loc, food_loc):
     game_state.add_food(food_loc)
     return game_state
 
+def generate_game_state2(width,height,start_loc,food_loc):
+    game_state = snek_state.snek_state(width,height)
+    game_state.add_snake_part2(start_loc)
+    game_state.add_food2(food_loc)
+    return game_state
 
 def snek_game(display, period, ai=False):
     game_over = False
     display.clear()
     tick = frameRate(period)
-    current_location = [display.x_width // 2, display.y_height // 2]
+    current_location = (display.x_width // 2, display.y_height // 2)
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
@@ -152,12 +157,22 @@ def snek_game(display, period, ai=False):
 
     direction = None
     if ai:
-        game_state = generate_game_state(
+        # game_state = generate_game_state(
+        #     display.x_width, display.y_height, current_location, current_food_location
+        # )
+        game_state = generate_game_state2(
             display.x_width, display.y_height, current_location, current_food_location
         )
         direction = "ai"
         print(current_location, current_food_location)
-        snek_path = snek_ai.run_Search(
+        # snek_path = snek_ai.run_Search(
+        #     current_location[0],
+        #     current_location[1],
+        #     current_food_location,
+        #     game_state,
+        #     snek_length,
+        # )
+        snek_path = snek_ai.run_Search2(
             current_location[0],
             current_location[1],
             current_food_location,
@@ -181,9 +196,11 @@ def snek_game(display, period, ai=False):
     display.draw_text(display.x_width // 2 - 2, 0, "SNAKE", push=True)
 
     while True:
-        old_settings = termios.tcgetattr(sys.stdin)
+        if not ai:
+            old_settings = termios.tcgetattr(sys.stdin)
         try:
-            tty.setcbreak(sys.stdin.fileno())
+            if not ai:
+                tty.setcbreak(sys.stdin.fileno())
 
             while not game_over:
                 # check keyboard press and generate new snake part
@@ -204,7 +221,7 @@ def snek_game(display, period, ai=False):
                     next(tick)
                     continue
                 elif not ai:
-                    current_location = [
+                    current_location = (
                         current_location[0] - 1
                         if direction == "a"
                         else current_location[0] + 1
@@ -215,10 +232,11 @@ def snek_game(display, period, ai=False):
                         else current_location[1] - 1
                         if direction == "w"
                         else current_location[1],
-                    ]
+                    )
                 else:
                     current_location = snek_path.pop(0)
-                    game_state.add_snake_part(current_location)
+                    # game_state.add_snake_part(current_location)
+                    game_state.add_snake_part2(current_location)
 
                 # check food situation
                 if current_food_location == current_location:
@@ -235,9 +253,17 @@ def snek_game(display, period, ai=False):
                         if snek_length > 200:
                             game_over = True
                             continue
-                        game_state.del_food(temp)
-                        game_state.add_food(current_food_location)
-                        snek_path = snek_ai.run_Search(
+                        # game_state.del_food(temp)
+                        # game_state.add_food(current_food_location)
+                        game_state.add_food2(current_food_location)
+                        # snek_path = snek_ai.run_Search(
+                        #     current_location[0],
+                        #     current_location[1],
+                        #     current_food_location,
+                        #     game_state,
+                        #     snek_length,
+                        # )
+                        snek_path = snek_ai.run_Search2(
                             current_location[0],
                             current_location[1],
                             current_food_location,
@@ -273,7 +299,8 @@ def snek_game(display, period, ai=False):
                 display.push()
                 next(tick)
         finally:
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+            if not ai:
+                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
         for i in snek_list:
             display.draw_pixel(i[0], i[1], 0)
@@ -337,10 +364,16 @@ def snek_game(display, period, ai=False):
         game_over = False
         snek_length = 1
         current_food_location = get_new_food_location()
-        current_location = [display.x_width // 2, display.y_height // 2]
+        current_location = (display.x_width // 2, display.y_height // 2)
         snek_list = [current_location]
         if ai:
-            game_state = generate_game_state(
+            # game_state = generate_game_state(
+            #     display.x_width,
+            #     display.y_height,
+            #     current_location,
+            #     current_food_location,
+            # )
+            game_state = generate_game_state2(
                 display.x_width,
                 display.y_height,
                 current_location,
@@ -348,7 +381,14 @@ def snek_game(display, period, ai=False):
             )
             direction = "ai"
             print(current_location, current_food_location)
-            snek_path = snek_ai.run_Search(
+            # snek_path = snek_ai.run_Search(
+            #     current_location[0],
+            #     current_location[1],
+            #     current_food_location,
+            #     game_state,
+            #     snek_length,
+            # )
+            snek_path = snek_ai.run_Search2(
                 current_location[0],
                 current_location[1],
                 current_food_location,
