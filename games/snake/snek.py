@@ -142,6 +142,8 @@ def snek_game(display, period, ai=False):
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
+    with open("ai_high_score.txt", "r") as scores:
+        h_score = int(scores.read())
 
     def get_new_food_location():
         food_location = (
@@ -195,7 +197,7 @@ def snek_game(display, period, ai=False):
     display.draw_hline(0, 2, display.x_width, push=True)
     display.draw_hline(0, 3, display.x_width, push=True)
     display.draw_text(0, 0, "SCORE 000")
-    display.draw_text(display.x_width - 3 - 8, 0, "H-SCORE 000")
+    display.draw_text(display.x_width - 3 - 8, 0, "H-SCORE " + str(h_score).zfill(3))
     display.draw_text(display.x_width // 2 - 2, 0, "SNAKE", push=True)
 
     while True:
@@ -237,6 +239,16 @@ def snek_game(display, period, ai=False):
                         else current_location[1],
                     )
                 else:
+                    if len(snek_path) == 0:
+                        print("ran out, try search again")
+                        game_state.snek_parts = deepcopy(snek_list[:-1])
+                        snek_path = snek_ai.run_Search2(
+                            current_location[0],
+                            current_location[1],
+                            current_food_location,
+                            game_state,
+                            snek_length,
+                        )
                     current_location = snek_path.pop(0)
                     # game_state.add_snake_part(current_location)
                     game_state.add_snake_part2(current_location)
@@ -279,6 +291,7 @@ def snek_game(display, period, ai=False):
                         #     "brand new path:", snek_path, "\nwith snake at:", snek_list
                         # )
                         if snek_path is None or len(snek_path) == 0:
+                            print("Path was zero, no solution?")
                             game_over = True
 
                 snek_list.append(current_location)
@@ -317,6 +330,7 @@ def snek_game(display, period, ai=False):
                 display.push()
                 next(tick)
         except Exception as e:
+            print("error occurred")
             print(e)
         finally:
 
@@ -336,6 +350,8 @@ def snek_game(display, period, ai=False):
                 "H-SCORE " + str(snek_length).zfill(3),
             )
             h_score = snek_length
+            with open("ai_high_score.txt", "w") as scores:
+                scores.write(str(h_score))
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
         else:
             display.draw_text(

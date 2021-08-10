@@ -150,10 +150,12 @@ def run_Search2(x, y, dst, state, len):
         # Reverse the path
         path.reverse()
         del path[0]
-        print("PATH FOUND! Cost = ", goal.actual_cost)
+
+        # print("PATH FOUND! Cost = ", goal.actual_cost)
         while not fringe.empty():
             junk = fringe.get()[1]
             del junk
+        del fringe
         del goal
 
         return path
@@ -163,27 +165,41 @@ def run_Search2(x, y, dst, state, len):
 
 
 def A_Star_Revised(state, fringe):
-    print("Goal:", state.food_locs)
+    # print("Goal:", state.food_locs)
     # List to store the expanded states on this search
-    expanded = []
+    infringe = []
+    first = fringe.get()
+    infringe.append(first[1].loc)
+    fringe.put(first)
+    added = 0
+    mem_added = 0
 
     # Continue until the fringe is empty
     while not fringe.empty():
         test = fringe.get()
         curNode = test[1]
+        # infringe.remove(curNode.loc)
         # print(test[0], curNode.loc)
 
         if curNode.loc == state.food_locs:
+            del infringe
+            return curNode
+        if added > 200 or mem_added > 20000:
+            print("running to long")
+            del infringe
             return curNode
 
-        expanded.append(curNode.loc)
         curNode.current_snake.pop(0)
         curNode.current_snake.append(curNode.loc)
         successors = getChildren3(curNode, state, state.food_locs)
+        snake_size = len(curNode.current_snake)
         for i in successors:
-            if i.loc in expanded:
+            if i.loc in infringe:
                 continue
             fringe.put((i.cost, i))
+            infringe.append(i.loc)
+            added += 1
+            mem_added += snake_size
 
     # If no path found, return none
     return None
@@ -199,7 +215,7 @@ def getChildren3(node, state, goal):
             snek_state.snek_Node(
                 (x + 1),
                 y,
-                heuristic(((x + 1), y), goal),
+                heuristic(((x + 1), y), goal) + node.actual_cost + 1,
                 node,
                 deepcopy(node.current_snake),
                 node.actual_cost + 1,
@@ -211,7 +227,7 @@ def getChildren3(node, state, goal):
             snek_state.snek_Node(
                 (x - 1),
                 y,
-                heuristic(((x - 1), y), goal),
+                heuristic(((x - 1), y), goal) + node.actual_cost + 1,
                 node,
                 deepcopy(node.current_snake),
                 node.actual_cost + 1,
@@ -223,7 +239,7 @@ def getChildren3(node, state, goal):
             snek_state.snek_Node(
                 x,
                 (y + 1),
-                heuristic((x, y + 1), goal),
+                heuristic((x, y + 1), goal) + node.actual_cost + 1,
                 node,
                 deepcopy(node.current_snake),
                 node.actual_cost + 1,
@@ -235,7 +251,7 @@ def getChildren3(node, state, goal):
             snek_state.snek_Node(
                 x,
                 y - 1,
-                heuristic((x, y - 1), goal),
+                heuristic((x, y - 1), goal) + node.actual_cost + 1,
                 node,
                 deepcopy(node.current_snake),
                 node.actual_cost + 1,
