@@ -276,11 +276,11 @@ def breakout(speed=500):
     #     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 # Test comment
-def main():
-    # while 1:
-    #     if keyboard.is_pressed('q'):
-    breakout(500)
-            # print("Banana")
+# def main():
+#     # while 1:
+#     #     if keyboard.is_pressed('q'):
+#     breakout(500)
+#             # print("Banana")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

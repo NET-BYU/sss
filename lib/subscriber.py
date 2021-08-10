@@ -7,7 +7,7 @@ def receive_msg(client, user_data, msg):
 
 
 def run(data_list):
-    broker_address = "127.0.0.1"
+    broker_address = "mqtt.eclipseprojects.io"
     # password = "yMk7upKt2dcGEao3u2uxvXC4KnQRL224"
     # username = "messages"
     # port = 27408

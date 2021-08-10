@@ -355,7 +355,7 @@ def snek_game(display, period, ai=False):
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
         else:
             display.draw_text(
-                display.x_width // 2 - ((6 + snek_length) // 2),
+                display.x_width // 2 - 6,
                 display.y_height // 2,
                 "SCORE " + str(snek_length).zfill(3),
             )
@@ -444,4 +444,4 @@ def snek_game(display, period, ai=False):
 
 
 if __name__ == "__main__":
-    snek_game(screen, 15, True)
+    snek_game(screen, 10, True)
