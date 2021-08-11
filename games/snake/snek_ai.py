@@ -1,12 +1,15 @@
 from queue import PriorityQueue
 
 import snek_state
+from copy import deepcopy
 
 PATH_COST = 1
 
 
 def run_Search(x, y, dst, state, len):
-    root = snek_state.snek_Node(x, y, heuristic((x, y), dst), None, 0.0)
+    root = snek_state.snek_Node(
+        x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
+    )
     fringe = PriorityQueue()
     fringe.put((root.cost, root))
     if len < 200:
@@ -24,7 +27,7 @@ def run_Search(x, y, dst, state, len):
         # Reverse the path
         path.reverse()
         del path[0]
-        print("PATH FOUND! Cost = ", goal.actual_cost)
+        # print("PATH FOUND! Cost = ", goal.actual_cost)
 
         return path
     else:
@@ -124,8 +127,11 @@ def getChildren2(node, state, goal):
 
     return children
 
+
 def run_Search2(x, y, dst, state, len):
-    root = snek_state.snek_Node(x, y, heuristic((x, y), dst), None, state.snek_parts 0.0)
+    root = snek_state.snek_Node(
+        x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
+    )
     fringe = PriorityQueue()
     fringe.put((root.cost, root))
     if len < 200:
@@ -144,84 +150,110 @@ def run_Search2(x, y, dst, state, len):
         # Reverse the path
         path.reverse()
         del path[0]
-        print("PATH FOUND! Cost = ", goal.actual_cost)
+
+        # print("PATH FOUND! Cost = ", goal.actual_cost)
+        while not fringe.empty():
+            junk = fringe.get()[1]
+            del junk
+        del fringe
+        del goal
 
         return path
     else:
         print("NO PATH FOUND!")
         return []
 
-def A_Star_Revised(state,fringe):
-    print("Goal:",state.food_locs)
+
+def A_Star_Revised(state, fringe):
+    # print("Goal:", state.food_locs)
     # List to store the expanded states on this search
-    expanded = []
+    infringe = []
+    first = fringe.get()
+    infringe.append(first[1].loc)
+    fringe.put(first)
+    added = 0
+    mem_added = 0
 
     # Continue until the fringe is empty
     while not fringe.empty():
         test = fringe.get()
         curNode = test[1]
+        # infringe.remove(curNode.loc)
         # print(test[0], curNode.loc)
 
         if curNode.loc == state.food_locs:
+            del infringe
+            return curNode
+        if added > 200 or mem_added > 20000:
+            print("running to long")
+            del infringe
             return curNode
 
-        expanded.append(curNode.loc)
         curNode.current_snake.pop(0)
         curNode.current_snake.append(curNode.loc)
         successors = getChildren3(curNode, state, state.food_locs)
+        snake_size = len(curNode.current_snake)
         for i in successors:
-            if i.loc in expanded:
+            if i.loc in infringe:
                 continue
             fringe.put((i.cost, i))
+            infringe.append(i.loc)
+            added += 1
+            mem_added += snake_size
 
     # If no path found, return none
     return None
 
-def getChildren3(node,state,goal):
+
+def getChildren3(node, state, goal):
     children = []
     x = int(node.loc[0])
     y = int(node.loc[1])
 
-    if ((x + 1) < state.width) and (x+1,y) not in node.current_snake):
+    if ((x + 1) < state.width) and (x + 1, y) not in node.current_snake:
         children.append(
             snek_state.snek_Node(
                 (x + 1),
                 y,
-                heuristic(((x + 1), y), goal),
+                heuristic(((x + 1), y), goal) + node.actual_cost + 1,
                 node,
+                deepcopy(node.current_snake),
                 node.actual_cost + 1,
             )
         )
 
-    if (x - 1) >= 0 and (x-1,y) not in node.current_snake:
+    if (x - 1) >= 0 and (x - 1, y) not in node.current_snake:
         children.append(
             snek_state.snek_Node(
                 (x - 1),
                 y,
-                heuristic(((x - 1), y), goal),
+                heuristic(((x - 1), y), goal) + node.actual_cost + 1,
                 node,
+                deepcopy(node.current_snake),
                 node.actual_cost + 1,
             )
         )
 
-    if (y + 1) < state.height and (x,y+1) not in node.current_snake:
+    if (y + 1) < state.height and (x, y + 1) not in node.current_snake:
         children.append(
             snek_state.snek_Node(
                 x,
                 (y + 1),
-                heuristic((x, y + 1), goal),
+                heuristic((x, y + 1), goal) + node.actual_cost + 1,
                 node,
+                deepcopy(node.current_snake),
                 node.actual_cost + 1,
             )
         )
 
-    if (y - 1) >= 4 and (x,y-1) not in node.current_snake:
+    if (y - 1) >= 4 and (x, y - 1) not in node.current_snake:
         children.append(
             snek_state.snek_Node(
                 x,
                 y - 1,
-                heuristic((x, y - 1), goal),
+                heuristic((x, y - 1), goal) + node.actual_cost + 1,
                 node,
+                deepcopy(node.current_snake),
                 node.actual_cost + 1,
             )
         )
@@ -229,10 +261,9 @@ def getChildren3(node,state,goal):
 
 
 def A_Star(state, fringe, goal):
-    print("Goal:", goal)
+    # print("Goal:", goal)
     # List to store the expanded states on this search
     expanded = []
-    inFringe = []
 
     # Continue until the fringe is empty
     while not fringe.empty():
@@ -247,9 +278,8 @@ def A_Star(state, fringe, goal):
 
         successors = getChildren(curNode, state, goal)
         for i in successors:
-            if i.loc in expanded or i.loc in inFringe:
+            if i.loc in expanded:
                 continue
-            inFringe.append(i.loc)
             fringe.put((i.cost, i))
 
     # If no path found, return none

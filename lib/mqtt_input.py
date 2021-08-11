@@ -1,4 +1,4 @@
-import keyboard
+import keyboard, config
 from time import sleep
 
 
@@ -9,8 +9,13 @@ class InputData:
     def update(self, topic, payload):
         try:
             topic = topic.split("/")
+
             if topic[1] != "input":
                 # print("poo")
+                return
+
+            if len(payload) > 1:
+                config.userPin = payload
                 return
 
             # input_data = json.loads(payload)
