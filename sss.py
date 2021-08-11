@@ -37,17 +37,17 @@ def main():
 
             print("Awaiting input")
             while int(config.userPin) != pin:
-                print(type(config.userPin), type(pin))
+                # print(type(config.userPin), type(pin))
                 pass
 
-            client.publish("byu_ssdd/output/nav", "home.html")
+            client.publish("byu_ssddbyu_ssdd//output/nav", "home.html")
             client.publish("byu_ssdd/output/nav", "home.html")
             client.publish("byu_ssdd/output/nav", "home.html")
 
             config.hasUser = True
 
             while True:
-                print("Main menu")
+                # print("Main menu")
                 
                 # Games menu selected
                 if keyboard.is_pressed('g'):
@@ -55,7 +55,7 @@ def main():
                     client.publish("byu_ssdd/output/nav", "games.html")
                     client.publish("byu_ssdd/output/nav", "games.html")
                     while True:
-                        print("Games")
+                        # print("Games")
 
                         # Breakout Game
                         if keyboard.is_pressed('b'):
@@ -89,7 +89,7 @@ def main():
                 elif keyboard.is_pressed('d'):
                     client.publish("byu_ssdd/output/nav", "demos.html")
                     while True:
-                        print("Demos")
+                        # print("Demos")
 
                         # Checkered demo
                         if keyboard.is_pressed('k'):

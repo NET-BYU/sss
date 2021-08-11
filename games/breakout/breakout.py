@@ -4,10 +4,8 @@ sys.path.append('../..')
 from lib import seven_seg as ss # import SevenSegment
 from lib import game_display as gd # import Display
 from lib import mqtt_input
-from lib import subscriber as sub
 from time import sleep
-import tty, sys, termios, select, threading
-import keyboard
+# from config import command_queue
 
 SCREEN_Y = 24
 SCREEN_X = 48
@@ -18,6 +16,11 @@ LEFT_BRICK = 0x7
 RIGHT_BRICK = 0xd
 PIXEL_ON = 0xf
 PIXEL_OFF = 0x0
+
+repeatRight = False
+repeatLeft = False
+
+speed=500
 
 panel = ss.SevenSegment(
     num_digits=96,
@@ -120,9 +123,6 @@ def update_lives(inc):
     global lives
     lives+=inc
 
-def isData():
-    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
-
 def clear_screen():
     for board in screen.board_objects:
         board.clear()
@@ -147,14 +147,11 @@ def fill_bricks(level=1):
     screen.push()
 
 
-def breakout(speed=500):
+def breakout(command_queue):
 
-    input_data = mqtt_input.InputData()
-    data_thread = threading.Thread(target=sub.run, args=([input_data],))
-    data_thread.daemon = True
-    data_thread.start()
+    print("BREAKOUT")
 
-    global isLeft, isDown, counter, lives
+    global isLeft, isDown, counter, lives, speed, repeatLeft, repeatRight
 
     fill_bricks()
 
@@ -165,37 +162,30 @@ def breakout(speed=500):
     screen.push()
 
 
-    # old_settings = termios.tcgetattr(sys.stdin)
-    # try:
-    #     tty.setcbreak(sys.stdin.fileno())
-
     while True:
 
-        # if isData():
-        # c = sys.stdin.read(1)
-        # c = input_data.keypress
-        
-        # if c == "a":
-        # if keyboard.is_pressed("a"):
-        #     if paddle[0] == 0:
-        #         continue
-        #     for val in range(len(paddle)):
-        #         paddle[val] -= 1
-        #     screen.draw_pixel(paddle[0], 23, PIXEL_ON, combine=False)
-        #     screen.draw_pixel(paddle[-1] + 1, 23, PIXEL_OFF, combine=False)
+        if not command_queue.empty():
+            input_ = command_queue.get(block=False)
+        else:
+            input_ = ""
+        # print(input_)
 
-        # # if c == "d":
-        # if keyboard.is_pressed("d"):
-        #     if paddle[-1] == 47:
-        #         continue
-        #     for val in range(len(paddle)):
-        #         paddle[val] += 1
-        #     screen.draw_pixel(paddle[0] - 1, 23, PIXEL_OFF, combine=False)
-        #     screen.draw_pixel(paddle[-1], 23, PIXEL_ON, combine=False)
+        if input_ == b"h":
+            repeatLeft = True
+        elif input_ == b"hh":
+            repeatLeft = False
+        elif input_ == b"k":
+            repeatRight = True
+        elif input_ == b"kk":
+            repeatRight = False
 
-        # if c == "q":
-        if keyboard.is_pressed("q"):
-            print("Bye felisha")
+        if repeatLeft:
+            input_ = b"a"
+        elif repeatRight:
+            input_ = b"d"
+
+        if input_ == b"q":
+            # print("Bye felisha")
             break
         
         counter += 1
@@ -203,8 +193,7 @@ def breakout(speed=500):
 
             counter = 0
 
-            if keyboard.is_pressed("a"):
-                print("left")
+            if input_ == b"a":
                 if paddle[0] == 0:
                     continue
                 for val in range(len(paddle)):
@@ -212,8 +201,7 @@ def breakout(speed=500):
                 screen.draw_pixel(paddle[0], 23, PIXEL_ON, combine=False)
                 screen.draw_pixel(paddle[-1] + 1, 23, PIXEL_OFF, combine=False)
 
-            # if c == "d":
-            if keyboard.is_pressed("d"):
+            if input_ == b"d":
                 if paddle[-1] == 47:
                     continue
                 for val in range(len(paddle)):
@@ -269,18 +257,3 @@ def breakout(speed=500):
         screen.draw_pixel(ball[0], ball[1], PIXEL_ON)
 
         screen.push()
-
-
-
-    # finally:
-    #     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-
-# Test comment
-# def main():
-#     # while 1:
-#     #     if keyboard.is_pressed('q'):
-#     breakout(500)
-#             # print("Banana")
-
-# if __name__ == "__main__":
-#     main()
