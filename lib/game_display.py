@@ -2,7 +2,15 @@ from lib import symbols
 
 
 class Display:
+    """ Game Display is a class that abstracts different S^3 panels into one display"""
+
     def __init__(self, board_objects, x_width, y_height):
+        """Constructor
+        
+        board_objects -- 2d array of seven segment objects oriented how the sign is put together, i.e. [[panel0, panel1],[panel2,panel3]]
+        x_width -- number of digits in the display on the x axis
+        y_height -- number of pixels on the y axis (each vertical digit is split into two pixels)
+        """
         self.board_objects = board_objects
         self.x_width = int(x_width)
         self.y_height = int(y_height)
@@ -12,6 +20,14 @@ class Display:
         self.changed_list = []
 
     def draw_pixel(self, x, y, value, combine=True, push=False):
+        """Draw shape to one pixel location
+
+        x -- x coordinate
+        y -- y coordinate
+        value -- which leds to turn on for the pixel (1 for bottom, 2 for left, 4 for top, 8 for right, add sides together for multiple sides)
+        combine -- digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+        push -- when true all the recent changes are pushed to the display
+        """
         half_height = y // 2
         if value == 0 and combine:
             current_value = self.display_buf[half_height][x]
@@ -47,6 +63,11 @@ class Display:
             self.push()
 
     def get_pixel(self, x, y):
+        """Get the value already at the pixel
+
+        x -- x coordinate
+        y -- y coordinate
+        """
         half_height = y // 2
         value = self.display_buf[half_height][x]
 
@@ -68,6 +89,8 @@ class Display:
         return half_value
 
     def push(self):
+        """Push all the recent changes to the display
+        """
         for location in self.changed_list:
             self.board_objects[location[1] // 6][location[0] // 16].raw2(
                 location[0] % 16,
@@ -80,6 +103,8 @@ class Display:
         self.changed_list.clear()
 
     def clear(self):
+        """Clear all the panels on the display
+        """
         self.display_buf = [
             [0 for x in range(self.x_width)] for y in range(self.y_height // 2)
         ]
@@ -89,6 +114,15 @@ class Display:
         self.changed_list.clear()
 
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
+        """Draw horizontal line
+
+        start_x -- x coordinate
+        start_y -- y coordinate
+        length -- length of line to draw
+        top -- draw horizontal line on the top or bottom of the pixel
+        combine -- digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+        push -- when true all the recent changes are pushed to the display
+        """ 
         half_height = start_y // 2
         if start_y % 2:
             for x in range(length):
@@ -128,7 +162,15 @@ class Display:
             self.push()
 
     def draw_vline(self, start_x, start_y, length, left=True, combine=True, push=False):
+         """Draw vertical line
 
+        start_x -- x coordinate
+        start_y -- y coordinate
+        length -- length of line to draw
+        left -- draw vertial line on the left or right of the pixel
+        combine -- digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+        push -- when true all the recent changes are pushed to the display
+        """ 
         for y in range(length):
             y_loc = start_y + y
             y_half = y_loc // 2
@@ -167,7 +209,16 @@ class Display:
     def draw_shape_line(
         self, start_x, start_y, end_x, end_y, value, combine=True, push=False
     ):
+        """Draw line with given value at each pixel, can be diagonal
 
+        start_x -- starting x coordinate
+        start_y -- starting y coordinate
+        end_x -- ending x coordinate
+        end_y -- ending y coordiante
+        value -- which leds to turn on for the pixel (1 for bottom, 2 for left, 4 for top, 8 for right, add sides together for multiple sides) 
+        combine -- digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+        push -- when true all the recent changes are pushed to the display
+        """ 
         if start_x != end_x:
             slope = (end_y - start_y) / (end_x - start_x)
             if start_x < end_x:
@@ -187,6 +238,14 @@ class Display:
             self.push()
 
     def draw_text(self, x, y, msg, combine=True, push=False):
+        """Print a message to the screen
+
+        x -- x coordinate
+        y -- y coordinate
+        msg -- string message to print
+        combine -- digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+        push -- when true all the recent changes are pushed to the display
+        """ 
         if y % 2:
             for pos, char in enumerate(msg):
                 value = symbols.get_char2(char)
@@ -209,6 +268,7 @@ class Display:
         if push:
             self.push()
 
+    # work in progress
     def fill_box(self, start_x, start_y, x_len, y_len, push=False):
         if push:
             self.push()
