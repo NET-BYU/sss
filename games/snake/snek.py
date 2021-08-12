@@ -10,96 +10,10 @@ import random
 import time
 from copy import deepcopy
 from itertools import count
-import tty, sys, termios, select
+# import tty, sys, termios, select
 
-import snek_ai, snek_state
-
-
-panel = ss.SevenSegment(
-    num_digits=96,
-    cs_num=2,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-panel2 = ss.SevenSegment(
-    num_digits=96,
-    cs_num=3,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-panel3 = ss.SevenSegment(
-    num_digits=96,
-    cs_num=4,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-panel6 = ss.SevenSegment(
-    num_digits=96,
-    cs_num=5,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-panel5 = ss.SevenSegment(
-    num_digits=96,
-    cs_num=9,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-panel4 = ss.SevenSegment(
-    num_digits=96,
-    cs_num=10,
-    brightness=2,
-    segment_orientation_array=[
-        [1, 2],
-        [3, 4],
-        [5, 6],
-        [7, 8],
-        [9, 10],
-        [11, 12],
-    ],
-)
-
-screen = gd.Display([[panel, panel2, panel3], [panel4, panel5, panel6]], 48, 24)
+# import snek_ai, snek_state
+from games.snake import snek_ai, snek_state
 
 
 def frameRate(fps):
@@ -116,8 +30,8 @@ def frameRate(fps):
         yield i, nextTime
 
 
-def isData():
-    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+# def isData():
+#     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
 
 
 def generate_game_state(width, height, start_loc, food_loc):
@@ -134,7 +48,7 @@ def generate_game_state2(width, height, start_loc, food_loc):
     return game_state
 
 
-def snek_game(display, period, ai=False):
+def snek_game(display, queue, period=10, ai=False):
     game_over = False
     display.clear()
     tick = frameRate(period)
@@ -142,7 +56,7 @@ def snek_game(display, period, ai=False):
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
-    with open("ai_high_score.txt", "r") as scores:
+    with open("games/snake/ai_high_score.txt", "r") as scores:
         h_score = int(scores.read())
 
     def get_new_food_location():
@@ -193,26 +107,36 @@ def snek_game(display, period, ai=False):
     display.draw_text(display.x_width // 2 - 2, 0, "SNAKE", push=True)
 
     while True:
-        if not ai:
-            old_settings = termios.tcgetattr(sys.stdin)
+        # if not ai:
+        #     old_settings = termios.tcgetattr(sys.stdin)
         try:
-            if not ai:
-                tty.setcbreak(sys.stdin.fileno())
+            # if not ai:
+            #     tty.setcbreak(sys.stdin.fileno())
 
             while not game_over:
                 # check keyboard press and generate new snake part
-                if isData():
-                    c = sys.stdin.read(1)
-                    while c == direction and isData():
-                        c = sys.stdin.read(1)
-                    if c == "a":
-                        direction = "a"
-                    if c == "w":
-                        direction = "w"
-                    if c == "d":
-                        direction = "d"
-                    if c == "s":
-                        direction = "s"
+                # if isData():
+                #     c = sys.stdin.read(1)
+                #     while c == direction and isData():
+                #         c = sys.stdin.read(1)
+                #     if c == "a":
+                #         direction = "a"
+                #     if c == "w":
+                #         direction = "w"
+                #     if c == "d":
+                #         direction = "d"
+                #     if c == "s":
+                #         direction = "s"
+
+                if not queue.empty():
+                    direction = queue.get(block=False)
+                else:
+                    direction = ""
+
+                if direction == b"q":
+                    game_over = True
+                    break
+
                 if direction is None:
                     print("press key to start game")
                     next(tick)
@@ -220,14 +144,14 @@ def snek_game(display, period, ai=False):
                 elif not ai:
                     current_location = (
                         current_location[0] - 1
-                        if direction == "a"
+                        if direction == b"a" or direction == b"h"
                         else current_location[0] + 1
-                        if direction == "d"
+                        if direction == b"d" or direction == b"k"
                         else current_location[0],
                         current_location[1] + 1
-                        if direction == "s"
+                        if direction == b"s" or direction == b"j"
                         else current_location[1] - 1
-                        if direction == "w"
+                        if direction == b"w" or direction == b"u"
                         else current_location[1],
                     )
                 else:
@@ -325,9 +249,9 @@ def snek_game(display, period, ai=False):
             print("error occurred")
             print(e)
         finally:
-
-            if not ai:
-                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+            pass
+            # if not ai:
+            #     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
         for i in snek_list:
             display.draw_pixel(i[0], i[1], 0)
@@ -435,6 +359,11 @@ def snek_game(display, period, ai=False):
             current_food_location[0], current_food_location[1], 15, push=True
         )
 
+    display.clear()
 
-if __name__ == "__main__":
-    snek_game(screen, 10, True)
+def snek_ai_game(screen, queue):
+    snek_game(screen, queue, ai=True)
+
+
+# if __name__ == "__main__":
+#     snek_game(screen)

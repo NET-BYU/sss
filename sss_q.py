@@ -1,20 +1,21 @@
 import paho.mqtt.client as mqtt
-
-from demos import checkerboard, netlab_flag
+from display import screen
+from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral
 import games.breakout.breakout as bo
 
-# import games.snake.snek as sn
+import games.snake.snek as sn
 from config import command_queue
 
 actions = {
-    # b"snake": sn.snek_game,
+    b"snake": sn.snek_game,
+    b"snake_ai": sn.snek_ai_game,
     b"breakout": bo.breakout,
     b"checkerboard": checkerboard.checkboard_screensaver,
     b"flag": netlab_flag.byu_netlab,
-    b"spiral": checkerboard.checkboard_screensaver,
-    b"circle": checkerboard.checkboard_screensaver,
-    b"sweep": checkerboard.checkboard_screensaver,
-    b"letters": checkerboard.checkboard_screensaver,
+    b"spiral": spiral.spiral,
+    b"circle": circle.circle,
+    b"sweep": sweep.sweep,
+    b"letters": letters.letters,
 }
 
 
@@ -26,7 +27,7 @@ def process_input(queue):
 
         try:
             selected_action = actions[input_]
-            selected_action(queue)
+            selected_action(screen, queue)
         except KeyError:
             print("err")
             pass
@@ -42,17 +43,6 @@ def mqtt_input(queue):
     client.connect("postman.cloudmqtt.com", 17408, 10000)
     client.subscribe("byu_sss/input")
     client.loop_start()
-
-
-# def keyboard_input(queue):
-
-#     def run():
-
-#         pass
-
-#     data_thread = threading.Thread(target=run)
-#     data_thread.daemon = True
-#     data_thread.start()
 
 
 def main():
