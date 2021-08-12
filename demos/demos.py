@@ -1,7 +1,8 @@
 import sys
-sys.path.append('..')
 
-from lib import seven_seg as ss # import SevenSegment
+sys.path.append("..")
+
+from lib import seven_seg as ss  # import SevenSegment
 import time
 import threading
 import random
@@ -200,7 +201,7 @@ def sweep(width, height, modules, sleep_time=0.05):
         for column in range(width - 1, -1, -1):
             column_all(column, " ")
             time.sleep(sleep_time)
-        
+
 
 def random_stuff(width, height, modules, sleep_time=0.05):
     def clear_all():

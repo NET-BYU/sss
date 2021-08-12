@@ -13,11 +13,13 @@ class snek_state:
         self.snek_parts = []
         self.food_locs = []
 
-    def add_snake_part2(self,cord):
+    def add_snake_part2(self, cord):
         self.snek_parts.append(cord)
+
     def del_snake_part2(self):
         return self.snek_parts.pop(0)
-    def add_food2(self,cord):
+
+    def add_food2(self, cord):
         self.food_locs = cord
 
     def add_snake_part(self, cord):

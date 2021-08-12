@@ -1,6 +1,6 @@
- 
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 
 from lib import game_display as gd
 from lib import seven_seg as ss
@@ -22,33 +22,39 @@ panel = ss.SevenSegment(
 
 panel.clear()
 
-display = gd.Display([[panel]],16,12)
+display = gd.Display([[panel]], 16, 12)
+
 
 def check_pixel_drawing():
     for x in range(16):
-        display.draw_pixel(x,0,x)
-        display.draw_pixel(x,3,x)
+        display.draw_pixel(x, 0, x)
+        display.draw_pixel(x, 3, x)
     display.push()
+
 
 def check_hline_drawing_bottom():
     for y in range(12):
-        display.draw_hline(0,y,16-y,top=False)
+        display.draw_hline(0, y, 16 - y, top=False)
     display.push()
+
 
 def check_hline_drawing_top():
     for y in range(12):
-        display.draw_hline(0,y,16-y,top=True)
+        display.draw_hline(0, y, 16 - y, top=True)
     display.push()
+
 
 def check_vline_drawing_left():
     for x in range(16):
-        display.draw_vline(x,0,12)
+        display.draw_vline(x, 0, 12)
     display.push()
+
 
 def check_vline_drawing_right():
     for x in range(16):
-        display.draw_vline(x,0,12,left=False)
+        display.draw_vline(x, 0, 12, left=False)
     display.push()
 
+
 if __name__ == "__main__":
-    display.draw_box_line(0,0,4,11,push=True)
+    display.draw_box_line(0, 0, 4, 11, push=True)

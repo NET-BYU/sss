@@ -1,8 +1,9 @@
 import sys, keyboard
-sys.path.append('..')
 
-from lib import seven_seg as ss # import SevenSegment
-from lib import game_display as gd # import Display
+sys.path.append("..")
+
+from lib import seven_seg as ss  # import SevenSegment
+from lib import game_display as gd  # import Display
 from time import sleep
 
 bright = 1
@@ -91,14 +92,15 @@ panel4 = ss.SevenSegment(
     ],
 )
 
-screen = gd.Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
+screen = gd.Display([[panel, panel2, panel3], [panel4, panel5, panel6]], 48, 24)
+
 
 def checkboard_screensaver(queue):
     print("CHECKERBOARD")
 
     input_ = ""
 
-    while input_ != b"q" :
+    while input_ != b"q":
 
         if not queue.empty():
             input_ = queue.get(block=False)
@@ -112,24 +114,22 @@ def checkboard_screensaver(queue):
             for y in range(screen.y_height):
                 if y % 2 == 0:
                     if x % 2:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
+                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
                 else:
                     if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
+                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
         screen.push()
-        sleep(.1)
+        sleep(0.1)
         # screen.board_object.clear()
         for x in range(screen.x_width):
             for y in range(screen.y_height):
                 if y % 2:
                     if x % 2:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
+                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
                 else:
                     if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xf, combine=False, push=False)
+                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
         screen.push()
-        sleep(.1)
+        sleep(0.1)
 
     screen.clear()
-
-    
