@@ -93,9 +93,20 @@ panel4 = ss.SevenSegment(
 
 screen = gd.Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
 
-def checkboard_screensaver():
+def checkboard_screensaver(queue):
+    print("CHECKERBOARD")
 
-    while not keyboard.is_pressed('q'):
+    input_ = ""
+
+    while input_ != b"q" :
+
+        if not queue.empty():
+            input_ = queue.get(block=False)
+        else:
+            input_ = ""
+
+        print(input_)
+
         # screen.board_object.clear()
         for x in range(screen.x_width):
             for y in range(screen.y_height):
@@ -119,9 +130,6 @@ def checkboard_screensaver():
         screen.push()
         sleep(.1)
 
-# def main():
-#     checkboard_screensaver()
+    screen.clear()
 
-# if __name__ == "__main__":
-#     main()
     

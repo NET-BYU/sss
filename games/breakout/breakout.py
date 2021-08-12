@@ -1,11 +1,11 @@
 import sys
-sys.path.append('../..')
 
-from lib import seven_seg as ss # import SevenSegment
-from lib import game_display as gd # import Display
+sys.path.append("../..")
+
+from lib import seven_seg as ss  # import SevenSegment
+from lib import game_display as gd  # import Display
 from lib import mqtt_input
 from time import sleep
-# from config import command_queue
 
 SCREEN_Y = 24
 SCREEN_X = 48
@@ -13,14 +13,14 @@ LEFT_KEY = 0x61
 RIGHT_KEY = 0x64
 QUIT_KEY = 0x71
 LEFT_BRICK = 0x7
-RIGHT_BRICK = 0xd
-PIXEL_ON = 0xf
+RIGHT_BRICK = 0xD
+PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
 
 repeatRight = False
 repeatLeft = False
 
-speed=500
+speed = 500
 
 panel = ss.SevenSegment(
     num_digits=96,
@@ -106,7 +106,7 @@ panel4 = ss.SevenSegment(
     ],
 )
 
-screen = gd.Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
+screen = gd.Display([[panel, panel2, panel3], [panel4, panel5, panel6]], 48, 24)
 
 
 paddle = [23, 24, 25]
@@ -119,13 +119,16 @@ isDown = True
 level = 1
 lives = 3
 
+
 def update_lives(inc):
     global lives
-    lives+=inc
+    lives += inc
+
 
 def clear_screen():
     for board in screen.board_objects:
         board.clear()
+
 
 def fill_bricks(level=1):
 
@@ -136,7 +139,7 @@ def fill_bricks(level=1):
         bricks[row] = []
         for brick in range(SCREEN_X):
             bricks[row].append(brick)
-    
+
     for row in bricks.keys():
         for brick in bricks[row]:
             if not brick % 2:
@@ -160,7 +163,6 @@ def breakout(command_queue):
         screen.draw_pixel(val, 23, PIXEL_ON, combine=False)
 
     screen.push()
-
 
     while True:
 
@@ -187,7 +189,7 @@ def breakout(command_queue):
         if input_ == b"q":
             # print("Bye felisha")
             break
-        
+
         counter += 1
         if counter >= speed:
 
@@ -221,8 +223,8 @@ def breakout(command_queue):
                             screen.draw_pixel(ball[0] + 1, row, PIXEL_OFF)
                         else:
                             bricks[row].remove(ball[0] - 1)
-                            screen.draw_pixel(ball[0] - 1, row, PIXEL_OFF)                
-            
+                            screen.draw_pixel(ball[0] - 1, row, PIXEL_OFF)
+
             screen.draw_pixel(ball[0], ball[1], PIXEL_OFF)
 
             # Bounds check for ball

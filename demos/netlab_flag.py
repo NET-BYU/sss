@@ -91,11 +91,10 @@ panel4 = ss.SevenSegment(
 
 screen = gd.Display([[panel, panel2, panel3],[panel4, panel5, panel6]], 48, 24)
 
-def byu_netlab_lines():
-    # clear_screen()
-    pass
+def byu_netlab(queue):
 
-def byu_netlab():
+    print("NET LAB FLAG")
+
     screen.draw_pixel(23, 2, 0xf, combine=False)
     screen.draw_pixel(24, 2, 0xf, combine=False)
 
@@ -172,7 +171,15 @@ def byu_netlab():
     screen.draw_pixel(30, 16, 0xf)
     screen.draw_pixel(30, 14, 0xf)
 
-    while True:
+    input_ = ""
+
+    while input_ != b"q":
+
+        if not queue.empty():
+            input_ = queue.get(block=False)
+        else:
+            input_ = ""
+
         for x in range(13):
             for y in range(screen.y_height):
                 if y % 2 == 0:
@@ -213,9 +220,5 @@ def byu_netlab():
         screen.push()
         sleep(.1)
 
-def main():
-    byu_netlab()
-
-if __name__ == "__main__":
-    main()
+    screen.clear()
     

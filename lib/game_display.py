@@ -162,7 +162,7 @@ class Display:
             self.push()
 
     def draw_vline(self, start_x, start_y, length, left=True, combine=True, push=False):
-         """Draw vertical line
+        """Draw vertical line
 
         start_x -- x coordinate
         start_y -- y coordinate

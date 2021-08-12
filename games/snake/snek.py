@@ -169,14 +169,6 @@ def snek_game(display, period, ai=False):
             display.x_width, display.y_height, current_location, current_food_location
         )
         direction = "ai"
-        # print(current_location, current_food_location)
-        # snek_path = snek_ai.run_Search(
-        #     current_location[0],
-        #     current_location[1],
-        #     current_food_location,
-        #     game_state,
-        #     snek_length,
-        # )
         snek_path = snek_ai.run_Search2(
             current_location[0],
             current_location[1],
@@ -433,7 +425,8 @@ def snek_game(display, period, ai=False):
                 game_state,
                 snek_length,
             )
-            # print(snek_path)
+        else:
+            break
 
         # draw snek part
         display.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
