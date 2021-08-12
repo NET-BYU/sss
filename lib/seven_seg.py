@@ -1,5 +1,5 @@
 import spidev
-from symbols import get_char2
+from lib import symbols as sy # get_char2
 
 MAX7219_DIGITS = 8
 
@@ -167,7 +167,7 @@ class SevenSegment:
             or position >= self.num_digits
         ):
             raise ValueError("position is not a valid number")
-        value = get_char2(char) | (dot << 7)
+        value = sy.get_char2(char) | (dot << 7)
         self._buf[position] = value
         self._flush_index.append(position)
         if flush:

@@ -1,11 +1,14 @@
-from seven_seg import SevenSegment
+import sys
+sys.path.append('..')
+
+from lib import seven_seg as ss # import SevenSegment
 import time
 import threading
 import random
 
 NUM_SEGMENTS = 36
 
-master = SevenSegment(
+master = ss.SevenSegment(
     num_digits=96,
     cs_num=6,
     brightness=4,
@@ -20,7 +23,7 @@ master = SevenSegment(
 )
 
 
-master2 = SevenSegment(
+master2 = ss.SevenSegment(
     num_digits=96,
     cs_num=7,
     brightness=4,
@@ -35,7 +38,7 @@ master2 = SevenSegment(
 )
 
 
-master3 = SevenSegment(
+master3 = ss.SevenSegment(
     num_digits=96,
     cs_num=2,
     brightness=4,
@@ -50,7 +53,7 @@ master3 = SevenSegment(
 )
 
 
-master4 = SevenSegment(
+master4 = ss.SevenSegment(
     num_digits=96,
     cs_num=3,
     brightness=4,
@@ -64,7 +67,7 @@ master4 = SevenSegment(
     ],
 )
 
-master5 = SevenSegment(
+master5 = ss.SevenSegment(
     num_digits=96,
     cs_num=4,
     brightness=4,
@@ -79,7 +82,7 @@ master5 = SevenSegment(
 )
 
 
-master6 = SevenSegment(
+master6 = ss.SevenSegment(
     num_digits=96,
     cs_num=5,
     brightness=4,
