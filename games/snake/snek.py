@@ -253,7 +253,7 @@ def snek_game(display, queue, fps=10, ai=False):
             # if not ai:
             #     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
-        for i in snek_list:
+        for i in snek_list[:-1]:
             display.draw_pixel(i[0], i[1], 0)
         display.draw_pixel(current_food_location[0], current_food_location[1], 0)
         display.draw_text(
