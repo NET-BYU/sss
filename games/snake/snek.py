@@ -48,10 +48,10 @@ def generate_game_state2(width, height, start_loc, food_loc):
     return game_state
 
 
-def snek_game(display, queue, period=10, ai=False):
+def snek_game(display, queue, fps=10, ai=False):
     game_over = False
     display.clear()
-    tick = frameRate(period)
+    tick = frameRate(fps)
     current_location = (display.x_width // 2, display.y_height // 2)
     snek_list = [current_location]
     snek_length = 1
@@ -130,8 +130,8 @@ def snek_game(display, queue, period=10, ai=False):
 
                 if not queue.empty():
                     direction = queue.get(block=False)
-                else:
-                    direction = ""
+                # else:
+                #     direction = ""
 
                 if direction == b"q":
                     game_over = True
