@@ -224,14 +224,14 @@ def snek_game(display, queue, fps=10, ai=False):
                     current_location[0] >= display.x_width
                     or current_location[0] < 0
                     or current_location[1] >= display.y_height
-                    or current_location[1] < 3
+                    or current_location[1] < 4
                     or current_location in snek_list[:-1]
                 ):
                     print(
                         "\nSnake:",
                         snek_list,
-                        "\nPATH:",
-                        snek_path,
+                        # "\nPATH:",
+                        # snek_path,
                         "\nCurrent location:",
                         current_location,
                     )
