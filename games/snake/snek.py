@@ -266,7 +266,7 @@ def snek_game(display, queue, fps=10, ai=False):
                 "H-SCORE " + str(snek_length).zfill(3),
             )
             h_score = snek_length
-            with open("ai_high_score.txt", "w") as scores:
+            with open("games/snake/ai_high_score.txt", "w") as scores:
                 scores.write(str(h_score))
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
         else:

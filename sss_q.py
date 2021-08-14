@@ -40,7 +40,8 @@ def mqtt_input(queue):
     client = mqtt.Client()
     client.username_pw_set("sss", "***REMOVED***")
     client.on_message = on_message
-    client.connect("postman.cloudmqtt.com", 17408, 10000)
+    client.tls_set("/etc/ssl/certs/ca-certificates.crt")
+    client.connect("aq.byu.edu", 8883)
     client.subscribe("byu_sss/input")
     client.loop_start()
 
