@@ -3,9 +3,23 @@ from lib import game_display as gd  # import Display
 
 bright = 1
 
-panel = ss.SevenSegment(
+panel0 = ss.SevenSegment(
     num_digits=96,
-    cs_num=2,
+    cs_num=12,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
+
+panel1 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=13,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -19,7 +33,7 @@ panel = ss.SevenSegment(
 
 panel2 = ss.SevenSegment(
     num_digits=96,
-    cs_num=3,
+    cs_num=2,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -33,7 +47,7 @@ panel2 = ss.SevenSegment(
 
 panel3 = ss.SevenSegment(
     num_digits=96,
-    cs_num=4,
+    cs_num=3,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -47,7 +61,7 @@ panel3 = ss.SevenSegment(
 
 panel4 = ss.SevenSegment(
     num_digits=96,
-    cs_num=10,
+    cs_num=4,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -61,7 +75,7 @@ panel4 = ss.SevenSegment(
 
 panel5 = ss.SevenSegment(
     num_digits=96,
-    cs_num=9,
+    cs_num=5,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -75,7 +89,7 @@ panel5 = ss.SevenSegment(
 
 panel6 = ss.SevenSegment(
     num_digits=96,
-    cs_num=5,
+    cs_num=6,
     brightness=bright,
     segment_orientation_array=[
         [1, 2],
@@ -87,5 +101,78 @@ panel6 = ss.SevenSegment(
     ],
 )
 
+panel7 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=7,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
 
-screen = gd.Display([[panel, panel2, panel3], [panel4, panel5, panel6]], 48, 24)
+panel8 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=14,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
+
+panel9 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=9,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
+
+panel10 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=10,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
+
+panel11 = ss.SevenSegment(
+    num_digits=96,
+    cs_num=11,
+    brightness=bright,
+    segment_orientation_array=[
+        [1, 2],
+        [3, 4],
+        [5, 6],
+        [7, 8],
+        [9, 10],
+        [11, 12],
+    ],
+)
+
+screen = gd.Display(
+    [[panel4, panel11, panel8], [panel2, panel3, panel7], [panel0, panel1, panel6]],
+    48,
+    36,
+)

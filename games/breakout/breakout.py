@@ -6,10 +6,9 @@ from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
 import paho.mqtt.publish as publish
 
-SCREEN_Y = 24
 SCREEN_X = 48
 ARENA_START = 14
-ARENA_END = 48 - 15
+ARENA_END = ARENA_START - 15
 LEFT_KEY = 0x61
 RIGHT_KEY = 0x64
 QUIT_KEY = 0x71
@@ -17,48 +16,41 @@ LEFT_BRICK = 0x7
 RIGHT_BRICK = 0xD
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
-BALL_SPEED = 500
+BALL_SPEED = 600
+SCORE_INC = 5
+LIFE_TOPIC = "byu_sss/output/lives"
+SCORE_TOPIC = "byu_sss/output/score"
+MQTT_HOST = "aq.byu.edu"
+MQTT_PORT = 8883
+MQTT_USERNAME = "sss"
+MQTT_PASSWORD = "***REMOVED***"
+MQTT_CERT = "/etc/ssl/certs/ca-certificates.crt"
 
-gameover = False
-repeatRight = False
-repeatLeft = False
-speed = BALL_SPEED
-paddle_speed = BALL_SPEED // 4
-paddle = [23, 24, 25]
-ball = [SCREEN_X // 2, SCREEN_Y // 2]
+paddle = [24]
+ball = []
 bricks = {}
-score = 0
-counter = 0
-isLeft = True
-isDown = True
-level = 4
-lives = 3
-line_left = 13
-line_right = (48 - 14)
+level = 1
+line_left = 0
+line_right = 0
 rows = level + 2
-screen = ""
 
 
-def update_lives(inc):
-    global lives
-    lives += inc
+def init_screen(screen):
 
+    global line_left, line_right, rows, level, ball, paddle
 
-def clear_screen():
-    for board in screen.board_objects:
-        board.clear()
+    paddle = [24]
+    line_right = screen.x_width - ARENA_START
+    line_left = ARENA_START - 1
 
-
-def fill_bricks():
-
-    global line_left, line_right, rows, level
+    ball = [screen.x_width // 2, screen.y_height // 2]
 
     if level % 2 == 0:
         for pix in range(screen.y_height):
             screen.draw_pixel(line_left, pix, 0x0)
             screen.draw_pixel(line_right, pix, 0x0)
         line_left = 13 - level
-        line_right = (screen.x_width - 14) + level
+        line_right = (screen.x_width - ARENA_START) + level
     else:
         rows = level + 2
 
@@ -77,6 +69,15 @@ def fill_bricks():
             else:
                 screen.draw_pixel(brick, row, RIGHT_BRICK)
 
+    # Draw ball and paddle
+    screen.draw_pixel(ball[0], ball[1], PIXEL_ON, combine=False)
+
+    for block in range(1, (line_right - line_left) // 3):
+        paddle.append(paddle[-1] + 1)
+
+    for val in paddle:
+        screen.draw_pixel(val, screen.y_height - 1, PIXEL_ON, combine=False)
+
     screen.push()
 
 
@@ -87,40 +88,37 @@ def level_up():
     return True
 
 
-def breakout(screen_g, command_queue):
+def breakout(screen, command_queue):
 
     print("BREAKOUT")
 
-    global isLeft, isDown, counter, lives, speed, repeatLeft, repeatRight, screen, level, score, line_left, line_right
-
-    screen = screen_g
-
-    fill_bricks()
-
-    screen.draw_pixel(ball[0], ball[1], PIXEL_ON, combine=False)
-    for val in paddle:
-        screen.draw_pixel(val, 23, PIXEL_ON, combine=False)
-
-    screen.push()
-
+    isLeft = True
+    isDown = True
+    counter = 0
+    paddle_counter = 0
+    gameover = False
+    repeatRight = False
+    repeatLeft = False
     score = 0
-    lives = 3
+    speed = BALL_SPEED
+    paddle_speed = BALL_SPEED // 2
+    lives = 5
 
-    publish.single(
-        "byu_sss/output/score",
-        score,
-        hostname="aq.byu.edu",
-        port=8883,
-        auth={"username": "sss", "password": "***REMOVED***"},
-        tls={"ca_certs": "/etc/ssl/certs/ca-certificates.crt"},
-    )
-    publish.single(
-        "byu_sss/output/lives",
-        lives,
-        hostname="aq.byu.edu",
-        port=8883,
-        auth={"username": "sss", "password": "***REMOVED***"},
-        tls={"ca_certs": "/etc/ssl/certs/ca-certificates.crt"},
+    global level, line_left, line_right, paddle, ball
+
+    # Draw bricks on screen
+    init_screen(screen)
+
+    msgs = [
+        {"topic": SCORE_TOPIC, "payload": score},
+        {"topic": LIFE_TOPIC, "payload": lives},
+    ]
+    publish.multiple(
+        msgs,
+        hostname=MQTT_HOST,
+        port=MQTT_PORT,
+        auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+        tls={"ca_certs": MQTT_CERT},
     )
 
     while not gameover:
@@ -148,6 +146,7 @@ def breakout(screen_g, command_queue):
             break
 
         counter += 1
+        paddle_counter += 1
         if counter >= speed:
 
             counter = 0
@@ -157,14 +156,14 @@ def breakout(screen_g, command_queue):
                 if row in bricks.keys():
                     if ball[0] in bricks[row]:
                         isDown = not isDown
-                        score += 5
+                        score += SCORE_INC
                         publish.single(
-                            "byu_sss/output/score",
+                            SCORE_TOPIC,
                             score,
-                            hostname="aq.byu.edu",
-                            port=8883,
-                            auth={"username": "sss", "password": "***REMOVED***"},
-                            tls={"ca_certs": "/etc/ssl/certs/ca-certificates.crt"},
+                            hostname=MQTT_HOST,
+                            port=MQTT_PORT,
+                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                            tls={"ca_certs": MQTT_CERT},
                         )
                         bricks[row].remove(ball[0])
                         screen.draw_pixel(ball[0], row, PIXEL_OFF)
@@ -175,19 +174,19 @@ def breakout(screen_g, command_queue):
                             bricks[row].remove(ball[0] - 1)
                             screen.draw_pixel(ball[0] - 1, row, PIXEL_OFF)
                 if level_up():
-                    score += 100
+                    score += SCORE_INC * 20
                     level += 1
                     if lives <= 4:
                         lives += 1
                         publish.single(
-                            "byu_sss/output/lives",
+                            LIFE_TOPIC,
                             lives,
-                            hostname="aq.byu.edu",
-                            port=8883,
-                            auth={"username": "sss", "password": "***REMOVED***"},
-                            tls={"ca_certs": "/etc/ssl/certs/ca-certificates.crt"},
+                            hostname=MQTT_HOST,
+                            port=MQTT_PORT,
+                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                            tls={"ca_certs": MQTT_CERT},
                         )
-                    fill_bricks()
+                    init_screen(screen)
 
             screen.draw_pixel(ball[0], ball[1], PIXEL_OFF)
 
@@ -198,19 +197,27 @@ def breakout(screen_g, command_queue):
                 isLeft = True
             if ball[1] == 0:
                 isDown = True
-            if ball[1] == 22:
+            if ball[1] == screen.y_height - 2:
                 if ball[0] in paddle:
                     isDown = False
-            if ball[1] == 23:
-                isDown = False
-                score -= score // 2
-                # update_lives(-1)
-                # screen.draw_pixel(ball[0], ball[1], PIXEL_OFF, combine=False)
-                # if lives == 0:
-                #     gameover = True
-                #     break
-                # ball[0] = SCREEN_X // 2
-                # ball[1] = SCREEN_Y // 2
+            if ball[1] == screen.y_height - 1:
+                isDown = True
+                # score //= 2
+                lives -= 1
+                publish.single(
+                            LIFE_TOPIC,
+                            lives,
+                            hostname=MQTT_HOST,
+                            port=MQTT_PORT,
+                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                            tls={"ca_certs": MQTT_CERT},
+                        )
+                screen.draw_pixel(ball[0], ball[1], PIXEL_OFF, combine=False, push=True)
+                if lives == 0:
+                    gameover = True
+                    break
+                ball[0] = screen.x_width // 2
+                ball[1] = screen.y_height // 2
 
             if isLeft:
                 ball[0] -= 1
@@ -221,23 +228,36 @@ def breakout(screen_g, command_queue):
             else:
                 ball[1] -= 1
 
+        if paddle_counter >= paddle_speed:
+            paddle_counter = 0
+
             if input_ == b"a":
                 if paddle[0] == line_left + 1:
                     continue
                 for val in range(len(paddle)):
                     paddle[val] -= 1
-                screen.draw_pixel(paddle[0], 23, PIXEL_ON, combine=False)
-                screen.draw_pixel(paddle[-1] + 1, 23, PIXEL_OFF, combine=False)
+                screen.draw_pixel(
+                    paddle[0], screen.y_height - 1, PIXEL_ON, combine=False
+                )
+                screen.draw_pixel(
+                    paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                )
 
             if input_ == b"d":
                 if paddle[-1] == line_right - 1:
                     continue
                 for val in range(len(paddle)):
                     paddle[val] += 1
-                screen.draw_pixel(paddle[0] - 1, 23, PIXEL_OFF, combine=False)
-                screen.draw_pixel(paddle[-1], 23, PIXEL_ON, combine=False)
+                screen.draw_pixel(
+                    paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                )
+                screen.draw_pixel(
+                    paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False
+                )
 
         # Handle the ball
         screen.draw_pixel(ball[0], ball[1], PIXEL_ON)
 
         screen.push()
+
+    screen.clear()

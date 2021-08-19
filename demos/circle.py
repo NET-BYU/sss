@@ -13,8 +13,8 @@ def circle(screen, queue):
 
     global stop
 
-    width = 48
-    height = 24
+    width = screen.x_width
+    height = screen.y_height
     sleep_time = 0.025
 
     input_ = ""

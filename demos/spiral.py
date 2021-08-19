@@ -17,8 +17,8 @@ def spiral(screen, queue):
 
     print("SPIRAL")
 
-    width = 48
-    height = 24
+    width = screen.x_width
+    height = screen.y_height
     sleep_time = 0.005
 
     input_ = ""

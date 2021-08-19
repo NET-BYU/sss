@@ -14,8 +14,8 @@ def sweep(screen, queue):
     global stop
     print("SWEEP")
 
-    width = 48
-    height = 24
+    width = screen.x_width
+    height = screen.y_height
     sleep_time = 0.02
 
     def draw_vline_loc(x, val):
