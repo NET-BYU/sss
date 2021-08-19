@@ -1,6 +1,7 @@
+from demos.game_of_life import game_of_life
 import paho.mqtt.client as mqtt
 from display import screen
-from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral
+from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral, game_of_life
 import games.breakout.breakout as bo
 
 import games.snake.snek as sn
@@ -10,6 +11,8 @@ actions = {
     b"snake": sn.snek_game,
     b"snake_ai": sn.snek_ai_game,
     b"breakout": bo.breakout,
+    b"breakout_ai": bo.breakout_demo,
+    b"gameoflife": game_of_life.game_of_life,
     b"checkerboard": checkerboard.checkboard_screensaver,
     b"flag": netlab_flag.byu_netlab,
     b"spiral": spiral.spiral,

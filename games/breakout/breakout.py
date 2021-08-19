@@ -88,7 +88,7 @@ def level_up():
     return True
 
 
-def breakout(screen, command_queue):
+def breakout(screen, command_queue, ai=False):
 
     print("BREAKOUT")
 
@@ -101,7 +101,10 @@ def breakout(screen, command_queue):
     repeatLeft = False
     score = 0
     speed = BALL_SPEED
-    paddle_speed = BALL_SPEED // 2
+    if not ai:
+        paddle_speed = BALL_SPEED // 2
+    else:
+        paddle_speed = BALL_SPEED
     lives = 5
 
     global level, line_left, line_right, paddle, ball
@@ -231,29 +234,55 @@ def breakout(screen, command_queue):
         if paddle_counter >= paddle_speed:
             paddle_counter = 0
 
-            if input_ == b"a":
-                if paddle[0] == line_left + 1:
-                    continue
-                for val in range(len(paddle)):
-                    paddle[val] -= 1
-                screen.draw_pixel(
-                    paddle[0], screen.y_height - 1, PIXEL_ON, combine=False
-                )
-                screen.draw_pixel(
-                    paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False
-                )
+            if ai:
+                if ball[1] >= (screen.y_height // 2):
+                    if isLeft:
+                        if paddle[0] == line_left + 1:
+                            continue
+                        for val in range(len(paddle)):
+                            paddle[val] -= 1
+                        screen.draw_pixel(
+                            paddle[0], screen.y_height - 1, PIXEL_ON, combine=False
+                        )
+                        screen.draw_pixel(
+                            paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                        )
+                    else:
+                        if paddle[-1] == line_right - 1:
+                            continue
+                        for val in range(len(paddle)):
+                            paddle[val] += 1
+                        screen.draw_pixel(
+                            paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                        )
+                        screen.draw_pixel(
+                            paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False
+                        )
 
-            if input_ == b"d":
-                if paddle[-1] == line_right - 1:
-                    continue
-                for val in range(len(paddle)):
-                    paddle[val] += 1
-                screen.draw_pixel(
-                    paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False
-                )
-                screen.draw_pixel(
-                    paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False
-                )
+            else:
+                if input_ == b"a":
+                    if paddle[0] == line_left + 1:
+                        continue
+                    for val in range(len(paddle)):
+                        paddle[val] -= 1
+                    screen.draw_pixel(
+                        paddle[0], screen.y_height - 1, PIXEL_ON, combine=False
+                    )
+                    screen.draw_pixel(
+                        paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                    )
+
+                if input_ == b"d":
+                    if paddle[-1] == line_right - 1:
+                        continue
+                    for val in range(len(paddle)):
+                        paddle[val] += 1
+                    screen.draw_pixel(
+                        paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                    )
+                    screen.draw_pixel(
+                        paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False
+                    )
 
         # Handle the ball
         screen.draw_pixel(ball[0], ball[1], PIXEL_ON)
@@ -261,3 +290,6 @@ def breakout(screen, command_queue):
         screen.push()
 
     screen.clear()
+
+def breakout_demo(screen, queue):
+    breakout(screen, queue, ai=True)
