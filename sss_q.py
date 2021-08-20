@@ -1,7 +1,7 @@
 from demos.game_of_life import game_of_life
 import paho.mqtt.client as mqtt
 from display import screen
-from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral, game_of_life
+from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral, welcome_y, welcome_netlab, game_of_life
 import games.breakout.breakout as bo
 
 import games.snake.snek as sn
@@ -19,6 +19,8 @@ actions = {
     b"circle": circle.circle,
     b"sweep": sweep.sweep,
     b"letters": letters.letters,
+    b"welcome_y": welcome_y.welcome_y,
+    b"welcome_netlab": welcome_netlab.welcome_netlab,
 }
 
 
