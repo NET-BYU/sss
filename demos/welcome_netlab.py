@@ -93,6 +93,7 @@ def welcome_netlab(screen, queue):
             location[1] -= 1
 
         draw_the_logo(screen, location[0], location[1])
+        time.sleep(0.05)
 
 
     screen.clear()
