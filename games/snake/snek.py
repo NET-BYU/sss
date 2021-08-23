@@ -10,6 +10,7 @@ import random
 import time
 from copy import deepcopy
 from itertools import count
+
 # import tty, sys, termios, select
 
 # import snek_ai, snek_state
@@ -135,7 +136,9 @@ def snek_game(display, queue, fps=10, ai=False):
 
                 if direction == b"q":
                     game_over = True
-                    break
+                    display.clear()
+                    return
+                    # break
 
                 if direction is None:
                     print("press key to start game")
@@ -360,6 +363,7 @@ def snek_game(display, queue, fps=10, ai=False):
         )
 
     display.clear()
+
 
 def snek_ai_game(screen, queue):
     snek_game(screen, queue, ai=True)
