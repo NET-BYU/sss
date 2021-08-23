@@ -1,11 +1,22 @@
 from demos.game_of_life import game_of_life
 import paho.mqtt.client as mqtt
 from display import screen
-from demos import checkerboard, netlab_flag, sweep, letters, circle, spiral, welcome_y, welcome_netlab, game_of_life
+from demos import (
+    checkerboard,
+    netlab_flag,
+    sweep,
+    letters,
+    circle,
+    spiral,
+    welcome_y,
+    welcome_netlab,
+    game_of_life,
+)
 import games.breakout.breakout as bo
 
 import games.snake.snek as sn
 from config import command_queue
+import inputs, threading
 
 actions = {
     b"snake": sn.snek_game,
@@ -51,7 +62,53 @@ def mqtt_input(queue):
     client.loop_start()
 
 
+def gamepad_input(queue):
+    def gamepad_listener():
+        leftPressed = False
+        rightPressed = False
+        upPressed = False
+        downPressed = False
+        while True:
+            events = inputs.get_gamepad()
+            for event in events:
+                if event.code == "ABS_X":
+                    if event.state == 0:
+                        queue.put(b"h")
+                        leftPressed = True
+                    elif event.state == 127:
+                        if leftPressed:
+                            queue.put(b"hh")
+                            leftPressed = False
+                        elif rightPressed:
+                            queue.put(b"kk")
+                            rightPressed = False
+                    elif event.state == 255:
+                        queue.put(b"k")
+                        rightPressed = True
+                elif event.code == "ABS_Y":
+                    if event.state == 0:
+                        queue.put(b"u")
+                        upPressed = True
+                    elif event.state == 127:
+                        if upPressed:
+                            queue.put(b"uu")
+                            upPressed = False
+                        elif downPressed:
+                            queue.put(b"jj")
+                            downPressed = False
+                    elif event.state == 255:
+                        queue.put(b"j")
+                        downPressed = True
+
+                # print(event.ev_type, event.code, event.state)
+
+    gamepad_thread = threading.Thread(target=gamepad_listener, daemon=True)
+    gamepad_thread.start()
+
+
 def main():
+
+    gamepad_input(command_queue)
 
     # Set up inputs
     mqtt_input(command_queue)
