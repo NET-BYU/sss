@@ -1,7 +1,7 @@
 from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
 
-bright = 1
+bright = 2
 
 panel0 = ss.SevenSegment(
     num_digits=96,

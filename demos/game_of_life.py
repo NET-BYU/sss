@@ -1,3 +1,4 @@
+import collections
 import copy
 import random
 from time import sleep
@@ -13,6 +14,7 @@ def display_board(board, screen):
     for x in range(screen.x_width):
         for y in range(screen.y_height):
             screen.draw_pixel(x, y, 0xF if board[y][x] else 0x0)
+    screen.push()
 
 
 def print_board(board):
@@ -79,12 +81,31 @@ def update_board(board):
     return new_board
 
 
-def game_of_life(display, queue, refresh=10000):
-    board = create_board(display.x_width, display.y_height, density=0.5)
-    print_board(board)
-    display_board(board, display)
+def game_of_life(display, queue, refresh=100, density=0.25):
 
-    while True:
+    board = create_board(display.x_width, display.y_height, density=density)
+    # print_board(board)
+    display_board(board, display)
+    input_ = None
+    old_boards = collections.deque(maxlen=5)
+
+    while input_ != b"q":
+        if not queue.empty():
+            input_ = queue.get(block=False)
+        else:
+            input_ = None
+
         sleep(1 / refresh)
+        old_boards.append(board)
         board = update_board(board)
         display_board(board, display)
+
+        if board in old_boards:
+            # Start over
+            display.clear()
+            old_boards.clear()
+            sleep(1)
+            board = create_board(display.x_width, display.y_height, density=density)
+            display_board(board, display)
+
+    display.clear()
