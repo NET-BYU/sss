@@ -130,7 +130,20 @@ def snek_game(display, queue, fps=10, ai=False):
                 #         direction = "s"
 
                 if not queue.empty():
-                    direction = queue.get(block=False)
+                    temp = queue.get(block=False)
+                    direction = (
+                        temp
+                        if temp == b"a"
+                        or temp == b"h"
+                        or temp == b"d"
+                        or temp == b"k"
+                        or temp == b"s"
+                        or temp == b"j"
+                        or temp == b"w"
+                        or temp == b"u"
+                        else direction
+                    )
+                    print(direction)
                 # else:
                 #     direction = ""
 
