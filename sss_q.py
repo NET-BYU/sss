@@ -11,6 +11,7 @@ from demos import (
     welcome_y,
     welcome_netlab,
     game_of_life,
+    sound_visualizer,
 )
 import games.breakout.breakout as bo
 
@@ -32,6 +33,7 @@ actions = {
     b"letters": letters.letters,
     b"welcome_y": welcome_y.welcome_y,
     b"welcome_netlab": welcome_netlab.welcome_netlab,
+    b"sound_visualizer": sound_visualizer.sound_visualizer_run,
 }
 
 
