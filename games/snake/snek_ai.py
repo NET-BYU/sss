@@ -184,7 +184,7 @@ def A_Star_Revised(state, fringe):
         if curNode.loc == state.food_locs:
             del infringe
             return curNode
-        if added > 200 or mem_added > 20000:
+        if added > 400 or mem_added > 50000:
             print("running to long")
             del infringe
             return curNode
