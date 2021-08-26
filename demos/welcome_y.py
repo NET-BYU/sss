@@ -20,19 +20,33 @@ FULL_PIXEL = 0xF
 SECTION_RIGHT = 0x8
 SECTION_LEFT = 0x2
 
-def draw_the_y(screen, x, y):
-    screen.draw_shape_line(x, y, x + SERIF_OFFSET, y, FULL_PIXEL)  # top left serif
-    screen.draw_shape_line(x + RIGHT_X_OFFSET, y, x + RIGHT_X_OFFSET - SERIF_OFFSET, y, FULL_PIXEL)    # top right serif
-    screen.draw_shape_line(x + BOTTOM_X_OFFSET, y + BOTTOM_Y_OFFSET, x + BOTTOM_X_OFFSET + SERIF_OFFSET, y + BOTTOM_Y_OFFSET, FULL_PIXEL) # bottom serif
-    screen.draw_shape_line(x + SERIF_OFFSET/2, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET, FULL_PIXEL)  # left Y branch main
-    screen.draw_shape_line(x + SERIF_OFFSET/2 - 1, y + 1, x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET, SECTION_RIGHT)  # left Y branch left border
-    screen.draw_shape_line(x + SERIF_OFFSET/2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET, SECTION_LEFT)  # left Y branch right border
-    screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET/2, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET - 1, FULL_PIXEL)  # right Y branch main
-    screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET/2 - 1, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET - 1, SECTION_RIGHT)  # right Y branch left border
-    screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET/2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 2, y + HALF_HEIGHT_OFFSET - 1, SECTION_LEFT)  # right Y branch right border
-    screen.draw_shape_line(x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET, y + BOTTOM_Y_OFFSET - 1, FULL_PIXEL) # Y stem main
-    screen.draw_shape_line(x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET - 1, y + BOTTOM_Y_OFFSET - 1, SECTION_RIGHT) # Y stem left border
-    screen.draw_shape_line(x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET + 1, y + BOTTOM_Y_OFFSET - 1, SECTION_LEFT) # Y stem left border
+def draw_the_y(screen, x, y, draw):
+    if not draw:
+        screen.draw_shape_line(x, y, x + SERIF_OFFSET, y, 0, combine = False)  # top left serif
+        screen.draw_shape_line(x + RIGHT_X_OFFSET, y, x + RIGHT_X_OFFSET - SERIF_OFFSET, y, 0)    # top right serif
+        screen.draw_shape_line(x + BOTTOM_X_OFFSET, y + BOTTOM_Y_OFFSET, x + BOTTOM_X_OFFSET + SERIF_OFFSET, y + BOTTOM_Y_OFFSET, 0) # bottom serif
+        screen.draw_shape_line(x + SERIF_OFFSET//2, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET, 0)  # left Y branch main
+        screen.draw_shape_line(x + SERIF_OFFSET//2 - 1, y + 1, x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET, 0)  # left Y branch left border
+        screen.draw_shape_line(x + SERIF_OFFSET//2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET, 0)  # left Y branch right border
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET - 1, 0)  # right Y branch main
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2 - 1, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET - 1, 0)  # right Y branch left border
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 2, y + HALF_HEIGHT_OFFSET - 1, 0)  # right Y branch right border
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET, y + BOTTOM_Y_OFFSET - 1, 0) # Y stem main
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET - 1, y + BOTTOM_Y_OFFSET - 1, 0) # Y stem left border
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET + 1, y + BOTTOM_Y_OFFSET - 1, 0) # Y stem left border
+    else:
+        screen.draw_shape_line(x, y, x + SERIF_OFFSET, y, FULL_PIXEL, combine = False)  # top left serif
+        screen.draw_shape_line(x + RIGHT_X_OFFSET, y, x + RIGHT_X_OFFSET - SERIF_OFFSET, y, FULL_PIXEL)    # top right serif
+        screen.draw_shape_line(x + BOTTOM_X_OFFSET, y + BOTTOM_Y_OFFSET, x + BOTTOM_X_OFFSET + SERIF_OFFSET, y + BOTTOM_Y_OFFSET, FULL_PIXEL) # bottom serif
+        screen.draw_shape_line(x + SERIF_OFFSET//2, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET, FULL_PIXEL)  # left Y branch main
+        screen.draw_shape_line(x + SERIF_OFFSET//2 - 1, y + 1, x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET, SECTION_RIGHT)  # left Y branch left border
+        screen.draw_shape_line(x + SERIF_OFFSET//2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET, SECTION_LEFT)  # left Y branch right border
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2, y + 1, x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET - 1, FULL_PIXEL)  # right Y branch main
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2 - 1, y + 1, x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET - 1, SECTION_RIGHT)  # right Y branch left border
+        screen.draw_shape_line(x + RIGHT_X_OFFSET - SERIF_OFFSET//2 + 1, y + 1, x + HALF_WIDTH_OFFSET + 2, y + HALF_HEIGHT_OFFSET - 1, SECTION_LEFT)  # right Y branch right border
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET, y + BOTTOM_Y_OFFSET - 1, FULL_PIXEL) # Y stem main
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET - 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET - 1, y + BOTTOM_Y_OFFSET - 1, SECTION_RIGHT) # Y stem left border
+        screen.draw_shape_line(x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET + 1, y + BOTTOM_Y_OFFSET - 1, SECTION_LEFT) # Y stem left border
     screen.push()
 
 def welcome_y(screen, queue):
@@ -42,7 +56,7 @@ def welcome_y(screen, queue):
     location = [STARTING_X, STARTING_Y]
     isLeft = False
     isDown = True
-    draw_the_y(screen, location[0], location[1])
+    draw_the_y(screen, location[0], location[1], True)
 
     input_ = ""
     while input_ != b"q":
@@ -54,24 +68,27 @@ def welcome_y(screen, queue):
 
         if location[0] == 0:
             isLeft = False
-        if location[0] == screen.x_width - 1:
+        if location[0] == screen.x_width - RIGHT_X_OFFSET - 1:
             isLeft = True
         if location[1] == 0:
             isDown = True
         if location[1] == screen.y_height - BOTTOM_Y_OFFSET - 1:
             isDown = False
+        
+        draw_the_y(screen, location[0], location[1], False)
+
 
         if not isLeft:
             location[0] += 1
         else:
             location[0] -= 1
-        
+
         if isDown:
             location[1] += 1
         else:
             location[1] -= 1
-
-        draw_the_y(screen, location[0], location[1])
+	
+        draw_the_y(screen, location[0], location[1], True)
         time.sleep(0.05)
 
 

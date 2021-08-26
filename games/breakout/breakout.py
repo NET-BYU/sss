@@ -5,6 +5,7 @@ sys.path.append("../..")
 from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
 import paho.mqtt.publish as publish
+from random import getrandbits
 
 SCREEN_X = 48
 ARENA_START = 14
@@ -88,6 +89,72 @@ def level_up():
     return True
 
 
+def get_angle(paddle):
+    global ball
+    if paddle.index(ball[0]) < (len(paddle) // 2):
+        spin = paddle.index(ball[0]) % len(paddle) + 1
+        isLeft = True
+    elif paddle.index(ball[0]) < (len(paddle) // 2):
+        spin = (len(paddle) - 1) - paddle.index(ball[0]) % len(paddle) + 1
+        isLeft = False
+    else:
+        spin = paddle.index(ball[0]) // 2
+        isLeft = bool(getrandbits(1))
+
+    return spin, isLeft
+    # print("Hit: ", paddle.index(ball[0]))
+    # print("Spin: ", spin)
+
+
+def ball_travel(isLeft, isDown, spin, screen):
+    global ball, bricks, paddle, rows
+    
+    horizbound = 0
+    vertbound = 0
+
+    if isLeft:
+        horizbound = ball[0] - 1
+    else:
+        horizbound = ball[0] + 1
+
+    if isDown:
+        vertbound = ball[1] + spin
+    else:
+        vertbound = ball[1] - spin        
+
+    collide_field = []
+    if spin > 1:
+        for y_val in range(min(ball[1], vertbound), max(ball[1], vertbound)):
+            collide_field.append([horizbound,y_val])       
+
+
+    if isLeft:
+        ball[0] -= 1
+    else:
+        ball[0] += 1    
+    
+    if isDown:
+        # A possible conflict with ball trying to jump paddle
+        if (screen.y_height) - (ball[1] + spin) <= 0 and spin > 1:
+            for block in collide_field:
+                if block[0] in paddle:
+                    ball[1] = screen.y_height - 2
+                    isDown = False
+                    return isLeft, isDown
+                ball[1] += spin
+        else:
+            ball[1] += spin
+    else:
+        # A possible conflict with ball trying to jump bricks
+        # if (rows - 1) - (ball[1] - spin) <= 0 and spin > 1:
+        #     for block in collide_field:
+        #         for row in rows:
+        #             if block[0]
+        ball[1] -= spin
+
+    return isLeft, isDown
+
+
 def breakout(screen, command_queue, ai=False):
 
     print("BREAKOUT")
@@ -97,10 +164,12 @@ def breakout(screen, command_queue, ai=False):
     counter = 0
     paddle_counter = 0
     gameover = False
+    start = False
     repeatRight = False
     repeatLeft = False
     score = 0
     speed = BALL_SPEED
+    spin = 1
     if not ai:
         paddle_speed = BALL_SPEED // 2
     else:
@@ -108,9 +177,6 @@ def breakout(screen, command_queue, ai=False):
     lives = 5
 
     global level, line_left, line_right, paddle, ball
-
-    # Draw bricks on screen
-    init_screen(screen)
 
     msgs = [
         {"topic": SCORE_TOPIC, "payload": score},
@@ -124,12 +190,60 @@ def breakout(screen, command_queue, ai=False):
         tls={"ca_certs": MQTT_CERT},
     )
 
+    screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "BREAKOUT")
+    screen.draw_text(
+        (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "PRESS START"
+    )
+    screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "TO BEGIN")
+    screen.push()
+
+    while not start:
+        if not command_queue.empty():
+            input_ = command_queue.get(block=False)
+        else:
+            input_ = ""
+        if input_ == b"start":
+            start = True
+
+    screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "        ")
+    screen.draw_text(
+        (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "           "
+    )
+    screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "        ")
+    screen.push()
+
+    # Draw bricks on screen
+    init_screen(screen)
+
     while not gameover:
 
         if not command_queue.empty():
             input_ = command_queue.get(block=False)
         else:
             input_ = ""
+
+        if input_ == b"start":
+            screen.draw_text(
+                (screen.x_width // 2) - 3,
+                (screen.y_height // 2) - 8,
+                "PAUSED",
+                push=True,
+            )
+            while True:
+                if not command_queue.empty():
+                    input_ = command_queue.get(block=False)
+                else:
+                    input_ = ""
+                if input_ == b"start":
+                    screen.draw_text(
+                        (screen.x_width // 2) - 3,
+                        (screen.y_height // 2) - 8,
+                        "      ",
+                        push=True,
+                    )
+                    with command_queue.mutex:
+                        command_queue.queue.clear()
+                    break
 
         if input_ == b"h":
             repeatLeft = True
@@ -139,7 +253,6 @@ def breakout(screen, command_queue, ai=False):
             repeatRight = True
         elif input_ == b"kk":
             repeatRight = False
-
         if repeatLeft:
             input_ = b"a"
         elif repeatRight:
@@ -202,19 +315,20 @@ def breakout(screen, command_queue, ai=False):
                 isDown = True
             if ball[1] == screen.y_height - 2:
                 if ball[0] in paddle:
+                    spin, isLeft = get_angle(paddle)
+                    speed = BALL_SPEED * spin // (1 + spin // 2)
                     isDown = False
             if ball[1] == screen.y_height - 1:
                 isDown = True
-                # score //= 2
                 lives -= 1
                 publish.single(
-                            LIFE_TOPIC,
-                            lives,
-                            hostname=MQTT_HOST,
-                            port=MQTT_PORT,
-                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                            tls={"ca_certs": MQTT_CERT},
-                        )
+                    LIFE_TOPIC,
+                    lives,
+                    hostname=MQTT_HOST,
+                    port=MQTT_PORT,
+                    auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                    tls={"ca_certs": MQTT_CERT},
+                )
                 screen.draw_pixel(ball[0], ball[1], PIXEL_OFF, combine=False, push=True)
                 if lives == 0:
                     gameover = True
@@ -222,14 +336,19 @@ def breakout(screen, command_queue, ai=False):
                 ball[0] = screen.x_width // 2
                 ball[1] = screen.y_height // 2
 
-            if isLeft:
-                ball[0] -= 1
-            else:
-                ball[0] += 1
-            if isDown:
-                ball[1] += 1
-            else:
-                ball[1] -= 1
+            isLeft, isDown = ball_travel(isLeft, isDown, spin, screen)
+            
+
+            # Spin correct
+            if ball[0] < line_left + 1:
+                ball[0] = line_left + 1
+            elif ball[0] > line_right - 1:
+                ball[0] = line_right - 1
+            
+            if ball[1] < 0:
+                ball[1] = 0
+            elif ball[1] > screen.y_height - 1:
+                ball[1] = screen.y_height - 1
 
         if paddle_counter >= paddle_speed:
             paddle_counter = 0
@@ -245,7 +364,10 @@ def breakout(screen, command_queue, ai=False):
                             paddle[0], screen.y_height - 1, PIXEL_ON, combine=False
                         )
                         screen.draw_pixel(
-                            paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False
+                            paddle[-1] + 1,
+                            screen.y_height - 1,
+                            PIXEL_OFF,
+                            combine=False,
                         )
                     else:
                         if paddle[-1] == line_right - 1:
@@ -290,6 +412,7 @@ def breakout(screen, command_queue, ai=False):
         screen.push()
 
     screen.clear()
+
 
 def breakout_demo(screen, queue):
     breakout(screen, queue, ai=True)

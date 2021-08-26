@@ -73,27 +73,27 @@ def welcome_netlab(screen, queue):
         else:
             input_ = ""
 
-        if location[0] == HEX_HALF_WIDTH:
-            isLeft = False
-        if location[0] == screen.x_width - HEX_HALF_WIDTH - 1:
-            isLeft = True
-        if location[1] == 0:
-            isDown = True
-        if location[1] == screen.y_height - BOTTOM_Y_OFFSET:
-            isDown = False
+        # if location[0] == HEX_HALF_WIDTH:
+        #     isLeft = False
+        # if location[0] == screen.x_width - HEX_HALF_WIDTH - 1:
+        #     isLeft = True
+        # if location[1] == 0:
+        #     isDown = True
+        # if location[1] == screen.y_height - BOTTOM_Y_OFFSET:
+        #     isDown = False
 
-        if not isLeft:
-            location[0] += 1
-        else:
-            location[0] -= 1
+        # if not isLeft:
+        #     location[0] += 1
+        # else:
+        #     location[0] -= 1
         
-        if isDown:
-            location[1] += 1
-        else:
-            location[1] -= 1
+        # if isDown:
+        #     location[1] += 1
+        # else:
+        #     location[1] -= 1
 
-        draw_the_logo(screen, location[0], location[1])
-        time.sleep(0.05)
+        # draw_the_logo(screen, location[0], location[1])
+        # time.sleep(0.05)
 
 
     screen.clear()

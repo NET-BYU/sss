@@ -99,6 +99,11 @@ def gamepad_input(queue):
                     elif event.state == 255:
                         queue.put(b"j")
                         downPressed = True
+                elif event.code == "BTN_BASE4":
+                    if event.state:
+                        queue.put(b"start")
+                    else:
+                        queue.put(b"pause")
 
                 # print(event.ev_type, event.code, event.state)
 

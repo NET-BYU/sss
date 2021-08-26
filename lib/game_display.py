@@ -221,9 +221,9 @@ class Display:
         """ 
         if start_x != end_x:
             slope = (end_y - start_y) / (end_x - start_x)
-            b = start_y if start_x < end_x else end_y
+            b = start_y - slope * start_x
             for x in range(min(start_x,end_x),max(start_x,end_x)+1):
-                self.draw_pixel(x,b+round(slope*x),value,combine)
+                self.draw_pixel(x,round(b)+round(slope*x),value,combine)
         else:
             for y in range(min(start_y,end_y),max(start_y,end_y)+1):
                 self.draw_pixel(start_x,y,value,combine)
