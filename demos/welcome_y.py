@@ -63,6 +63,7 @@ def welcome_y(screen, queue):
 
         if not queue.empty():
             input_ = queue.get(block=False)
+            print("Got something from the queue:", input_)
         else:
             input_ = ""
 

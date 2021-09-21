@@ -19,7 +19,7 @@ def spiral(screen, queue):
 
     width = screen.x_width
     height = screen.y_height
-    sleep_time = 0.005
+    sleep_time = 0.0025
 
     input_ = ""
     while not stop:
@@ -56,8 +56,8 @@ def spiral(screen, queue):
                         stop = True
                         break
                 screen.draw_pixel(x, y_in, 0xF)
-                if x > x_in:
-                    screen.draw_pixel(x - 1, y_in, 0x0)
+                # if x > x_in:
+                    # screen.draw_pixel(x - 1, y_in, 0x0)
                 screen.push()
                 if x < across - 1:
                     time.sleep(sleep_time)
@@ -72,8 +72,8 @@ def spiral(screen, queue):
                         stop = True
                         break
                 screen.draw_pixel(x, y, 0xF)
-                if y > y_in:
-                    screen.draw_pixel(x, y - 1, 0x0)
+                # if y > y_in:
+                #     screen.draw_pixel(x, y - 1, 0x0)
                 screen.push()
                 if y < down - 1:
                     time.sleep(sleep_time)
@@ -88,8 +88,8 @@ def spiral(screen, queue):
                         stop = True
                         break
                 screen.draw_pixel(x, y, 0xF)
-                if x < across - 1:
-                    screen.draw_pixel(x + 1, y, 0x0)
+                # if x < across - 1:
+                #     screen.draw_pixel(x + 1, y, 0x0)
                 screen.push()
                 if x > 0:
                     time.sleep(sleep_time)
@@ -107,13 +107,13 @@ def spiral(screen, queue):
                         stop = True
                         break
                 screen.draw_pixel(x, y, 0xF)
-                if y < down - 1:
-                    screen.draw_pixel(x, y + 1, 0x0)
+                # if y < down - 1:
+                #     screen.draw_pixel(x, y + 1, 0x0)
                 screen.push()
                 # if y > 0:
                 time.sleep(sleep_time)
-                if y == y_in + 1:
-                    screen.draw_pixel(x, y, 0x0)
+                # if y == y_in + 1:
+                #     screen.draw_pixel(x, y, 0x0)
 
             if stop:
                 break

@@ -187,6 +187,7 @@ def breakout(screen, command_queue, ai=False):
     lives = 5
 
     global level, line_left, line_right, paddle, ball
+    level = 1
 
     if not ai:
         msgs = [
@@ -373,7 +374,7 @@ def breakout(screen, command_queue, ai=False):
             paddle_counter = 0
 
             if ai:
-                if ball[1] >= (screen.y_height // 2):
+                if ball[1] >= (screen.y_height // 2.5):
                     if isLeft:
                         if paddle[0] == line_left + 1:
                             continue

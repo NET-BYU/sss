@@ -65,7 +65,7 @@ def snek_game(display, queue, fps=10, ai=False):
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
-    with open("games/snake/ai_high_score.txt", "r") as scores:
+    with open("/home/pi/raspi_seven_seg/games/snake/ai_high_score.txt", "r") as scores:
         h_score = int(scores.read())
 
     def get_new_food_location():
@@ -198,12 +198,12 @@ def snek_game(display, queue, fps=10, ai=False):
                 if current_food_location == current_location:
                     snek_length += 1
                     publish.single(
-                            SCORE_TOPIC,
-                            snek_length,
-                            hostname=MQTT_HOST,
-                            port=MQTT_PORT,
-                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                            tls={"ca_certs": MQTT_CERT},
+                        SCORE_TOPIC,
+                        snek_length,
+                        hostname=MQTT_HOST,
+                        port=MQTT_PORT,
+                        auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                        tls={"ca_certs": MQTT_CERT},
                     )
                     # temp = current_food_location
                     current_food_location = get_new_food_location()
@@ -271,12 +271,12 @@ def snek_game(display, queue, fps=10, ai=False):
                     print("killed itself")
                     game_over = True
                     publish.single(
-                            LIFE_TOPIC,
-                            0,
-                            hostname=MQTT_HOST,
-                            port=MQTT_PORT,
-                            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                            tls={"ca_certs": MQTT_CERT},
+                        LIFE_TOPIC,
+                        0,
+                        hostname=MQTT_HOST,
+                        port=MQTT_PORT,
+                        auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
+                        tls={"ca_certs": MQTT_CERT},
                     )
                     continue
 
@@ -307,7 +307,9 @@ def snek_game(display, queue, fps=10, ai=False):
                 "H-SCORE " + str(snek_length).zfill(3),
             )
             h_score = snek_length
-            with open("games/snake/ai_high_score.txt", "w") as scores:
+            with open(
+                "/home/pi/raspi_seven_seg/games/snake/ai_high_score.txt", "w"
+            ) as scores:
                 scores.write(str(h_score))
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
         else:
@@ -317,6 +319,8 @@ def snek_game(display, queue, fps=10, ai=False):
                 "SCORE " + str(snek_length).zfill(3),
             )
         display.push()
+        # if game_over:
+        #     return
         time.sleep(5)
         print("\n\n\nNEW GAME")
         start_sweep_x = display.x_width // 2 - 1

@@ -1,5 +1,6 @@
 from lib import game_functions
 import random
+import numpy as np
 
 
 def sound_visualizer(display, queue, sound_frames, fps):
@@ -41,12 +42,33 @@ def sound_visualizer(display, queue, sound_frames, fps):
 
 
 def sound_visualizer_run(display, queue):
+    input = ""
+    while True:
+        if not queue.empty():
+            input = queue.get(block=False)
+            if input == b"q":
+                display.clear()
+                return
+            break
+    with open(
+        "/home/pi/raspi_seven_seg/lib/bensound-" + input.decode() + ".npy", "rb"
+    ) as f:
+        frames = np.load(f)
     sound_visualizer(
         display,
         queue,
-        [
-            [random.randint(0, display.y_height - 1) for x in range(display.x_width)]
-            for frames in range(1000)
-        ],
-        10,
+        frames,
+        30,
     )
+
+
+# def sound_visualizer_run(display, queue):
+#     sound_visualizer(
+#         display,
+#         queue,
+#         [
+#             [random.randint(0, display.y_height - 1) for x in range(display.x_width)]
+#             for frames in range(1000)
+#         ],
+#         10,
+#     )
