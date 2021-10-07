@@ -1,5 +1,5 @@
 from builtins import Exception
-from multiprocessing import Process
+import multiprocessing
 import inputs
 import threading
 import random
@@ -70,12 +70,12 @@ def screen_controller(queue, client):
 
 def get_random_demo():
     demos = [
-        # b"snake_ai",
-        # b"breakout_ai",
+        b"snake_ai",
+        b"breakout_ai",
         b"gameoflife",
         b"flag",
-        # b"letters",
-        # b"welcome_y",
+        b"letters",
+        b"welcome_y",
         # b"welcome_netlab",
     ]
 
@@ -87,15 +87,13 @@ def get_random_demo():
 
 def process_input(input_queue, client, user_input_timeout=300, demo_timeout=30):
     last_input_time = time.time()
-    screen_queue = Queue()
+    screen_queue = multiprocessing.Queue()
     random_demo = get_random_demo()
     playing_demos = True
 
-    # Create process here
-    thread = threading.Thread(target=screen_controller, args=(screen_queue, client))
-    process = Process(target=screen_controller, args=(screen_queue, client))
+    # Create process
+    process = multiprocessing.Process(target=screen_controller, args=(screen_queue, client))
     process.start()
-
 
     # Play a demo on startup
     demo = next(random_demo)
