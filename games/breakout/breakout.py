@@ -4,8 +4,8 @@ sys.path.append("../..")
 
 from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
-import paho.mqtt.publish as publish
 from random import getrandbits
+from loguru import logger
 
 SCREEN_X = 48
 ARENA_START = 14
@@ -165,7 +165,7 @@ def ball_travel(isLeft, isDown, spin, screen):
     return isLeft, isDown
 
 
-def breakout(screen, command_queue, ai=False):
+def breakout(screen, command_queue, mqtt_client, ai=False):
 
     print("BREAKOUT")
 
@@ -190,17 +190,11 @@ def breakout(screen, command_queue, ai=False):
     level = 1
 
     if not ai:
-        msgs = [
-            {"topic": SCORE_TOPIC, "payload": score},
-            {"topic": LIFE_TOPIC, "payload": lives},
-        ]
-        publish.multiple(
-            msgs,
-            hostname=MQTT_HOST,
-            port=MQTT_PORT,
-            auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-            tls={"ca_certs": MQTT_CERT},
-        )
+        if mqtt_client.connected:
+            mqtt_client.publish(topic=SCORE_TOPIC, payload=score)
+            mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+        else:
+            logger.info("MQTT Client is not connected so skipping publications.")
 
     # Waits for user ready
     if not ai:
@@ -291,14 +285,11 @@ def breakout(screen, command_queue, ai=False):
                         isDown = not isDown
                         score += SCORE_INC
                         if not ai:
-                            publish.single(
-                                SCORE_TOPIC,
-                                score,
-                                hostname=MQTT_HOST,
-                                port=MQTT_PORT,
-                                auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                                tls={"ca_certs": MQTT_CERT},
-                            )
+                            if mqtt_client.connected:
+                                mqtt_client.publish(topic=SCORE_TOPIC, payload=score)
+                            else:
+                                logger.info("MQTT Client is not connected so skipping publications.")
+                                
                         bricks[row].remove(ball[0])
                         screen.draw_pixel(ball[0], row, PIXEL_OFF)
                         if not ball[0] % 2:
@@ -313,14 +304,10 @@ def breakout(screen, command_queue, ai=False):
                     if lives <= 4:
                         lives += 1
                         if not ai:
-                            publish.single(
-                                LIFE_TOPIC,
-                                lives,
-                                hostname=MQTT_HOST,
-                                port=MQTT_PORT,
-                                auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                                tls={"ca_certs": MQTT_CERT},
-                            )
+                            if mqtt_client.connected:
+                                mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+                            else:
+                                logger.info("MQTT Client is not connected so skipping publications.")
                     init_screen(screen)
 
             screen.draw_pixel(ball[0], ball[1], PIXEL_OFF)
@@ -341,14 +328,12 @@ def breakout(screen, command_queue, ai=False):
                 isDown = True
                 if not ai:
                     lives -= 1
-                publish.single(
-                    LIFE_TOPIC,
-                    lives,
-                    hostname=MQTT_HOST,
-                    port=MQTT_PORT,
-                    auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                    tls={"ca_certs": MQTT_CERT},
-                )
+
+                    if mqtt_client.connected:
+                        mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+                    else:
+                        logger.info("MQTT Client is not connected so skipping publications.")
+
                 screen.draw_pixel(ball[0], ball[1], PIXEL_OFF, combine=False, push=True)
                 if lives == 0:
                     gameover = True
@@ -435,5 +420,5 @@ def breakout(screen, command_queue, ai=False):
     print("bye")
 
 
-def breakout_demo(screen, queue):
-    breakout(screen, queue, ai=True)
+def breakout_demo(screen, queue, mqtt_client):
+    breakout(screen, queue, mqtt_client, ai=True)

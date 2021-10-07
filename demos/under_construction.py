@@ -54,7 +54,7 @@ def construction_sign(screen):
     screen.push()
 
 
-def under_construction(screen, queue):
+def under_construction(screen, queue, mqtt_client):
     print("UNDER CONSTRUCTION")
 
     construction_sign(screen)

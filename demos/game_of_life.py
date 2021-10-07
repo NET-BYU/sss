@@ -81,7 +81,7 @@ def update_board(board):
     return new_board
 
 
-def game_of_life(display, queue, refresh=100, density=0.25):
+def game_of_life(display, queue, mqtt_client, refresh=100, density=0.25):
 
     board = create_board(display.x_width, display.y_height, density=density)
     # print_board(board)

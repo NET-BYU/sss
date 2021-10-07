@@ -10,7 +10,7 @@ import time
 stop = False
 
 
-def sweep(screen, queue):
+def sweep(screen, queue, mqtt_client):
     global stop
     print("SWEEP")
 

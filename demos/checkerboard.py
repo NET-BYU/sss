@@ -7,7 +7,7 @@ from lib import game_display as gd  # import Display
 from time import sleep
 
 
-def checkboard_screensaver(screen, queue):
+def checkboard_screensaver(screen, queue, mqtt_client):
     print("CHECKERBOARD")
 
     input_ = ""

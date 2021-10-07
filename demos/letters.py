@@ -7,7 +7,7 @@ from lib import game_display as gd  # import Display
 import time, random
 
 
-def letters(screen, queue):
+def letters(screen, queue, mqtt_client):
 
     print("LETTERS")
 

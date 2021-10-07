@@ -49,7 +49,7 @@ def draw_the_y(screen, x, y, draw):
         screen.draw_shape_line(x + HALF_WIDTH_OFFSET + 1, y + HALF_HEIGHT_OFFSET + 1, x + HALF_WIDTH_OFFSET + 1, y + BOTTOM_Y_OFFSET - 1, SECTION_LEFT) # Y stem left border
     screen.push()
 
-def welcome_y(screen, queue):
+def welcome_y(screen, queue, mqtt_client):
 
     print("Welcome to the Y")
 

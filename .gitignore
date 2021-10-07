@@ -3,3 +3,5 @@
 pico-go.json
 __pycache__
 *.swp
+*.log
+.venv

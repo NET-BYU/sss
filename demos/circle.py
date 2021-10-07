@@ -9,7 +9,7 @@ import time
 stop = False
 
 
-def circle(screen, queue):
+def circle(screen, queue, mqtt_client):
 
     global stop
 

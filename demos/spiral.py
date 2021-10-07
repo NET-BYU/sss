@@ -10,7 +10,7 @@ import time
 stop = False
 
 
-def spiral(screen, queue):
+def spiral(screen, queue, mqtt_client):
     """circle chase around the board, width is number of digits across and height is how many digits tall."""
 
     global stop

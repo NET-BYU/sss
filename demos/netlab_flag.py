@@ -7,7 +7,7 @@ from lib import game_display as gd  # import Display
 from time import sleep
 
 
-def byu_netlab(screen, queue):
+def byu_netlab(screen, queue, mqtt_client):
 
     print("NET LAB FLAG")
 

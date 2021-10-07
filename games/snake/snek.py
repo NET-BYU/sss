@@ -1,6 +1,4 @@
 import sys
-from paho.mqtt.client import LOGGING_LEVEL
-import paho.mqtt.publish as publish
 from numpy.core.defchararray import zfill
 
 sys.path.append("../..")
@@ -11,14 +9,15 @@ import random
 import time
 from copy import deepcopy
 from itertools import count
+from loguru import logger
 
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"
-MQTT_HOST = "aq.byu.edu"
-MQTT_PORT = 8883
-MQTT_USERNAME = "sss"
-MQTT_PASSWORD = "***REMOVED***"
-MQTT_CERT = "/etc/ssl/certs/ca-certificates.crt"
+# MQTT_HOST = "aq.byu.edu"
+# MQTT_PORT = 8883
+# MQTT_USERNAME = "sss"
+# MQTT_PASSWORD = "***REMOVED***"
+# MQTT_CERT = "/etc/ssl/certs/ca-certificates.crt"
 # import tty, sys, termios, select
 
 # import snek_ai, snek_state
@@ -57,7 +56,7 @@ def generate_game_state2(width, height, start_loc, food_loc):
     return game_state
 
 
-def snek_game(display, queue, fps=10, ai=False):
+def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     game_over = False
     display.clear()
     tick = frameRate(fps)
@@ -85,6 +84,7 @@ def snek_game(display, queue, fps=10, ai=False):
 
     direction = None
     if ai:
+        logger.info("Run snake AI")
         # game_state = generate_game_state(
         #     display.x_width, display.y_height, current_location, current_food_location
         # )
@@ -119,24 +119,16 @@ def snek_game(display, queue, fps=10, ai=False):
         # if not ai:
         #     old_settings = termios.tcgetattr(sys.stdin)
         try:
-
-            msgs = [
-                {"topic": SCORE_TOPIC, "payload": snek_length},
-                {"topic": LIFE_TOPIC, "payload": 1},
-            ]
-            publish.multiple(
-                msgs,
-                hostname=MQTT_HOST,
-                port=MQTT_PORT,
-                auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                tls={"ca_certs": MQTT_CERT},
-            )
+            if mqtt_client.connected:
+                mqtt_client.publish(topic=SCORE_TOPIC, payload=snek_length)
+                mqtt_client.publish(topic=LIFE_TOPIC, payload=1)
+            else:
+                logger.info("MQTT Client is not connected so skipping publications.")
 
             # if not ai:
             #     tty.setcbreak(sys.stdin.fileno())
 
             while not game_over:
-
                 if not queue.empty():
                     temp = queue.get(block=False)
                     direction = (
@@ -197,14 +189,12 @@ def snek_game(display, queue, fps=10, ai=False):
                 # check food situation
                 if current_food_location == current_location:
                     snek_length += 1
-                    publish.single(
-                        SCORE_TOPIC,
-                        snek_length,
-                        hostname=MQTT_HOST,
-                        port=MQTT_PORT,
-                        auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                        tls={"ca_certs": MQTT_CERT},
-                    )
+
+                    if mqtt_client.connected:
+                        mqtt_client.publish(topic=SCORE_TOPIC, payload=snek_length)
+                    else:
+                        logger.info("MQTT Client is not connected so skipping publications.")
+
                     # temp = current_food_location
                     current_food_location = get_new_food_location()
                     # print("new food location", current_food_location)
@@ -270,14 +260,12 @@ def snek_game(display, queue, fps=10, ai=False):
                     )
                     print("killed itself")
                     game_over = True
-                    publish.single(
-                        LIFE_TOPIC,
-                        0,
-                        hostname=MQTT_HOST,
-                        port=MQTT_PORT,
-                        auth={"username": MQTT_USERNAME, "password": MQTT_PASSWORD},
-                        tls={"ca_certs": MQTT_CERT},
-                    )
+
+                    if mqtt_client.connected:
+                        mqtt_client.publish(topic=LIFE_TOPIC, payload="Game Over")
+                    else:
+                        logger.info("MQTT Client is not connected so skipping publications.")
+
                     continue
 
                 # draw snek part
@@ -407,8 +395,8 @@ def snek_game(display, queue, fps=10, ai=False):
     display.clear()
 
 
-def snek_ai_game(screen, queue):
-    snek_game(screen, queue, ai=True)
+def snek_ai_game(screen, queue, client):
+    snek_game(screen, queue, client, ai=True)
 
 
 # if __name__ == "__main__":

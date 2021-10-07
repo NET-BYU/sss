@@ -56,7 +56,7 @@ def draw_the_logo(screen, x, y):
     screen.draw_pixel(x + 1, y + TOP_SIDE_Y_OFFSET + HEX_SIDE_HEIGHT + 2, PIXEL_FULL)
     screen.push()
 
-def welcome_netlab(screen, queue):
+def welcome_netlab(screen, queue, mqtt_client):
 
     print("Welcome to the NET Lab")
 

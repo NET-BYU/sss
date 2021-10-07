@@ -41,7 +41,7 @@ def sound_visualizer(display, queue, sound_frames, fps):
         next(tick)
 
 
-def sound_visualizer_run(display, queue):
+def sound_visualizer_run(display, queue, mqtt_client):
     input = ""
     while True:
         if not queue.empty():

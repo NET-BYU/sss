@@ -1,4 +1,5 @@
 from builtins import Exception
+from multiprocessing import Process
 import inputs
 import threading
 import random
@@ -9,7 +10,7 @@ from queue import Queue, Empty
 from loguru import logger
 import paho.mqtt.client as mqtt
 
-from display import screen
+from display import create_screen, close_screen
 from demos import (
     checkerboard,
     netlab_flag,
@@ -26,8 +27,7 @@ from demos import (
 import games.breakout.breakout as bo
 import games.snake.snek as sn
 
-logger.add("sss.log", rotation="midnight", retention="1 week")
-
+logger.add("sss.log", rotation="00:00", retention="1 week")
 
 actions = {
     b"snake": sn.snek_game,
@@ -48,26 +48,34 @@ actions = {
 }
 
 
-def screen_controller(queue):
+# Separate process
+def screen_controller(queue, client):
+    screen = create_screen()
+
     while True:
         try:
             logger.debug("Proocessing items from screen queue...")
             action = queue.get()
             logger.debug("Action: {}", action)
             selected_action = actions[action]
-            selected_action(screen, queue)
+            selected_action(screen, queue, client)
+
+            close_screen(screen)
+            screen = create_screen()
         except KeyError:
             logger.error("Unknown action...")
+        except Exception:
+            logger.exception("Unknown error occurred!")
 
 
 def get_random_demo():
     demos = [
-        b"snake_ai",
-        b"breakout_ai",
+        # b"snake_ai",
+        # b"breakout_ai",
         b"gameoflife",
         b"flag",
-        b"letters",
-        b"welcome_y",
+        # b"letters",
+        # b"welcome_y",
         # b"welcome_netlab",
     ]
 
@@ -77,14 +85,23 @@ def get_random_demo():
             yield d
 
 
-def process_input(input_queue, user_input_timeout=300, demo_timeout=30):
+def process_input(input_queue, client, user_input_timeout=300, demo_timeout=30):
     last_input_time = time.time()
     screen_queue = Queue()
     random_demo = get_random_demo()
-    playing_demos = False
+    playing_demos = True
 
-    thread = threading.Thread(target=screen_controller, args=(screen_queue,))
-    thread.start()
+    # Create process here
+    thread = threading.Thread(target=screen_controller, args=(screen_queue, client))
+    process = Process(target=screen_controller, args=(screen_queue, client))
+    process.start()
+
+
+    # Play a demo on startup
+    demo = next(random_demo)
+    logger.info("Selecting a random demo: {}", demo)
+    screen_queue.put(b"q")
+    screen_queue.put(demo)
 
     while True:
         try:
@@ -102,16 +119,20 @@ def process_input(input_queue, user_input_timeout=300, demo_timeout=30):
 
             # Figure out how long to wait. We should wait a different amount of time
             # between demos compared to when a user inputs something
-            timeout = user_input_timeout if not playing_demos else demo_timeout
+            if playing_demos:
+                timeout = demo_timeout
+            else:
+                timeout = user_input_timeout
 
             # No input from user
             if (now - last_input_time) >= timeout:
                 logger.info("There has been no output for awhile...")
 
+                logger.info("Starting next demo...")
+                screen_queue.put(b"q")
                 demo = next(random_demo)
 
                 logger.info("Selecting a random demo: {}", demo)
-                screen_queue.put(b"q")
                 screen_queue.put(demo)
 
                 last_input_time = now
@@ -119,20 +140,39 @@ def process_input(input_queue, user_input_timeout=300, demo_timeout=30):
 
             # TODO: Start quiet hours (e.g., turn off screen at night)
 
-            # TODO: Start up screen after quiet hours (e.g., turn screen back on)
+        except Exception:
+            logger.exception("Unknown error occurred!")
 
 
 def mqtt_input(queue):
     def on_message(client, userdata, message):
         queue.put(message.payload)
 
+    def on_connect(client, userdata, flags, rc):
+        logger.info("MQTT Client connected ({})", rc)
+        client.connected = True
+
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
+        client.subscribe("byu_sss/input")
+
+    def on_disconnect(client, userdata, rc):
+        logger.info("MQTT Client disconnected ({})", rc)
+        client.connected = False
+
     client = mqtt.Client()
     client.username_pw_set("sss", "***REMOVED***")
-    client.on_message = on_message
     client.tls_set("/etc/ssl/certs/ca-certificates.crt")
-    client.connect("aq.byu.edu", 8883)
-    client.subscribe("byu_sss/input")
+
+    client.on_message = on_message
+    client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
+    client.connected = False
+
+    client.connect_async("aq.byu.edu", 8883)
     client.loop_start()
+
+    return client
 
 
 def gamepad_input(queue):
@@ -193,14 +233,15 @@ def gamepad_input(queue):
 
 
 def main():
+    logger.info("Starting...")
     command_queue = Queue()
 
     # Set up inputs
     gamepad_input(command_queue)
-    mqtt_input(command_queue)
+    client = mqtt_input(command_queue)
 
     # Process inputs
-    process_input(command_queue)
+    process_input(command_queue, client)
 
 
 if __name__ == "__main__":
