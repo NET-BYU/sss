@@ -9,6 +9,7 @@ from queue import Queue, Empty
 
 from loguru import logger
 import paho.mqtt.client as mqtt
+import sentry_sdk
 
 from display import create_screen, close_screen
 from demos import (
@@ -27,7 +28,12 @@ from demos import (
 import games.breakout.breakout as bo
 import games.snake.snek as sn
 
-logger.add("sss.log", rotation="00:00", retention="1 week")
+sentry_sdk.init(
+    "https://268759707c594a558f4e23fa85808fdf@o84589.ingest.sentry.io/6036604",
+    traces_sample_rate=1.0
+)
+
+logger.add("logs/sss.log", rotation="00:00", retention="1 week")
 
 actions = {
     b"snake": sn.snek_game,
