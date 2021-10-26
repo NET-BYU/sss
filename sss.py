@@ -85,7 +85,7 @@ def get_random_demo():
             yield d
 
 
-def process_input(input_queue, client, user_input_timeout=300, demo_timeout=30):
+def process_input(input_queue, client, user_input_timeout=300, demo_timeout=60):
     last_input_time = time.time()
     screen_queue = multiprocessing.Queue()
     random_demo = get_random_demo()
