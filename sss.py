@@ -92,7 +92,10 @@ def process_input(input_queue, client, user_input_timeout=300, demo_timeout=60):
     playing_demos = True
 
     # Create process
-    process = multiprocessing.Process(target=screen_controller, args=(screen_queue, client))
+    logger.debug("Creating process to handle screen")
+    process = multiprocessing.Process(
+        target=screen_controller, args=(screen_queue, client)
+    )
     process.start()
 
     # Play a demo on startup
