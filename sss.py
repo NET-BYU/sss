@@ -70,8 +70,6 @@ def screen_controller(queue, client):
             screen = create_screen()
         except KeyError:
             logger.error("Unknown action...")
-        except Exception:
-            logger.exception("Unknown error occurred!")
 
 
 def get_random_demo():
@@ -149,6 +147,7 @@ def process_input(input_queue, client, user_input_timeout=300, demo_timeout=60):
 
         except Exception:
             logger.exception("Unknown error occurred!")
+            sentry_sdk.capture_exception()
 
 
 def mqtt_input(queue):
