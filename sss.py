@@ -33,8 +33,6 @@ sentry_sdk.init(
     traces_sample_rate=1.0
 )
 
-logger.add("logs/sss.log", rotation="00:00", retention="1 week")
-
 actions = {
     b"snake": sn.snek_game,
     b"snake_ai": sn.snek_ai_game,
@@ -239,7 +237,11 @@ def gamepad_input(queue):
 
 
 def main():
+    # Start up logger
+    logger.add("logs/sss.log", rotation="00:00", retention="1 week", enqueue=True, backtrace=True, diagnose=True)
     logger.info("Starting...")
+
+    # Create main queue for all commands to pass through
     command_queue = Queue()
 
     # Set up inputs
