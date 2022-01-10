@@ -17,7 +17,7 @@ LEFT_BRICK = 0x7
 RIGHT_BRICK = 0xD
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
-BALL_SPEED = 600
+BALL_SPEED = 400
 SCORE_INC = 5
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"
@@ -99,7 +99,7 @@ def get_angle(paddle):
     if paddle.index(ball[0]) < (len(paddle) // 2):
         spin = paddle.index(ball[0]) % len(paddle) + 1
         isLeft = True
-    elif paddle.index(ball[0]) < (len(paddle) // 2):
+    elif paddle.index(ball[0]) > (len(paddle) // 2):
         spin = (len(paddle) - 1) - paddle.index(ball[0]) % len(paddle) + 1
         isLeft = False
     else:
