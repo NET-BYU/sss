@@ -244,19 +244,19 @@ def create_screen():
         ],
     )
 
-    panel5 = ss.SevenSegment(
-        num_digits=96,
-        cs_num=5,
-        brightness=bright,
-        segment_orientation_array=[
-            [1, 2],
-            [3, 4],
-            [5, 6],
-            [7, 8],
-            [9, 10],
-            [11, 12],
-        ],
-    )
+    # panel5 = ss.SevenSegment(
+    #     num_digits=96,
+    #     cs_num=5,
+    #     brightness=bright,
+    #     segment_orientation_array=[
+    #         [1, 2],
+    #         [3, 4],
+    #         [5, 6],
+    #         [7, 8],
+    #         [9, 10],
+    #         [11, 12],
+    #     ],
+    # )
 
     panel6 = ss.SevenSegment(
         num_digits=96,
@@ -300,33 +300,33 @@ def create_screen():
         ],
     )
 
-    panel9 = ss.SevenSegment(
-        num_digits=96,
-        cs_num=9,
-        brightness=bright,
-        segment_orientation_array=[
-            [1, 2],
-            [3, 4],
-            [5, 6],
-            [7, 8],
-            [9, 10],
-            [11, 12],
-        ],
-    )
+    # panel9 = ss.SevenSegment(
+    #     num_digits=96,
+    #     cs_num=9,
+    #     brightness=bright,
+    #     segment_orientation_array=[
+    #         [1, 2],
+    #         [3, 4],
+    #         [5, 6],
+    #         [7, 8],
+    #         [9, 10],
+    #         [11, 12],
+    #     ],
+    # )
 
-    panel10 = ss.SevenSegment(
-        num_digits=96,
-        cs_num=10,
-        brightness=bright,
-        segment_orientation_array=[
-            [1, 2],
-            [3, 4],
-            [5, 6],
-            [7, 8],
-            [9, 10],
-            [11, 12],
-        ],
-    )
+    # panel10 = ss.SevenSegment(
+    #     num_digits=96,
+    #     cs_num=10,
+    #     brightness=bright,
+    #     segment_orientation_array=[
+    #         [1, 2],
+    #         [3, 4],
+    #         [5, 6],
+    #         [7, 8],
+    #         [9, 10],
+    #         [11, 12],
+    #     ],
+    # )
 
     panel11 = ss.SevenSegment(
         num_digits=96,
