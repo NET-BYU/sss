@@ -173,8 +173,8 @@ def mqtt_input(queue):
     client.on_disconnect = on_disconnect
     client.connected = False
 
-    # client.connect_async("aq.byu.edu", 8883)
-    # client.loop_start()
+    client.connect_async("aq.byu.edu", 8883)
+    client.loop_start()
 
     return client
 
