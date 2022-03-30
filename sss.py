@@ -24,10 +24,11 @@ from demos import (
     game_of_life,
     sound_visualizer,
     under_construction,
+    tour,
 )
 import games.breakout.breakout as bo
 import games.snake.snek as sn
-
+import tools.nsh.nsh as nsh
 sentry_sdk.init(
     "https://268759707c594a558f4e23fa85808fdf@o84589.ingest.sentry.io/6036604",
     traces_sample_rate=1.0
@@ -49,6 +50,9 @@ actions = {
     b"welcome_netlab": welcome_netlab.welcome_netlab,
     b"sound_visualizer": sound_visualizer.sound_visualizer_run,
     b"under_construction": under_construction.under_construction,
+    b"nsh": nsh.nsh,
+    b"tour": tour.spiral
+
 }
 
 
@@ -79,6 +83,8 @@ def get_random_demo():
         b"letters",
         b"welcome_y",
         # b"welcome_netlab",
+        # b"sweep",
+        # b"tour",
     ]
 
     while True:

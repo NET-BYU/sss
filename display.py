@@ -2,7 +2,7 @@ from lib import seven_seg as ss  # import SevenSegment
 from lib import game_display as gd  # import Display
 from loguru import logger
 
-bright = 4
+bright = 3
 
 # panel0 = ss.SevenSegment(
 #     num_digits=96,
@@ -244,19 +244,19 @@ def create_screen():
         ],
     )
 
-    # panel5 = ss.SevenSegment(
-    #     num_digits=96,
-    #     cs_num=5,
-    #     brightness=bright,
-    #     segment_orientation_array=[
-    #         [1, 2],
-    #         [3, 4],
-    #         [5, 6],
-    #         [7, 8],
-    #         [9, 10],
-    #         [11, 12],
-    #     ],
-    # )
+    panel5 = ss.SevenSegment(
+       num_digits=96,
+       cs_num=5,
+       brightness=bright,
+       segment_orientation_array=[
+           [1, 2],
+           [3, 4],
+           [5, 6],
+           [7, 8],
+           [9, 10],
+           [11, 12],
+       ],
+    )
 
     panel6 = ss.SevenSegment(
         num_digits=96,
@@ -300,33 +300,33 @@ def create_screen():
         ],
     )
 
-    # panel9 = ss.SevenSegment(
-    #     num_digits=96,
-    #     cs_num=9,
-    #     brightness=bright,
-    #     segment_orientation_array=[
-    #         [1, 2],
-    #         [3, 4],
-    #         [5, 6],
-    #         [7, 8],
-    #         [9, 10],
-    #         [11, 12],
-    #     ],
-    # )
+    panel9 = ss.SevenSegment(
+       num_digits=96,
+       cs_num=9,
+       brightness=bright,
+       segment_orientation_array=[
+           [1, 2],
+           [3, 4],
+           [5, 6],
+           [7, 8],
+           [9, 10],
+           [11, 12],
+       ],
+    )
 
-    # panel10 = ss.SevenSegment(
-    #     num_digits=96,
-    #     cs_num=10,
-    #     brightness=bright,
-    #     segment_orientation_array=[
-    #         [1, 2],
-    #         [3, 4],
-    #         [5, 6],
-    #         [7, 8],
-    #         [9, 10],
-    #         [11, 12],
-    #     ],
-    # )
+    panel10 = ss.SevenSegment(
+       num_digits=96,
+       cs_num=10,
+       brightness=bright,
+       segment_orientation_array=[
+           [1, 2],
+           [3, 4],
+           [5, 6],
+           [7, 8],
+           [9, 10],
+           [11, 12],
+       ],
+    )
 
     panel11 = ss.SevenSegment(
         num_digits=96,
@@ -342,11 +342,21 @@ def create_screen():
         ],
     )
 
+    #5,9,10
+    #4,11,8
+    #2,3,7
+    #0,1,6
     screen = gd.Display(
-        [[panel4, panel11, panel8], [panel2, panel3, panel7], [panel0, panel1, panel6]],
+        [[panel5, panel10, panel9],[panel4, panel11, panel8], [panel2, panel3, panel7], [panel0, panel1, panel6]],
         48,
-        36,
+        48,
     )
+
+    # screen = gd.Display(
+    #    [[panel9]],
+    #    16,
+    #    12,
+    # )
 
     return screen
 
