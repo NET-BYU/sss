@@ -1,4 +1,5 @@
 import sys
+from yaml import safe_load
 
 sys.path.append("../..")
 
@@ -17,15 +18,19 @@ LEFT_BRICK = 0x7
 RIGHT_BRICK = 0xD
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
-BALL_SPEED = 400
+BALL_SPEED = 300
 SCORE_INC = 5
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"
-MQTT_HOST = "aq.byu.edu"
-MQTT_PORT = 8883
-MQTT_USERNAME = "sss"
-MQTT_PASSWORD = "***REMOVED***"
-MQTT_CERT = "/etc/ssl/certs/ca-certificates.crt"
+
+with open("creds.yaml") as f:
+    config = safe_load(f)
+
+MQTT_HOST = config["mqtt"]["host"]
+MQTT_PORT = config["mqtt"]["port"]
+MQTT_USERNAME = config["mqtt"]["username"]
+MQTT_PASSWORD = config["mqtt"]["password"]
+MQTT_CERT = config["mqtt"]["cert"]
 
 paddle = [24]
 ball = []
@@ -233,28 +238,29 @@ def breakout(screen, command_queue, mqtt_client, ai=False):
         else:
             input_ = ""
 
-        if input_ == b"start":
-            screen.draw_text(
-                (screen.x_width // 2) - 3,
-                (screen.y_height // 2) - 8,
-                "PAUSED",
-                push=True,
-            )
-            while True:
-                if not command_queue.empty():
-                    input_ = command_queue.get(block=False)
-                else:
-                    input_ = ""
-                if input_ == b"start":
-                    screen.draw_text(
-                        (screen.x_width // 2) - 3,
-                        (screen.y_height // 2) - 8,
-                        "      ",
-                        push=True,
-                    )
-                    with command_queue.mutex:
-                        command_queue.queue.clear()
-                    break
+        # if input_ == b"start":
+        #     screen.draw_text(
+        #         (screen.x_width // 2) - 3,
+        #         (screen.y_height // 2) - 8,
+        #         "PAUSED",
+        #         push=True,
+        #     )
+        #     while True:
+        #         logger.debug("banana")
+        #         if not command_queue.empty():
+        #             input_ = command_queue.get(block=False)
+        #         else:
+        #             input_ = ""
+        #         if input_ == b"start":
+        #             screen.draw_text(
+        #                 (screen.x_width // 2) - 3,
+        #                 (screen.y_height // 2) - 8,
+        #                 "      ",
+        #                 push=True,
+        #             )
+        #             with command_queue.mutex:
+        #                 command_queue.queue.clear()
+        #             break
 
         if input_ == b"h":
             repeatLeft = True
@@ -359,7 +365,7 @@ def breakout(screen, command_queue, mqtt_client, ai=False):
             paddle_counter = 0
 
             if ai:
-                if ball[1] >= (screen.y_height // 2.5):
+                if ball[1] >= (screen.y_height // 2):
                     if isLeft:
                         if paddle[0] == line_left + 1:
                             continue

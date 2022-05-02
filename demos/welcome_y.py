@@ -7,8 +7,8 @@ from lib import game_display as gd  # import Display
 import time
 
 SIZE_MULTIPLIER = 1 # try 2 for better proportionality??
-STARTING_X = 3
-STARTING_Y = 3
+STARTING_X = 0
+STARTING_Y = 10
 
 RIGHT_X_OFFSET = 6 * SIZE_MULTIPLIER # horizontal distance between right extremity and top left
 BOTTOM_X_OFFSET = 2 * SIZE_MULTIPLIER # horizontal distance between bottom left extremity and top left
@@ -90,7 +90,7 @@ def welcome_y(screen, queue, mqtt_client):
             location[1] -= 1
 	
         draw_the_y(screen, location[0], location[1], True)
-        time.sleep(0.05)
+        time.sleep(0.04)
 
 
     screen.clear()
