@@ -64,7 +64,7 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
-    with open("/home/pi/raspi_seven_seg/games/snake/ai_high_score.txt", "r") as scores:
+    with open("games/snake/ai_high_score.txt", "r") as scores:
         h_score = int(scores.read())
 
     def get_new_food_location():
@@ -296,7 +296,7 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
             )
             h_score = snek_length
             with open(
-                "/home/pi/raspi_seven_seg/games/snake/ai_high_score.txt", "w"
+                "games/snake/ai_high_score.txt", "w"
             ) as scores:
                 scores.write(str(h_score))
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
