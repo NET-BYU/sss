@@ -1,3 +1,5 @@
+# Performed offline on a different computer
+
 import librosa, scipy.signal
 import numpy as np
 
@@ -8,7 +10,7 @@ hop_length_secs = 1 / 10
 bands = 48  # How many frequency bands?
 
 # filename = librosa.ex("~/Downloads/bensound-evolution")
-y, sr = librosa.load("/home/apal6981/Downloads/" + song_name + ".mp3", sr=22050)
+y, sr = librosa.load("~/Downloads/" + song_name + ".mp3", sr=22050)
 sound_length = y.shape[0] / sr
 print(f"{sound_length = }")
 hop_length_samples = int(hop_length_secs * sr)

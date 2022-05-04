@@ -51,7 +51,7 @@ def sound_visualizer_run(display, queue, mqtt_client):
                 return
             break
     with open(
-        "/home/pi/raspi_seven_seg/lib/bensound-" + input.decode() + ".npy", "rb"
+        "/home/pi/sss/demos/sound_visualizer/bensound-" + input.decode() + ".npy", "rb"
     ) as f:
         frames = np.load(f)
     sound_visualizer(
