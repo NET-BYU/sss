@@ -1,5 +1,16 @@
 from builtins import Exception
 import multiprocessing
+from demos.checkerboard import main
+from demos.circle import main
+from demos.game_of_life import main
+from demos.letters import main
+from demos.netlab_flag import main
+from demos.sound_visualizer import main
+from demos.spiral import main
+from demos.sweep import main
+from demos.tour import main
+from demos.under_construction import main
+from demos.welcome_netlab import main
 import inputs
 import threading
 import random
@@ -12,19 +23,8 @@ import paho.mqtt.client as mqtt
 import sentry_sdk
 
 from display import create_screen, close_screen
-from demos import (
-    checkerboard,
-    netlab_flag,
-    sweep,
-    letters,
-    circle,
-    spiral,
-    welcome_y,
-    welcome_netlab,
-    game_of_life,
-    sound_visualizer,
-    under_construction,
-    tour,
+from demos.welcome_y import (
+    main,
 )
 import games.breakout.breakout as bo
 import games.snake.snek as sn
@@ -39,19 +39,19 @@ actions = {
     b"snake_ai": sn.snek_ai_game,
     b"breakout": bo.breakout,
     b"breakout_ai": bo.breakout_demo,
-    b"gameoflife": game_of_life.game_of_life,
-    b"checkerboard": checkerboard.checkboard_screensaver,
-    b"flag": netlab_flag.byu_netlab,
-    b"spiral": spiral.spiral,
-    b"circle": circle.circle,
-    b"sweep": sweep.sweep,
-    b"letters": letters.letters,
-    b"welcome_y": welcome_y.welcome_y,
-    b"welcome_netlab": welcome_netlab.welcome_netlab,
-    b"sound_visualizer": sound_visualizer.sound_visualizer_run,
-    b"under_construction": under_construction.under_construction,
+    b"gameoflife": main.game_of_life,
+    b"checkerboard": main.checkboard_screensaver,
+    b"flag": main.byu_netlab,
+    b"spiral": main.spiral,
+    b"circle": main.circle,
+    b"sweep": main.sweep,
+    b"letters": main.letters,
+    b"welcome_y": main.welcome_y,
+    b"welcome_netlab": main.welcome_netlab,
+    b"sound_visualizer": main.sound_visualizer_run,
+    b"under_construction": main.under_construction,
     b"nsh": nsh.nsh,
-    b"tour": tour.spiral
+    b"tour": main.spiral
 
 }
 
