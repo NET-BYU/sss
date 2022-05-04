@@ -2,8 +2,8 @@ import sys, keyboard
 
 sys.path.append("..")
 
-from lib import seven_seg as ss  # import SevenSegment
-from lib import game_display as gd  # import Display
+from display import seven_seg as ss  # import SevenSegment
+from display import game_display as gd  # import Display
 from time import sleep
 
 

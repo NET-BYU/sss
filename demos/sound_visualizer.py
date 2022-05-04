@@ -1,4 +1,4 @@
-from lib import game_functions
+from display import game_functions
 import random
 import numpy as np
 

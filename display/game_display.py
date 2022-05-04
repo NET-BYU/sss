@@ -1,4 +1,4 @@
-from lib import symbols
+from display import symbols
 
 
 class Display:
