@@ -13,15 +13,8 @@ from loguru import logger
 
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"
-# MQTT_HOST = "aq.byu.edu"
-# MQTT_PORT = 8883
-# MQTT_USERNAME = "sss"
-# MQTT_PASSWORD = "***REMOVED***"
-# MQTT_CERT = "/etc/ssl/certs/ca-certificates.crt"
-# import tty, sys, termios, select
 
-# import snek_ai, snek_state
-from games.snake import snek_ai, snek_state
+from demos.snake import snek_ai, snek_state
 
 
 def frameRate(fps):
