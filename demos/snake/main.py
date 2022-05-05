@@ -80,7 +80,6 @@ class Snake:
                         or temp == b"j"
                         or temp == b"w"
                         or temp == b"u"
-                        or temp == b"q"
                         else direction
                     )
 
