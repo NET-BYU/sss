@@ -1,10 +1,12 @@
-from demos.snake import snek_state
+from turtle import Screen
+from demos.snake import snek_state, snek_ai
 import random
 from loguru import logger
+from copy import deepcopy
 
 
 class Snake:
-    """This is the playable snake game. The user inputs either from the controller or the phone to control the snake
+    """This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written before exiting"""
@@ -29,7 +31,7 @@ class Snake:
         snek_list = [current_location]
         self.snek_length = 1
         self.h_score = 0
-        with open("/home/pi/sss/games/snake/high_score.txt", "r") as scores:
+        with open("/home/pi/sss/games/snake_ai/ai_high_score.txt", "r") as scores:
             self.h_score = int(scores.read())
 
         def get_new_food_location():
@@ -45,9 +47,28 @@ class Snake:
             # print(food_location)
             return food_location
 
+        def generate_game_state(width, height, start_loc, food_loc):
+            game_state = snek_state.snek_state(width, height)
+            game_state.add_snake_part2(start_loc)
+            game_state.add_food2(food_loc)
+            return game_state
+
         current_food_location = get_new_food_location()
 
-        direction = b"a"
+        game_state = generate_game_state(
+            self.screen.x_width,
+            self.screen.y_height,
+            current_location,
+            current_food_location,
+        )
+
+        snek_path = snek_ai.run_Search2(
+            current_location[0],
+            current_location[1],
+            current_food_location,
+            game_state,
+            self.snek_length,
+        )
 
         # draw snek part
         self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -68,34 +89,20 @@ class Snake:
         # Generator Loop with raw yield
         while True:
             while not game_over:
-                if not self.input_queue.empty():
-                    temp = self.input_queue.get(block=False)
-                    direction = (
-                        temp
-                        if temp == b"a"
-                        or temp == b"h"
-                        or temp == b"d"
-                        or temp == b"k"
-                        or temp == b"s"
-                        or temp == b"j"
-                        or temp == b"w"
-                        or temp == b"u"
-                        else direction
-                    )
 
-                # Get new snake location based on trajectory
-                current_location = (
-                    current_location[0] - 1
-                    if direction == b"a" or direction == b"h"
-                    else current_location[0] + 1
-                    if direction == b"d" or direction == b"k"
-                    else current_location[0],
-                    current_location[1] + 1
-                    if direction == b"s" or direction == b"j"
-                    else current_location[1] - 1
-                    if direction == b"w" or direction == b"u"
-                    else current_location[1],
-                )
+                if len(snek_path) == 0:
+                    logger.info("ran out, try search again")
+                    game_state.snek_parts = deepcopy(snek_list[:-1])
+                    snek_path = snek_ai.run_Search2(
+                        current_location[0],
+                        current_location[1],
+                        current_food_location,
+                        game_state,
+                        self.snek_length,
+                    )
+                current_location = snek_path.pop(0)
+                # game_state.add_snake_part(current_location)
+                game_state.add_snake_part2(current_location)
 
                 # check food situation
                 if current_food_location == current_location:
@@ -103,9 +110,26 @@ class Snake:
 
                     # Publish score to output
                     self.output_queue.put("SCORE: " + str(self.snek_length))
+                    logger.info("SCORE: " + str(self.snek_length))
 
                     # calc new food location and draw on screen
                     current_food_location = get_new_food_location()
+                    game_state.add_food2(current_food_location)
+                    game_state.snek_parts = deepcopy(snek_list)
+
+                    snek_path = snek_ai.run_Search2(
+                        current_location[0],
+                        current_location[1],
+                        current_food_location,
+                        game_state,
+                        self.snek_length,
+                    )
+
+                    if snek_path is None or len(snek_path) == 0:
+                        logger.info("Path was zero, no solution?")
+                        game_over = True
+                        continue
+
                     self.screen.draw_pixel(
                         current_food_location[0], current_food_location[1], 15
                     )
@@ -161,7 +185,9 @@ class Snake:
                     "H-SCORE " + str(self.snek_length).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open("/home/pi/sss/games/snake/high_score.txt", "w") as scores:
+                with open(
+                    "/home/pi/sss/games/snake_ai/ai_high_score.txt", "w"
+                ) as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
                     self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)
@@ -190,8 +216,6 @@ class Snake:
 
             current_food_location = get_new_food_location()
 
-            direction = b"a"
-
             # draw snek part
             self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
             # draw food
@@ -208,5 +232,5 @@ class Snake:
         # Reset the state of the demo if needed, else leave blank
         if self.snek_length > self.h_score:
             self.h_score = self.snek_length
-            with open("/home/pi/sss/games/snake/high_score.txt", "w") as scores:
+            with open("/home/pi/sss/games/snake_ai/ai_high_score.txt", "w") as scores:
                 scores.write(str(self.h_score))
