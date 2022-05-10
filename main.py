@@ -23,7 +23,7 @@ def load_demos(demo_dir="demos"):
     # Convert to module notation
     demos = ((d, str(d).replace("/", ".") + ".main") for d in demos)
 
-    return {demo: load_demo(module) for demo, module in demos}
+    return {name: load_demo(module) for name, module in demos}
 
 
 def main():
@@ -36,7 +36,12 @@ def main():
         backtrace=True,
         diagnose=True,
     )
-    logger.info("Starting SSS 🐍...")
+    logger.info("             ____")
+    logger.info("            / . .\\")
+    logger.info("            \  ---<   Starting SSS")
+    logger.info("             \  /")
+    logger.info("   __________/ /")
+    logger.info("-=:___________/")
 
     load_demos()
 
