@@ -1,50 +1,6 @@
-import sys, keyboard
-
-sys.path.append("..")
-
-from display import seven_seg as ss  # import SevenSegment
-from display import game_display as gd  # import Display
-from time import sleep
 
 
-def checkboard_screensaver(screen, queue, mqtt_client):
-    print("CHECKERBOARD")
-
-    input_ = ""
-
-    while input_ != b"q":
-
-        if not queue.empty():
-            input_ = queue.get(block=False)
-        else:
-            input_ = ""
-
-        for x in range(screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2 == 0:
-                    if x % 2:
-                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
-                else:
-                    if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
-        screen.push()
-        sleep(0.1)
-
-        for x in range(screen.x_width):
-            for y in range(screen.y_height):
-                if y % 2:
-                    if x % 2:
-                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
-                else:
-                    if x % 2 == 0:
-                        screen.draw_pixel(x, y, 0xF, combine=False, push=False)
-        screen.push()
-        sleep(0.1)
-
-    screen.clear()
-
-
-class CheckerBoard_Screensaver:
+class CheckerBoard:
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
     # User input is passed through input_queue

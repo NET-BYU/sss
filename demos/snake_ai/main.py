@@ -5,7 +5,7 @@ from loguru import logger
 from copy import deepcopy
 
 
-class Snake:
+class Snake_AI:
     """This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
