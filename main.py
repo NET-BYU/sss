@@ -1,91 +1,39 @@
-from builtins import Exception
-import multiprocessing
-from demos.checkerboard import main
-from demos.circle import main
-from demos.game_of_life import main
-from demos.letters import main
-from demos.netlab_flag import main
-from demos.sound_visualizer import main
-from demos.spiral import main
-from demos.sweep import main
-from demos.tour import main
-from demos.under_construction import main
-from demos.welcome_netlab import main
-import inputs
-import threading
+from importlib import import_module
+from pathlib import Path
+from queue import Queue, Empty
 import random
 import time
-import arrow
-from queue import Queue, Empty
 
 from loguru import logger
-import paho.mqtt.client as mqtt
-import sentry_sdk
 
 from display import create_screen, close_screen
-from demos.welcome_y import (
-    main,
-)
-import games.breakout.breakout as bo
-import games.snake.snek as sn
-import tools.nsh.nsh as nsh
-sentry_sdk.init(
-    "https://268759707c594a558f4e23fa85808fdf@o84589.ingest.sentry.io/6036604",
-    traces_sample_rate=1.0
-)
-
-actions = {
-    b"snake": sn.snek_game,
-    b"snake_ai": sn.snek_ai_game,
-    b"breakout": bo.breakout,
-    b"breakout_ai": bo.breakout_demo,
-    b"gameoflife": main.game_of_life,
-    b"checkerboard": main.checkboard_screensaver,
-    b"flag": main.byu_netlab,
-    b"spiral": main.spiral,
-    b"circle": main.circle,
-    b"sweep": main.sweep,
-    b"letters": main.letters,
-    b"welcome_y": main.welcome_y,
-    b"welcome_netlab": main.welcome_netlab,
-    b"sound_visualizer": main.sound_visualizer_run,
-    b"under_construction": main.under_construction,
-    b"nsh": nsh.nsh,
-    b"tour": main.spiral
-
-}
 
 
-# Separate process
-def screen_controller(queue, client):
-    screen = create_screen()
-
-    while True:
-        try:
-            logger.debug("Proocessing items from screen queue...")
-            action = queue.get()
-            logger.debug("Action: {}", action)
-            selected_action = actions[action]
-            selected_action(screen, queue, client)
-
-            close_screen(screen)
-            screen = create_screen()
-        except KeyError:
-            logger.error("Unknown action...")
+def load_demo(module):
+    logger.debug(f"Loading {module}")
+    return import_module(module)
 
 
-def get_random_demo():
-    demos = [
-        b"snake_ai",
-        b"breakout_ai",
-        b"gameoflife",
-        b"flag",
-        b"letters",
-        b"welcome_y",
-        # b"welcome_netlab",
-        # b"sweep",
-        # b"tour",
-    ]
+def load_demos(demo_dir="demos"):
+    logger.debug("Loading demos...")
+
+    demo_path = Path(demo_dir)
+
+    # Only import directories
+    demos = (d for d in demo_path.iterdir() if d.is_dir())
+
+    # Make sure there is a main in the folder
+    demos = (d for d in demos if (d / "main.py").exists())
+
+    # Convert to module notation
+    demos = ((d, str(d).replace("/", ".") + ".main") for d in demos)
+
+    return {name: load_demo(module) for name, module in demos}
+
+
+def get_random_demo(demos):
+    # Filter out demos that can't be shown without input
+    demos = [d for d in demos.values()]  # if d.USER_INPUT == False]
 
     while True:
         random.shuffle(demos)
@@ -93,169 +41,100 @@ def get_random_demo():
             yield d
 
 
-def process_input(input_queue, client, user_input_timeout=300, demo_timeout=60):
-    last_input_time = time.time()
-    screen_queue = multiprocessing.Queue()
-    random_demo = get_random_demo()
-    playing_demos = True
-
-    # Create process
-    logger.debug("Creating process to handle screen")
-    process = multiprocessing.Process(
-        target=screen_controller, args=(screen_queue, client)
-    )
-    process.start()
-
-    # Play a demo on startup
-    demo = next(random_demo)
-    logger.info("Selecting a random demo: {}", demo)
-    screen_queue.put(b"q")
-    screen_queue.put(demo)
+def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300):
+    demos = load_demos()
+    random_demos = get_random_demo(demos)
+    screen = create_screen()
 
     while True:
-        try:
-            input_ = input_queue.get(timeout=0.1)
+        if not system_queue.empty():
 
-            logger.debug("Processing items from action queue...")
-            logger.debug("Input: {}", input_)
-            screen_queue.put(input_)
-
-            last_input_time = time.time()
-            playing_demos = False
-
-        except Empty:
-            now = time.time()
-
-            # Figure out how long to wait. We should wait a different amount of time
-            # between demos compared to when a user inputs something
-            if playing_demos:
-                timeout = demo_timeout
-            else:
-                timeout = user_input_timeout
-
-            # No input from user
-            if (now - last_input_time) >= timeout:
-                logger.info("There has been no output for awhile...")
-
-                logger.info("Starting next demo...")
-                screen_queue.put(b"q")
-                demo = next(random_demo)
-
-                logger.info("Selecting a random demo: {}", demo)
-                screen_queue.put(demo)
-
-                last_input_time = now
-                playing_demos = True
-
-            # TODO: Start quiet hours (e.g., turn off screen at night)
-
-        except Exception:
-            logger.exception("Unknown error occurred!")
-            sentry_sdk.capture_exception()
-
-
-def mqtt_input(queue):
-    def on_message(client, userdata, message):
-        queue.put(message.payload)
-
-    def on_connect(client, userdata, flags, rc):
-        logger.info("MQTT Client connected ({})", rc)
-        client.connected = True
-
-        # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
-        client.subscribe("byu_sss/input")
-
-    def on_disconnect(client, userdata, rc):
-        logger.info("MQTT Client disconnected ({})", rc)
-        client.connected = False
-
-    client = mqtt.Client()
-    client.username_pw_set("sss", "***REMOVED***")
-    client.tls_set("/etc/ssl/certs/ca-certificates.crt")
-
-    client.on_message = on_message
-    client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
-    client.connected = False
-
-    client.connect_async("aq.byu.edu", 8883)
-    client.loop_start()
-
-    return client
-
-
-def gamepad_input(queue):
-    def gamepad_listener():
-        leftPressed = False
-        rightPressed = False
-        upPressed = False
-        downPressed = False
-        controllerFound = False
-        while True:
+            # Start the demo
             try:
-                events = inputs.get_gamepad()
-                if not controllerFound:
-                    logger.success("Controller detected")
-                    controllerFound = True
-                for event in events:
-                    if event.code == "ABS_X":
-                        if event.state == 0:
-                            queue.put(b"h")
-                            leftPressed = True
-                        elif event.state == 127:
-                            if leftPressed:
-                                queue.put(b"hh")
-                                leftPressed = False
-                            elif rightPressed:
-                                queue.put(b"kk")
-                                rightPressed = False
-                        elif event.state == 255:
-                            queue.put(b"k")
-                            rightPressed = True
-                    elif event.code == "ABS_Y":
-                        if event.state == 0:
-                            queue.put(b"u")
-                            upPressed = True
-                        elif event.state == 127:
-                            if upPressed:
-                                queue.put(b"uu")
-                                upPressed = False
-                            elif downPressed:
-                                queue.put(b"jj")
-                                downPressed = False
-                        elif event.state == 255:
-                            queue.put(b"j")
-                            downPressed = True
-                    elif event.code == "BTN_BASE4":
-                        if event.state:
-                            queue.put(b"start")
-                        else:
-                            queue.put(b"pause")
-            except inputs.UnpluggedError:
-                logger.warning("There is no controller plugged in")
-                break
+                demo_name = system_queue.get(timeout=0.01)
+                demo = demos[demo_name](demo_input_queue, demo_output_queue, screen)
+                demo_runner = demo.run()
+                sleep_time = 1 / demo.frame_rate
+                last_input_time = time.time()
+            except KeyError:
+                logger.error(f"Unknown demo: {demo_name}")
+                continue  # Start over
+            except Empty:
+                # If for some reason it is empty (shouldn't be), then start over
+                continue
 
-                # print(event.ev_type, event.code, event.state)
+            # As long as there is input from the user, keep passing it to the demo
+            while user_input_timeout > (time.time() - last_input_time):
+                # We need to be able to handle multiple inputs on the queue
+                while not system_queue.empty():
+                    try:
+                        input_ = system_queue.get(
+                            timeout=0.01
+                        )  # TODO: We need to detect if the input is for the game or for the system
+                        demo_input_queue.put(input_)
+                        last_input_time = time.time()
+                    except Empty:
+                        break
 
-    gamepad_thread = threading.Thread(target=gamepad_listener, daemon=True)
-    gamepad_thread.start()
+                # Tick the demo
+                try:
+                    next(demo_runner)
+                except Exception:
+                    logger.exception("Unknown error occurred!")
+
+                # Wait for next tick
+                time.sleep(sleep_time)
+
+        while system_queue.empty():
+            # Pick a random demo and set up the environment
+            random_demo = next(random_demos)(
+                demo_input_queue, demo_output_queue, screen
+            )
+            random_demo_runner = random_demo.run()
+            demo_time = random_demo.demo_time
+            sleep_time = 1 / random_demo.frame_rate
+            start_time = time.time()
+            logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
+
+            # Run the demo for a certain amount of time
+            while demo_time > (time.time() - start_time):
+                # We have received input from the user, so we need to stop the demo
+                if not system_queue.empty():
+                    logger.info("User input has been received. Exiting demo...")
+                    break
+
+                # Tick the demo
+                try:
+                    next(random_demo_runner)
+                except Exception:
+                    logger.exception("Unknown error occurred!")
+
+                # Wait for next tick
+                time.sleep(sleep_time)
+            else:
+                # Refresh the screen when the demo time has run out
+                close_screen(screen)
+                screen = create_screen()
 
 
 def main():
     # Start up logger
-    logger.add("logs/sss.log", rotation="00:00", retention="1 week", enqueue=True, backtrace=True, diagnose=True)
-    logger.info("Starting...")
+    logger.add(
+        "logs/sss.log",
+        rotation="00:00",
+        retention="1 week",
+        enqueue=True,
+        backtrace=True,
+        diagnose=True,
+    )
+    logger.info("             ____")
+    logger.info("            / . .\\")
+    logger.info("            \  ---<   Starting SSS")
+    logger.info("             \  /")
+    logger.info("   __________/ /")
+    logger.info("-=:___________/")
 
-    # Create main queue for all commands to pass through
-    command_queue = Queue()
-
-    # Set up inputs
-    gamepad_input(command_queue)
-    client = mqtt_input(command_queue)
-
-    # Process inputs
-    process_input(command_queue, client)
+    run(None, None)
 
 
 if __name__ == "__main__":
