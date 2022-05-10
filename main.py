@@ -6,7 +6,7 @@ import time
 
 from loguru import logger
 
-from display import create_screen, close_screen
+from display import create_screen, close_screen, frameRate
 
 
 def load_demo(module):
@@ -54,7 +54,8 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
                 demo_name = system_queue.get(timeout=0.01)
                 demo = demos[demo_name](demo_input_queue, demo_output_queue, screen)
                 demo_runner = demo.run()
-                sleep_time = 1 / demo.frame_rate
+                # sleep_time = 1 / demo.frame_rate
+                frame_tick = frameRate(demo.frame_rate)
                 last_input_time = time.time()
             except KeyError:
                 logger.error(f"Unknown demo: {demo_name}")
@@ -83,7 +84,8 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
                     logger.exception("Unknown error occurred!")
 
                 # Wait for next tick
-                time.sleep(sleep_time)
+                # time.sleep(sleep_time)
+                next(frame_tick)
 
         while system_queue.empty():
             # Pick a random demo and set up the environment
@@ -92,7 +94,8 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
             )
             random_demo_runner = random_demo.run()
             demo_time = random_demo.demo_time
-            sleep_time = 1 / random_demo.frame_rate
+            # sleep_time = 1 / random_demo.frame_rate
+            frame_tick = frameRate(random_demo.frame_rate)
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
 
@@ -110,7 +113,8 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
                     logger.exception("Unknown error occurred!")
 
                 # Wait for next tick
-                time.sleep(sleep_time)
+                # time.sleep(sleep_time)
+                next(frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
                 close_screen(screen)
