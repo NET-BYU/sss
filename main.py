@@ -72,6 +72,10 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
                         input_ = system_queue.get(
                             timeout=0.01
                         )  # TODO: We need to detect if the input is for the game or for the system
+
+                        if input_ == "q":
+                            break
+
                         demo_input_queue.put(input_)
                         last_input_time = time.time()
                     except Empty:
@@ -104,6 +108,7 @@ def run(system_queue, demo_input_queue, demo_output_queue, user_input_timeout=30
                 # We have received input from the user, so we need to stop the demo
                 if not system_queue.empty():
                     logger.info("User input has been received. Exiting demo...")
+                    screen.clear()
                     break
 
                 # Tick the demo
