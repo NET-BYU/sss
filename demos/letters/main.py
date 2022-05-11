@@ -1,6 +1,6 @@
 import random
 
-class Template:
+class Letters:
     """This is demo draws random symbols on the screen. Kind of fun to watch"""
 
     # User input is passed through input_queue
