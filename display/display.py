@@ -1,5 +1,5 @@
-import seven_seg as ss
-import game_display as gd
+import display.seven_seg as ss
+import display.game_display as gd
 
 
 def create_screen():

@@ -6,7 +6,8 @@ import time
 
 from loguru import logger
 
-from display import create_screen, close_screen, frameRate
+from display.display import create_screen, close_screen
+from display.game_functions import frameRate
 
 
 def load_demo(module):
