@@ -29,7 +29,7 @@ def load_demos(demo_dir="demos"):
     # Convert to module notation
     demos = ((d, str(d).replace("/", ".") + ".main") for d in demos)
 
-    return {name: load_demo(module) for name, module in demos}
+    return {str(name).split("/")[1]: load_demo(module) for name, module in demos}
 
 
 def get_random_demo(demos):
