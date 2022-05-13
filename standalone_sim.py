@@ -30,6 +30,15 @@ class Simulator:
         self.refresh = pygame.display.flip
         self.input_q = Queue(10)
         self.output_q = Queue(10)
+        self.text_font = pygame.font.SysFont("arial", 32)
+        self.lives_text = self.text_font.render("LIVES: ", False, (255, 165, 0), (0, 0, 0))
+        self.score_text = self.text_font.render("SCORE: ", False, (255, 165, 0), (0, 0, 0))
+        self.lives_prev = ""
+        self.score_prev = ""
+        # self.lives_text_rect = self.lives_text.get_rect()
+        # self.lives_text_rect.center = (self.width // 2, self.height - 50)
+        self.screen.blit(self.lives_text, (0, 720))
+        self.screen.blit(self.score_text, (300, 720))
         boards = [[Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)] for j in range(4)]
         self.disp = Display(boards, 16 * 3, 12 * 4)
         self.disp.clear()
@@ -68,6 +77,12 @@ class Simulator:
                       name, module in demos}
 
     def _load_game(self, game_name="template"):
+        self.lives_text = self.text_font.render("LIVES: " +
+                                                self.lives_prev, False, (0, 0, 0), (0, 0, 0))
+        self.screen.blit(self.lives_text, (0, 720))
+        self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
+        self.screen.blit(self.score_text, (300, 720))
+
         self.game = getattr(self.demos[game_name], "_".join([word.capitalize() for word in game_name.split("_")]))(
             self.input_q,
             self.output_q,
@@ -98,7 +113,7 @@ class Simulator:
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
                 onClick=lambda a: self._load_game(a),  # Function to call when clicked on
-                onClickParams=[(key)]
+                onClickParams=[key]
             )
 
     def _generate_buttons(self):
@@ -142,6 +157,14 @@ class Simulator:
                     # If the Esc key is pressed, then exit the main loop
                     if event.key == K_ESCAPE:
                         running = False
+                    if event.key == K_LEFT:
+                        self.input_q.put("l")
+                    if event.key == K_UP:
+                        self.input_q.put("u")
+                    if event.key == K_RIGHT:
+                        self.input_q.put("r")
+                    if event.key == K_DOWN:
+                        self.input_q.put("d")
 
                 # Check for QUIT event. If QUIT, then set running to false.
                 elif event.type == QUIT:
@@ -153,7 +176,23 @@ class Simulator:
             # Draw the player on the screen
             next(self.game_runner)
             self.input_q.queue.clear()
-            self.output_q.queue.clear()
+            while not self.output_q.empty():
+                # parse the message
+                msg = self.output_q.get()
+                msg_type, msg_content = msg.split(" ", maxsplit=1)
+                if msg_type == "LIVES":
+                    self.lives_text = self.text_font.render("LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0))
+                    self.screen.blit(self.lives_text, (0, 720))
+                    self.lives_text = self.text_font.render("LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0))
+                    self.lives_prev = msg_content
+                    self.screen.blit(self.lives_text, (0, 720))
+                if msg_type == "SCORE":
+                    self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
+                    self.screen.blit(self.score_text, (300, 720))
+                    self.score_text = self.text_font.render("SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0))
+                    self.score_prev = msg_content
+                    self.screen.blit(self.score_text, (300, 720))
+
             # Update the display
             # screen.blit(button_surface, (25 * 48, 0))
             pygame_widgets.update(events)
@@ -163,7 +202,7 @@ class Simulator:
 
 
 def main():
-    sim = Simulator(25 * 48 + 150, 30 * 24)
+    sim = Simulator(25 * 48 + 150, 30 * 24 + 30)
     sim.start()
 
 

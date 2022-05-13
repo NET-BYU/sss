@@ -16,7 +16,7 @@ class Snake_Ai:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 30
+        self.frame_rate = 60
         self.demo_time = 600  # None for a game
 
         self.input_queue = input_queue
@@ -111,7 +111,7 @@ class Snake_Ai:
                     self.snek_length += 1
 
                     # Publish score to output
-                    self.output_queue.put("SCORE: " + str(self.snek_length))
+                    self.output_queue.put("SCORE " + str(self.snek_length))
                     logger.info("SCORE: " + str(self.snek_length))
 
                     # calc new food location and draw on screen
@@ -158,7 +158,7 @@ class Snake_Ai:
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
 
-                    self.output_queue("LIVES: Game Over")
+                    self.output_queue.put("LIVES Game Over")
 
                     continue
 
@@ -203,6 +203,7 @@ class Snake_Ai:
                 )
             self.screen.push()
             logger.info("Game over screen printed")
+            self.output_queue.put("LIVES Game Over")
             # draw this stuff to the screen and await next update
             yield
 
@@ -232,6 +233,7 @@ class Snake_Ai:
                 game_state,
                 self.snek_length,
             )
+            self.screen.clear()
 
             # draw snek part
             self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -250,6 +252,8 @@ class Snake_Ai:
                 self.screen.x_width - 3 - 8, 0, "H-SCORE " + str(self.h_score).zfill(3)
             )
             self.screen.draw_text(self.screen.x_width // 2 - 2, 0, "SNAKE", push=True)
+            self.output_queue.put("SCORE                        ")
+            self.output_queue.put("LIVES                        ")
             # draw new snake in reset spot and get ready to start moving again
             yield
 
