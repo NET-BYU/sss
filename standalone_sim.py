@@ -152,6 +152,8 @@ class Simulator:
 
             # Draw the player on the screen
             next(self.game_runner)
+            self.input_q.queue.clear()
+            self.output_q.queue.clear()
             # Update the display
             # screen.blit(button_surface, (25 * 48, 0))
             pygame_widgets.update(events)

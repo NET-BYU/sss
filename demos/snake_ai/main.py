@@ -16,8 +16,8 @@ class Snake_Ai:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 10
-        self.demo_time = 300  # None for a game
+        self.frame_rate = 30
+        self.demo_time = 600  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -101,11 +101,13 @@ class Snake_Ai:
                         self.snek_length,
                     )
                 current_location = snek_path.pop(0)
+                # logger.info(str(current_location) + " " + str(current_food_location))
                 # game_state.add_snake_part(current_location)
                 game_state.add_snake_part2(current_location)
 
                 # check food situation
                 if current_food_location == current_location:
+                    logger.info("found some food")
                     self.snek_length += 1
 
                     # Publish score to output
@@ -124,6 +126,7 @@ class Snake_Ai:
                         game_state,
                         self.snek_length,
                     )
+                    logger.info("found new snake path")
 
                     if snek_path is None or len(snek_path) == 0:
                         logger.info("Path was zero, no solution?")
@@ -162,6 +165,7 @@ class Snake_Ai:
                 # draw snek part and flush updates to the screen
                 self.screen.draw_pixel(current_location[0], current_location[1], 15)
                 self.screen.push()
+                # logger.info("yielding")
                 # yield here await next tick
                 yield
 
