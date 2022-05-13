@@ -5,7 +5,6 @@ from pygame_widgets.button import Button
 from pathlib import Path
 from loguru import logger
 from importlib import import_module, reload
-from copy import deepcopy
 from display.game_display import Display
 from queue import Queue, Empty
 from pygame.locals import (
@@ -115,7 +114,7 @@ class Simulator:
             text='RELOAD',  # Text to display
             fontSize=50,  # Size of font
             margin=20,  # Minimum distance between text/image and edge of button
-            inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+            inactiveColour=(255, 165, 0),  # Colour of button when not being interacted with
             hoverColour=(150, 0, 0),  # Colour of button when being hovered over
             pressedColour=(0, 200, 20),  # Colour of button when being clicked
             radius=20,  # Radius of border corners (leave empty for not curved)
