@@ -5,3 +5,4 @@ __pycache__
 *.log
 .venv
 creds.yaml
+.idea/
