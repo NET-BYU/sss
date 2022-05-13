@@ -3,8 +3,9 @@ import pygame
 import pygame_widgets
 from pygame_widgets.button import Button
 from pathlib import Path
-import loguru as logger
+from loguru import logger
 from importlib import import_module, reload
+from copy import deepcopy
 from display.game_display import Display
 from queue import Queue, Empty
 from pygame.locals import (
@@ -33,8 +34,10 @@ class Simulator:
         boards = [[Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)] for j in range(4)]
         self.disp = Display(boards, 16 * 3, 12 * 4)
         self.disp.clear()
+        self._generate_buttons()
         self.demos = {}
         self._reload_demos()
+        self.repopulate()
         self._load_game()
 
     @staticmethod
@@ -59,11 +62,11 @@ class Simulator:
 
         # Convert to module notation
         demos = [(d, str(d).replace("/", ".").replace("\\", ".") + ".main") for d in demos]
-        return {str(name)[6:]: self._reload_module(self.demos[str(name)[6:]]) if str(name)[
-                                                                                 6:] in self.demos else self._import_module(
+        self.demos = {str(name)[6:]: self._reload_module(self.demos[str(name)[6:]]) if str(name)[
+                                                                                       6:] in self.demos else self._import_module(
             module)
-                for
-                name, module in demos}
+                      for
+                      name, module in demos}
 
     def _load_game(self, game_name="template"):
         self.game = getattr(self.demos[game_name], "_".join([word.capitalize() for word in game_name.split("_")]))(
@@ -74,11 +77,30 @@ class Simulator:
         self.disp.clear()
 
     def repopulate(self):
+        self._reload_demos()
         # for i in range(1, (self.height - 50) // 50):
         #     self.buttons[i].set("text", )
         for index, key in enumerate(self.demos.keys()):
-            self.buttons[index + 1].text = str(key)
-            self.buttons[index + 1].onClick = lambda: self._load_game(str(key))
+            # print(index, str(key))
+            self.buttons[index + 1] = Button(
+                # Mandatory Parameters
+                self.screen,  # Surface to place button on
+                25 * 48,  # X-coordinate of top left corner
+                (index + 1) * 51,  # Y-coordinate of top left corner
+                150,  # Width
+                50,  # Height
+
+                # Optional Parameters
+                text=str(key),  # Text to display
+                fontSize=50,  # Size of font
+                margin=20,  # Minimum distance between text/image and edge of button
+                inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                pressedColour=(0, 200, 20),  # Colour of button when being clicked
+                radius=20,  # Radius of border corners (leave empty for not curved)
+                onClick=lambda a: self._load_game(a),  # Function to call when clicked on
+                onClickParams=[(key)]
+            )
 
     def _generate_buttons(self):
         self.buttons = [Button(
@@ -101,7 +123,7 @@ class Simulator:
         )]
         for i in range((self.height - 50) // 50):
             self.buttons.append(
-                Button(self.screen, 25 * 48, i * 50 + 50, 150, 50, fontSize=50, margin=20, inactiveColour=(200, 50, 0),
+                Button(self.screen, 25 * 48, i * 51 + 51, 150, 50, fontSize=50, margin=20, inactiveColour=(200, 50, 0),
                        # Colour of button when not being interacted with
                        hoverColour=(150, 0, 0),  # Colour of button when being hovered over
                        pressedColour=(0, 200, 20),  # Colour of button when being clicked
@@ -142,3 +164,7 @@ class Simulator:
 def main():
     sim = Simulator(25 * 48 + 150, 30 * 24)
     sim.start()
+
+
+if __name__ == "__main__":
+    main()
