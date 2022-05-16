@@ -231,7 +231,7 @@ class Display:
             self.push()
 
     def draw_text(self, x, y, msg, combine=True, push=False):
-        """Print a message to the screen
+        """Print a message to the screen, y_height-2 is lowest y value accepted without error
 
         x -- x coordinate
         y -- y coordinate

@@ -100,7 +100,6 @@ class Simulator:
         # create lists to display demos better
         for index, key in enumerate(self.demos.keys()):
             if index % 13 == 0:
-                print("new page:",index)
                 self.demo_lst.append([])
             self.demo_lst[-1].append(key)
         self.demo_list_index = 0
