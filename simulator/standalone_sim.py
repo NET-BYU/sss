@@ -40,29 +40,39 @@ class Simulator:
         self.width = width
         self.height = height
         self.demo_dir = demo_dir
+
+        # Pygame variables
         pygame.init()
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.screen.fill((0, 0, 0))
         self.refresh = pygame.display.flip
+
+        # input and output queues
         self.input_q = Queue(10)
         self.output_q = Queue(10)
+
+        # drawing of the output queue
         self.text_font = pygame.font.SysFont("arial", 32)
         self.lives_text = self.text_font.render("LIVES: ", False, (255, 165, 0), (0, 0, 0))
         self.score_text = self.text_font.render("SCORE: ", False, (255, 165, 0), (0, 0, 0))
         self.lives_prev = ""
         self.score_prev = ""
-        # self.lives_text_rect = self.lives_text.get_rect()
-        # self.lives_text_rect.center = (self.width // 2, self.height - 50)
         self.screen.blit(self.lives_text, (0, 720))
         self.screen.blit(self.score_text, (300, 720))
+
+        # get simulator screen
         boards = [[Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)] for j in range(4)]
         self.disp = Display(boards, 16 * 3, 12 * 4)
+
+        # variables for hot loadable demos
         self.demo_lst = []
         self.demo_list_index = 0
+        self.demos = {}
+
+        # set up the start display
         self.disp.clear()
         self._generate_buttons()
-        self.demos = {}
         self._reload_demos()
         self.game = getattr(self.demos["template"], "_".join([word.capitalize() for word in "template".split("_")]))(
             self.input_q,
@@ -73,15 +83,18 @@ class Simulator:
 
     @staticmethod
     def _import_module(module):
+        # First time loading of the demo module
         logger.info(f"Loading {module}")
         return import_module(module)
 
     @staticmethod
     def _reload_module(module):
+        # Hot reload the demo module
         logger.info(f"Reloading {module}")
         return reload(module) 
 
     def _reload_demos(self):
+        # Hot load all the demos in the demo folder
         logger.info("Loading demos...")
         demo_path = Path(self.demo_dir)
 
@@ -101,6 +114,7 @@ class Simulator:
         self._repopulate_demo_list()
 
     def _repopulate_demo_list(self):
+        # if there are more than 13 demos break them up into different pages
         self.demo_lst.clear()
         # create lists to display demos better
         for index, key in enumerate(self.demos.keys()):
@@ -110,13 +124,17 @@ class Simulator:
         self.demo_list_index = 0
 
     def _load_game(self, game_name="template"):
+        # clear the output queue stuff on the screen
         self.lives_text = self.text_font.render("LIVES: " +
                                                 self.lives_prev, False, (0, 0, 0), (0, 0, 0))
         self.screen.blit(self.lives_text, (0, 720))
         self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
         self.screen.blit(self.score_text, (300, 720))
+
+        # stop the current game
         self.game.stop()
 
+        # load the new class and get new runner
         self.game = getattr(self.demos[game_name], "_".join([word.capitalize() for word in game_name.split("_")]))(
             self.input_q,
             self.output_q,
@@ -125,31 +143,8 @@ class Simulator:
         self.disp.clear()
 
     def repopulate(self):
+        # Hot load demos and populate selection buttons on the screen
         self._reload_demos()
-        # for i in range(1, (self.height - 50) // 50):
-        #     self.buttons[i].set("text", )
-        # for index, key in enumerate(self.demos.keys()):
-        #     # print(index, str(key))
-        #     self.buttons[index + 1] = Button(
-        #         # Mandatory Parameters
-        #         self.screen,  # Surface to place button on
-        #         25 * 48,  # X-coordinate of top left corner
-        #         (index + 1) * 51,  # Y-coordinate of top left corner
-        #         150,  # Width
-        #         50,  # Height
-
-        #         # Optional Parameters
-        #         text=str(key),  # Text to display
-        #         fontSize=20,  # Size of font
-        #         margin=20,  # Minimum distance between text/image and edge of button
-        #         inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
-        #         hoverColour=(150, 0, 0),  # Colour of button when being hovered over
-        #         pressedColour=(0, 200, 20),  # Colour of button when being clicked
-        #         radius=20,  # Radius of border corners (leave empty for not curved)
-        #         onClick=lambda a: self._load_game(a),  # Function to call when clicked on
-        #         onClickParams=[key]
-        #     )
-        
         for index in range(13):
             if index >= len(self.demo_lst[self.demo_list_index]):
                 text_str = ""
@@ -177,6 +172,7 @@ class Simulator:
                 onClickParams=[key])
 
     def _update_page_count(self):
+        # update which demo buttons are displayed
         self.demo_list_index += 1
         if self.demo_list_index >= len(self.demo_lst):
             self.demo_list_index = 0
@@ -207,6 +203,7 @@ class Simulator:
                 onClickParams=[key])
 
     def _generate_buttons(self):
+        # first drawing of the buttons on the screen.
         self.buttons = [Button(
             # Mandatory Parameters
             self.screen,  # Surface to place button on
@@ -252,6 +249,7 @@ class Simulator:
         ))
 
     def start(self):
+        # main pygame loop
         # Variable to keep the main loop running
         running = True
 
@@ -260,7 +258,7 @@ class Simulator:
             # for loop through the event queue
             events = pygame.event.get()
             for event in events:
-                # Check for KEYDOWN event
+                # Check for KEYDOWN event and pass into input queue
                 if event.type == KEYDOWN:
                     # If the Esc key is pressed, then exit the main loop
                     if event.key == K_ESCAPE:
@@ -273,6 +271,7 @@ class Simulator:
                         self.input_q.put("RIGHT_P")
                     elif event.key == K_DOWN:
                         self.input_q.put("DOWN_P")
+                # check for KEYUP event and pass into input queue
                 if event.type == KEYUP:
                     if event.key == K_LEFT:
                         self.input_q.put("LEFT_R")
@@ -287,12 +286,12 @@ class Simulator:
                 elif event.type == QUIT:
                     running = False
 
-            # Fill the screen with black
-            # screen.fill((0, 0, 0))
 
-            # Draw the player on the screen
+            # Tick the selected game function
             next(self.game_runner)
-            self.input_q.queue.clear()
+            self.input_q.queue.clear() # keep the input queue cleared up
+
+            # Process the output queue completely
             while not self.output_q.empty():
                 # parse the message
                 msg = self.output_q.get()
@@ -310,16 +309,22 @@ class Simulator:
                     self.score_prev = msg_content
                     self.screen.blit(self.score_text, (300, 720))
 
-            # Update the display
-            # screen.blit(button_surface, (25 * 48, 0))
+            # Do the button updates
             pygame_widgets.update(events)
 
+            # draw everything to the screen and sleep until next frame
             self.refresh()
             self.clock.tick(self.game.frame_rate)
 
 
 def main():
-    sim = Simulator(25 * 48 + 150, 30 * 24 + 30,"demos")
+    digit_space_across = 25
+    digits_across = 48
+    digit_space_down = 30
+    digits_down = 24
+    button_space_across = 150
+    button_space_down = 30
+    sim = Simulator(digit_space_across * digits_across + button_space_across, digit_space_down * digits_down + button_space_down,"demos")
     sim.start()
 
 
