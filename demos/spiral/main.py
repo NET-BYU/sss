@@ -1,3 +1,5 @@
+from loguru import logger
+
 class Spiral:
     """This demo that just spirals around"""
 
@@ -6,7 +8,7 @@ class Spiral:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 10
+        self.frame_rate = 200
         self.demo_time = 30  # None for a game
 
         self.input_queue = input_queue
@@ -64,6 +66,14 @@ class Spiral:
             y_in += 1
             across -= 1
             down -= 1
+
+            if across == width / 2:
+                self.screen.clear()
+                x_in = 0
+                y_in = 0
+                across = width
+                down = height
+                continue
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank

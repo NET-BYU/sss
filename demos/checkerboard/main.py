@@ -1,6 +1,6 @@
 
 
-class CheckerBoard:
+class Checkerboard:
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
     # User input is passed through input_queue
