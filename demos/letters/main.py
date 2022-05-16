@@ -17,23 +17,7 @@ class Letters:
         # init demo/game specific variables here
 
     def run(self):
-        # Create generator here
-        # width = 16
-        # height = 6
 
-        # modules = [j for sub in self.screen.board_objects for j in sub]
-        # while True:
-        #     for mod in modules:
-        #         x1 = random.randint(0, width - 1)
-        #         y1 = random.randint(0, height - 1)
-        #         x2 = random.randint(0, width - 1)
-        #         y2 = random.randint(0, height - 1)
-        #         letter1 = chr(random.randint(33, 126))
-        #         # letter2 = chr(random.randint(33, 126))
-        #         mod.letter2(x1, y1, letter1)
-        #         mod.letter2(x2, y2, " ")
-        #         mod.flush()
-        #     yield
         while True:
             for _ in range(4):
                 self.screen.draw_text(random.randint(0,self.screen.x_width-1),random.randint(0,self.screen.y_height-2),chr(random.randint(33, 126)))
