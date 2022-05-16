@@ -1,4 +1,3 @@
-from turtle import Screen
 from demos.snake_ai import snek_state, snek_ai
 import random
 from loguru import logger

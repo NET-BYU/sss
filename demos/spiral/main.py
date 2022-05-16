@@ -1,4 +1,4 @@
-class Sprial:
+class Spiral:
     """This demo that just spirals around"""
 
     # User input is passed through input_queue
