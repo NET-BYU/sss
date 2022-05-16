@@ -16,8 +16,17 @@ SCORE_INC = 5
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"
 
+# with open("creds.yaml") as f:
+#     config = safe_load(f)
 
-class Breakout:
+# MQTT_HOST = config["mqtt"]["host"]
+# MQTT_PORT = config["mqtt"]["port"]
+# MQTT_USERNAME = config["mqtt"]["username"]
+# MQTT_PASSWORD = config["mqtt"]["password"]
+# MQTT_CERT = config["mqtt"]["cert"]
+
+
+class Breakout_Ai:
 
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
@@ -41,8 +50,6 @@ class Breakout:
         self.line_left = 0
         self.line_right = 0
         self.rows = self.level + 2
-        self.start = False
-        self.gameover = False
 
         self.init_screen(screen)
 
@@ -50,11 +57,13 @@ class Breakout:
 
         screen = self.screen
 
+        logger.info("BREAKOUT")
+
         is_left = True
         is_down = True
         # paddle_counter = 0
-        # gameover = False
-        # start = False
+        gameover = False
+        start = False
         repeat_right = False
         repeat_left = False
         score = 0
@@ -68,69 +77,72 @@ class Breakout:
 
         self.level = 1
 
+        # if not ai:
+        #     if mqtt_client.connected:
+        #         mqtt_client.publish(topic=SCORE_TOPIC, payload=score)
+        #         mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+        # else:
+        #     logger.info("MQTT Client is not connected so skipping publications.")
+
         # Waits for user ready
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "BREAKOUT"
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "PRESS START"
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "TO BEGIN"
-        )
-        screen.push()
+        # if not ai:
+        #     screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "BREAKOUT")
+        #     screen.draw_text(
+        #         (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "PRESS START"
+        #     )
+        #     screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "TO BEGIN")
+        #     screen.push()
 
-        while not self.start:
-            if not self.input_queue.empty():
-                input_ = self.input_queue.get(block=False)
-            else:
-                input_ = ""
-            if input_ == "START_R":
-                self.start = True
-            yield
+        #     while not start:
+        #         if not self.input_queue.empty():
+        #             input_ = self.input_queue.get(block=False)
+        #         else:
+        #             input_ = ""
+        #         if input_ == b"start":
+        #             start = True
+        #         elif input_ == b"q":
+        #             start = True
+        #             gameover = True
 
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "        "
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "           "
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "        "
-        )
-        screen.push()
+        #     screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "        ")
+        #     screen.draw_text(
+        #         (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "           "
+        #     )
+        #     screen.draw_text((screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "        ")
+        #     screen.push()
 
         self.init_screen(self.screen)
 
         while True:
-            while not self.gameover:
+            while not gameover:
+
                 if not self.input_queue.empty():
                     input_ = self.input_queue.get(block=False)
                 else:
                     input_ = ""
 
-                if input_ == "START_R":
-                    screen.draw_text(
-                        (screen.x_width // 2) - 3,
-                        (screen.y_height // 2) - 8,
-                        "PAUSED",
-                        push=True,
-                    )
-                    # while True:
-                    #     if not command_queue.empty():
-                    #         input_ = command_queue.get(block=False)
-                    #     else:
-                    #         input_ = ""
-                    #     if input_ == b"start":
-                    #         screen.draw_text(
-                    #             (screen.x_width // 2) - 3,
-                    #             (screen.y_height // 2) - 8,
-                    #             "      ",
-                    #             push=True,
-                    #         )
-                    #         with command_queue.mutex:
-                    #             command_queue.queue.clear()
-                    #         break
+                # if input_ == b"start":
+                #     screen.draw_text(
+                #         (screen.x_width // 2) - 3,
+                #         (screen.y_height // 2) - 8,
+                #         "PAUSED",
+                #         push=True,
+                #     )
+                #     while True:
+                #         if not command_queue.empty():
+                #             input_ = command_queue.get(block=False)
+                #         else:
+                #             input_ = ""
+                #         if input_ == b"start":
+                #             screen.draw_text(
+                #                 (screen.x_width // 2) - 3,
+                #                 (screen.y_height // 2) - 8,
+                #                 "      ",
+                #                 push=True,
+                #             )
+                #             with command_queue.mutex:
+                #                 command_queue.queue.clear()
+                #             break
 
                 if input_ == b"h":
                     repeat_left = True
@@ -145,6 +157,11 @@ class Breakout:
                 elif repeat_right:
                     input_ = b"d"
 
+                if input_ == b"q":
+                    break
+
+                # paddle_counter += 1
+
                 self.output_queue.put("SCORE " + str(score))
                 self.output_queue.put("LIVES " + str(lives))
 
@@ -154,7 +171,11 @@ class Breakout:
                         if self.ball[0] in self.bricks[row]:
                             is_down = not is_down
                             score += SCORE_INC
-                            self.output_queue.put("SCORE " + str(score))
+                            # if not ai:
+                            #     if mqtt_client.connected:
+                            #         mqtt_client.publish(topic=SCORE_TOPIC, payload=score)
+                            #     else:
+                            #         logger.info("MQTT Client is not connected so skipping publications.")
 
                             self.bricks[row].remove(self.ball[0])
                             screen.draw_pixel(self.ball[0], row, PIXEL_OFF)
@@ -169,7 +190,11 @@ class Breakout:
                         self.level += 1
                         if lives <= 4:
                             lives += 1
-                            self.output_queue.put("LIVES " + str(lives))
+                            # if not ai:
+                            # if mqtt_client.connected:
+                            #     mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+                            # else:
+                            #     logger.info("MQTT Client is not connected so skipping publications.")
                         self.init_screen(screen)
 
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_OFF)
@@ -188,53 +213,101 @@ class Breakout:
                         is_down = False
                 if self.ball[1] >= screen.y_height - 1:
                     is_down = True
-                    lives -= 1
-                    self.output_queue.put("LIVES " + str(lives))
+                    # if not ai:
+                    #     lives -= 1
+
+                    #     if mqtt_client.connected:
+                    #         mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)
+                    #     else:
+                    #         logger.info("MQTT Client is not connected so skipping publications.")
 
                     screen.draw_pixel(
                         self.ball[0], self.ball[1], PIXEL_OFF, combine=False, push=True
                     )
                     if lives == 0:
-                        self.gameover = True
+                        gameover = True
                         break
                     self.ball[0] = screen.x_width // 2
                     self.ball[1] = screen.y_height // 2
 
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
 
-                if input_ == "LEFT_P":
-                    if self.paddle[0] != self.line_left + 1:
-                        for val in range(len(self.paddle)):
-                            self.paddle[val] -= 1
-                        screen.draw_pixel(
-                            self.paddle[0],
-                            screen.y_height - 1,
-                            PIXEL_ON,
-                            combine=False,
-                        )
-                        screen.draw_pixel(
-                            self.paddle[-1] + 1,
-                            screen.y_height - 1,
-                            PIXEL_OFF,
-                            combine=False,
-                        )
+                # if paddle_counter >= paddle_speed:
+                #     paddle_counter = 0
 
-                if input_ == "RIGHT_P":
-                    if self.paddle[-1] != self.line_right - 1:
-                        for val in range(len(self.paddle)):
-                            self.paddle[val] += 1
-                        screen.draw_pixel(
-                            self.paddle[0] - 1,
-                            screen.y_height - 1,
-                            PIXEL_OFF,
-                            combine=False,
-                        )
-                        screen.draw_pixel(
-                            self.paddle[-1],
-                            screen.y_height - 1,
-                            PIXEL_ON,
-                            combine=False,
-                        )
+                # if ai:
+                if self.ball[1] >= (screen.y_height // 2):
+                    if is_left:
+                        if self.paddle[0] != self.line_left + 1:
+                            # continue
+                            for val in range(len(self.paddle)):
+                                self.paddle[val] -= 1
+                            screen.draw_pixel(
+                                self.paddle[0],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1] + 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+                    else:
+                        if self.paddle[-1] != self.line_right - 1:
+                            # continue
+                            for val in range(len(self.paddle)):
+                                self.paddle[val] += 1
+                            screen.draw_pixel(
+                                self.paddle[0] - 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
+
+                else:
+                    if input_ == b"a":
+                        if self.paddle[0] != self.line_left + 1:
+                            # continue
+                            for val in range(len(self.paddle)):
+                                self.paddle[val] -= 1
+                            screen.draw_pixel(
+                                self.paddle[0],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1] + 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+
+                    if input_ == b"d":
+                        if self.paddle[-1] != self.line_right - 1:
+                            # continue
+                            for val in range(len(self.paddle)):
+                                self.paddle[val] += 1
+                            screen.draw_pixel(
+                                self.paddle[0] - 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
 
                 # Handle the ball
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_ON)
@@ -243,8 +316,7 @@ class Breakout:
                 yield
 
     def stop(self):
-        self.start = True
-        self.gameover = True
+        pass
 
     def init_screen(self, screen):
 

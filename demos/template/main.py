@@ -26,3 +26,6 @@ class Template:
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
+
+    def get_input_buff(self):
+        return list(self.input_queue)
