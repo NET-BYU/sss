@@ -28,4 +28,5 @@ class Template:
         pass
 
     def get_input_buff(self):
-        return list(self.input_queue)
+        # Get all input off the queue
+        return list(self.input_queue.queue)
