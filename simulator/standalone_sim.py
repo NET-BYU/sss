@@ -3,16 +3,16 @@ import sys
 
 import sys
 import os
-  
+
 # getting the name of the directory
 # where the this file is present.
 current = os.path.dirname(os.path.realpath(__file__))
-  
+
 # Getting the parent directory name
 # where the current directory is present.
 parent = os.path.dirname(current)
-  
-# adding the parent directory to 
+
+# adding the parent directory to
 # the sys.path.
 sys.path.append(parent)
 import pygame
@@ -29,6 +29,7 @@ from pygame.locals import (
     K_LEFT,
     K_RIGHT,
     K_ESCAPE,
+    K_RETURN,
     KEYDOWN,
     KEYUP,
     QUIT,
@@ -54,15 +55,20 @@ class Simulator:
 
         # drawing of the output queue
         self.text_font = pygame.font.SysFont("arial", 32)
-        self.lives_text = self.text_font.render("LIVES: ", False, (255, 165, 0), (0, 0, 0))
-        self.score_text = self.text_font.render("SCORE: ", False, (255, 165, 0), (0, 0, 0))
+        self.lives_text = self.text_font.render(
+            "LIVES: ", False, (255, 165, 0), (0, 0, 0)
+        )
+        self.score_text = self.text_font.render(
+            "SCORE: ", False, (255, 165, 0), (0, 0, 0)
+        )
         self.lives_prev = ""
         self.score_prev = ""
         self.screen.blit(self.lives_text, (0, 720))
         self.screen.blit(self.score_text, (300, 720))
-
-        # get simulator screen
-        boards = [[Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)] for j in range(4)]
+        boards = [
+            [Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)]
+            for j in range(4)
+        ]
         self.disp = Display(boards, 16 * 3, 12 * 4)
 
         # variables for hot loadable demos
@@ -74,10 +80,10 @@ class Simulator:
         self.disp.clear()
         self._generate_buttons()
         self._reload_demos()
-        self.game = getattr(self.demos["template"], "_".join([word.capitalize() for word in "template".split("_")]))(
-            self.input_q,
-            self.output_q,
-            self.disp)
+        self.game = getattr(
+            self.demos["template"],
+            "_".join([word.capitalize() for word in "template".split("_")]),
+        )(self.input_q, self.output_q, self.disp)
         self.repopulate()
         self._load_game()
 
@@ -91,7 +97,7 @@ class Simulator:
     def _reload_module(module):
         # Hot reload the demo module
         logger.info(f"Reloading {module}")
-        return reload(module) 
+        return reload(module)
 
     def _reload_demos(self):
         # Hot load all the demos in the demo folder
@@ -105,12 +111,15 @@ class Simulator:
         demos = (d for d in demos if (d / "main.py").exists())
 
         # Convert to module notation
-        demos = [(d, str(d).replace("/", ".").replace("\\", ".") + ".main") for d in demos]
-        self.demos = {str(name)[6:]: self._reload_module(self.demos[str(name)[6:]]) if str(name)[
-                                                                                       6:] in self.demos else self._import_module(
-            module)
-                      for
-                      name, module in demos}
+        demos = [
+            (d, str(d).replace("/", ".").replace("\\", ".") + ".main") for d in demos
+        ]
+        self.demos = {
+            str(name)[6:]: self._reload_module(self.demos[str(name)[6:]])
+            if str(name)[6:] in self.demos
+            else self._import_module(module)
+            for name, module in demos
+        }
         self._repopulate_demo_list()
 
     def _repopulate_demo_list(self):
@@ -124,27 +133,52 @@ class Simulator:
         self.demo_list_index = 0
 
     def _load_game(self, game_name="template"):
-        # clear the output queue stuff on the screen
-        self.lives_text = self.text_font.render("LIVES: " +
-                                                self.lives_prev, False, (0, 0, 0), (0, 0, 0))
+        self.lives_text = self.text_font.render(
+            "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
+        )
         self.screen.blit(self.lives_text, (0, 720))
-        self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
+        self.score_text = self.text_font.render(
+            "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
+        )
         self.screen.blit(self.score_text, (300, 720))
 
         # stop the current game
         self.game.stop()
 
-        # load the new class and get new runner
-        self.game = getattr(self.demos[game_name], "_".join([word.capitalize() for word in game_name.split("_")]))(
-            self.input_q,
-            self.output_q,
-            self.disp)
+        self.game = getattr(
+            self.demos[game_name],
+            "_".join([word.capitalize() for word in game_name.split("_")]),
+        )(self.input_q, self.output_q, self.disp)
         self.game_runner = self.game.run()
         self.disp.clear()
 
     def repopulate(self):
         # Hot load demos and populate selection buttons on the screen
         self._reload_demos()
+        # for i in range(1, (self.height - 50) // 50):
+        #     self.buttons[i].set("text", )
+        # for index, key in enumerate(self.demos.keys()):
+        #     # print(index, str(key))
+        #     self.buttons[index + 1] = Button(
+        #         # Mandatory Parameters
+        #         self.screen,  # Surface to place button on
+        #         25 * 48,  # X-coordinate of top left corner
+        #         (index + 1) * 51,  # Y-coordinate of top left corner
+        #         150,  # Width
+        #         50,  # Height
+
+        #         # Optional Parameters
+        #         text=str(key),  # Text to display
+        #         fontSize=20,  # Size of font
+        #         margin=20,  # Minimum distance between text/image and edge of button
+        #         inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+        #         hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+        #         pressedColour=(0, 200, 20),  # Colour of button when being clicked
+        #         radius=20,  # Radius of border corners (leave empty for not curved)
+        #         onClick=lambda a: self._load_game(a),  # Function to call when clicked on
+        #         onClickParams=[key]
+        #     )
+
         for index in range(13):
             if index >= len(self.demo_lst[self.demo_list_index]):
                 text_str = ""
@@ -159,17 +193,23 @@ class Simulator:
                 (index + 1) * 51,  # Y-coordinate of top left corner
                 150,  # Width
                 50,  # Height
-
                 # Optional Parameters
                 text=str(text_str),  # Text to display
                 fontSize=20,  # Size of font
                 margin=20,  # Minimum distance between text/image and edge of button
-                inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+                inactiveColour=(
+                    200,
+                    50,
+                    0,
+                ),  # Colour of button when not being interacted with
                 hoverColour=(150, 0, 0),  # Colour of button when being hovered over
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
-                onClick=lambda a: self._load_game(a),  # Function to call when clicked on
-                onClickParams=[key])
+                onClick=lambda a: self._load_game(
+                    a
+                ),  # Function to call when clicked on
+                onClickParams=[key],
+            )
 
     def _update_page_count(self):
         # update which demo buttons are displayed
@@ -190,63 +230,88 @@ class Simulator:
                 (index + 1) * 51,  # Y-coordinate of top left corner
                 150,  # Width
                 50,  # Height
-
                 # Optional Parameters
                 text=str(text_str),  # Text to display
                 fontSize=20,  # Size of font
                 margin=20,  # Minimum distance between text/image and edge of button
-                inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+                inactiveColour=(
+                    200,
+                    50,
+                    0,
+                ),  # Colour of button when not being interacted with
                 hoverColour=(150, 0, 0),  # Colour of button when being hovered over
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
-                onClick=lambda a: self._load_game(a),  # Function to call when clicked on
-                onClickParams=[key])
+                onClick=lambda a: self._load_game(
+                    a
+                ),  # Function to call when clicked on
+                onClickParams=[key],
+            )
 
     def _generate_buttons(self):
-        # first drawing of the buttons on the screen.
-        self.buttons = [Button(
-            # Mandatory Parameters
-            self.screen,  # Surface to place button on
-            25 * 48,  # X-coordinate of top left corner
-            0,  # Y-coordinate of top left corner
-            150,  # Width
-            50,  # Height
-
-            # Optional Parameters
-            text='RELOAD',  # Text to display
-            fontSize=20,  # Size of font
-            margin=20,  # Minimum distance between text/image and edge of button
-            inactiveColour=(255, 165, 0),  # Colour of button when not being interacted with
-            hoverColour=(150, 0, 0),  # Colour of button when being hovered over
-            pressedColour=(0, 200, 20),  # Colour of button when being clicked
-            radius=20,  # Radius of border corners (leave empty for not curved)
-            onClick=lambda: self.repopulate()  # Function to call when clicked on
-        )]
+        self.buttons = [
+            Button(
+                # Mandatory Parameters
+                self.screen,  # Surface to place button on
+                25 * 48,  # X-coordinate of top left corner
+                0,  # Y-coordinate of top left corner
+                150,  # Width
+                50,  # Height
+                # Optional Parameters
+                text="RELOAD",  # Text to display
+                fontSize=20,  # Size of font
+                margin=20,  # Minimum distance between text/image and edge of button
+                inactiveColour=(
+                    255,
+                    165,
+                    0,
+                ),  # Colour of button when not being interacted with
+                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                pressedColour=(0, 200, 20),  # Colour of button when being clicked
+                radius=20,  # Radius of border corners (leave empty for not curved)
+                onClick=lambda: self.repopulate(),  # Function to call when clicked on
+            )
+        ]
         for i in range(13):
             self.buttons.append(
-                Button(self.screen, 25 * 48, i * 51 + 51, 150, 50, fontSize=50, margin=20, inactiveColour=(200, 50, 0),
-                       # Colour of button when not being interacted with
-                       hoverColour=(150, 0, 0),  # Colour of button when being hovered over
-                       pressedColour=(0, 200, 20),  # Colour of button when being clicked
-                       radius=20, ))
-        self.buttons.append(Button(
-            # Mandatory Parameters
-            self.screen,  # Surface to place button on
-            25 * 48,  # X-coordinate of top left corner
-            51+13*51,  # Y-coordinate of top left corner
-            150,  # Width
-            35,  # Height
-
-            # Optional Parameters
-            text='MORE',  # Text to display
-            fontSize=20,  # Size of font
-            margin=20,  # Minimum distance between text/image and edge of button
-            inactiveColour=(255, 165, 0),  # Colour of button when not being interacted with
-            hoverColour=(150, 0, 0),  # Colour of button when being hovered over
-            pressedColour=(0, 200, 20),  # Colour of button when being clicked
-            radius=20,  # Radius of border corners (leave empty for not curved)
-            onClick=lambda: self._update_page_count()  # Function to call when clicked on
-        ))
+                Button(
+                    self.screen,
+                    25 * 48,
+                    i * 51 + 51,
+                    150,
+                    50,
+                    fontSize=50,
+                    margin=20,
+                    inactiveColour=(200, 50, 0),
+                    # Colour of button when not being interacted with
+                    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                    pressedColour=(0, 200, 20),  # Colour of button when being clicked
+                    radius=20,
+                )
+            )
+        self.buttons.append(
+            Button(
+                # Mandatory Parameters
+                self.screen,  # Surface to place button on
+                25 * 48,  # X-coordinate of top left corner
+                51 + 13 * 51,  # Y-coordinate of top left corner
+                150,  # Width
+                35,  # Height
+                # Optional Parameters
+                text="MORE",  # Text to display
+                fontSize=20,  # Size of font
+                margin=20,  # Minimum distance between text/image and edge of button
+                inactiveColour=(
+                    255,
+                    165,
+                    0,
+                ),  # Colour of button when not being interacted with
+                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                pressedColour=(0, 200, 20),  # Colour of button when being clicked
+                radius=20,  # Radius of border corners (leave empty for not curved)
+                onClick=lambda: self._update_page_count(),  # Function to call when clicked on
+            )
+        )
 
     def start(self):
         # main pygame loop
@@ -271,7 +336,9 @@ class Simulator:
                         self.input_q.put("RIGHT_P")
                     elif event.key == K_DOWN:
                         self.input_q.put("DOWN_P")
-                # check for KEYUP event and pass into input queue
+                    # check for KEYUP event and pass into input queue
+                    elif event.key == K_RETURN:
+                        self.input_q.put("START_P")
                 if event.type == KEYUP:
                     if event.key == K_LEFT:
                         self.input_q.put("LEFT_R")
@@ -281,15 +348,16 @@ class Simulator:
                         self.input_q.put("RIGHT_R")
                     elif event.key == K_DOWN:
                         self.input_q.put("DOWN_R")
+                    elif event.key == K_RETURN:
+                        self.input_q.put("START_R")
 
                 # Check for QUIT event. If QUIT, then set running to false.
                 elif event.type == QUIT:
                     running = False
 
-
             # Tick the selected game function
             next(self.game_runner)
-            self.input_q.queue.clear() # keep the input queue cleared up
+            self.input_q.queue.clear()  # keep the input queue cleared up
 
             # Process the output queue completely
             while not self.output_q.empty():
@@ -297,15 +365,23 @@ class Simulator:
                 msg = self.output_q.get()
                 msg_type, msg_content = msg.split(" ", maxsplit=1)
                 if msg_type == "LIVES":
-                    self.lives_text = self.text_font.render("LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0))
+                    self.lives_text = self.text_font.render(
+                        "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
+                    )
                     self.screen.blit(self.lives_text, (0, 720))
-                    self.lives_text = self.text_font.render("LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0))
+                    self.lives_text = self.text_font.render(
+                        "LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0)
+                    )
                     self.lives_prev = msg_content
                     self.screen.blit(self.lives_text, (0, 720))
                 if msg_type == "SCORE":
-                    self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
+                    self.score_text = self.text_font.render(
+                        "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
+                    )
                     self.screen.blit(self.score_text, (300, 720))
-                    self.score_text = self.text_font.render("SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0))
+                    self.score_text = self.text_font.render(
+                        "SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0)
+                    )
                     self.score_prev = msg_content
                     self.screen.blit(self.score_text, (300, 720))
 
@@ -318,13 +394,7 @@ class Simulator:
 
 
 def main():
-    digit_space_across = 25
-    digits_across = 48
-    digit_space_down = 30
-    digits_down = 24
-    button_space_across = 150
-    button_space_down = 30
-    sim = Simulator(digit_space_across * digits_across + button_space_across, digit_space_down * digits_down + button_space_down,"demos")
+    sim = Simulator(25 * 48 + 150, 30 * 24 + 30, "demos")
     sim.start()
 
 

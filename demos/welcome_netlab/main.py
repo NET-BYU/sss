@@ -1,14 +1,3 @@
-TOP_SIDE_Y_OFFSET = 5
-BOTTOM_Y_OFFSET = 17
-HEX_SIDE_HEIGHT = 8
-HEX_HALF_WIDTH = 6
-HEX_HALF_HEIGHT = 8
-PIXEL_FULL = 0xF
-PIXEL_BOTTOM = 0x1
-PIXEL_LEFT = 0x2
-PIXEL_TOP = 0x4
-PIXEL_RIGHT = 0x8
-
 PIXEL_FULL = 0xF
 PIXEL_BOTTOM = 0x1
 PIXEL_LEFT = 0x2
@@ -80,7 +69,6 @@ class Welcome_Netlab:
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-
 
 
 # class Welcome_Netlab:

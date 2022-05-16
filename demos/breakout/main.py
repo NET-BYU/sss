@@ -1,7 +1,6 @@
 from random import getrandbits
 from loguru import logger
 
-SCREEN_X = 48
 ARENA_START = 14
 ARENA_END = ARENA_START - 15
 LEFT_KEY = 0x61
@@ -13,8 +12,6 @@ PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
 BALL_SPEED = 0
 SCORE_INC = 5
-LIFE_TOPIC = "byu_sss/output/lives"
-SCORE_TOPIC = "byu_sss/output/score"
 
 
 class Breakout:
@@ -26,7 +23,7 @@ class Breakout:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 25
+        self.frame_rate = 20
         self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
@@ -46,27 +43,22 @@ class Breakout:
 
         self.init_screen(screen)
 
+    def get_input_buff(self):
+        # Get all input off the queue
+        return list(self.input_queue.queue)
+
     def run(self):
 
         screen = self.screen
 
         is_left = True
         is_down = True
-        # paddle_counter = 0
-        # gameover = False
-        # start = False
         repeat_right = False
         repeat_left = False
         score = 0
-        # speed = BALL_SPEED
         spin = 1
-        # if not ai:
-        #     paddle_speed = BALL_SPEED // 2
-        # else:
-        # paddle_speed = BALL_SPEED
         lives = 5
-
-        self.level = 1
+        restart_count = 10
 
         # Waits for user ready
         screen.draw_text(
@@ -85,7 +77,7 @@ class Breakout:
                 input_ = self.input_queue.get(block=False)
             else:
                 input_ = ""
-            if input_ == "START_R":
+            if input_ == "START_P":
                 self.start = True
             yield
 
@@ -105,45 +97,43 @@ class Breakout:
         while True:
             while not self.gameover:
                 if not self.input_queue.empty():
-                    input_ = self.input_queue.get(block=False)
-                else:
-                    input_ = ""
 
-                if input_ == "START_R":
-                    screen.draw_text(
-                        (screen.x_width // 2) - 3,
-                        (screen.y_height // 2) - 8,
-                        "PAUSED",
-                        push=True,
-                    )
-                    # while True:
-                    #     if not command_queue.empty():
-                    #         input_ = command_queue.get(block=False)
-                    #     else:
-                    #         input_ = ""
-                    #     if input_ == b"start":
-                    #         screen.draw_text(
-                    #             (screen.x_width // 2) - 3,
-                    #             (screen.y_height // 2) - 8,
-                    #             "      ",
-                    #             push=True,
-                    #         )
-                    #         with command_queue.mutex:
-                    #             command_queue.queue.clear()
-                    #         break
+                    for keypress in self.get_input_buff():
 
-                if input_ == b"h":
-                    repeat_left = True
-                elif input_ == b"hh":
-                    repeat_left = False
-                elif input_ == b"k":
-                    repeat_right = True
-                elif input_ == b"kk":
-                    repeat_right = False
-                if repeat_left:
-                    input_ = b"a"
-                elif repeat_right:
-                    input_ = b"d"
+                        if keypress == "LEFT_P":
+                            repeat_left = True
+                        if keypress == "LEFT_R":
+                            repeat_left = False
+                        if keypress == "RIGHT_P":
+                            repeat_right = True
+                        if keypress == "RIGHT_R":
+                            repeat_right = False
+
+                        if keypress == "START_P":
+                            screen.draw_text(
+                                (screen.x_width // 2) - 3,
+                                (screen.y_height // 2) - 8,
+                                "PAUSED",
+                                push=True,
+                            )
+                            self.input_queue.queue.clear()
+                            # input_ = ""
+                            unpause = False
+                            while not unpause:
+                                if not self.input_queue.empty():
+                                    for keypress in self.get_input_buff():
+                                        if keypress == "START_P":
+                                            screen.draw_text(
+                                                (screen.x_width // 2) - 3,
+                                                (screen.y_height // 2) - 8,
+                                                "      ",
+                                                push=True,
+                                            )
+                                            unpause = True
+                                            break
+                                yield
+
+                    logger.debug(str(self.get_input_buff()))
 
                 self.output_queue.put("SCORE " + str(score))
                 self.output_queue.put("LIVES " + str(lives))
@@ -184,12 +174,17 @@ class Breakout:
                 if self.ball[1] == screen.y_height - 2:
                     if self.ball[0] in self.paddle:
                         spin, is_left = self.get_angle(self.paddle)
-                        self.frame_rate = self.frame_rate * spin // (1 + spin // 2)
+                        self.frame_rate = self.frame_rate * spin // (1 + spin // 10)
                         is_down = False
                 if self.ball[1] >= screen.y_height - 1:
                     is_down = True
                     lives -= 1
+                    self.frame_rate = 20
                     self.output_queue.put("LIVES " + str(lives))
+                    restart_count = 10
+                    # while restart_count > 0:
+                    #     restart_count -= 1
+                    #     yield
 
                     screen.draw_pixel(
                         self.ball[0], self.ball[1], PIXEL_OFF, combine=False, push=True
@@ -202,7 +197,7 @@ class Breakout:
 
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
 
-                if input_ == "LEFT_P":
+                if repeat_left:
                     if self.paddle[0] != self.line_left + 1:
                         for val in range(len(self.paddle)):
                             self.paddle[val] -= 1
@@ -219,7 +214,7 @@ class Breakout:
                             combine=False,
                         )
 
-                if input_ == "RIGHT_P":
+                if repeat_right:
                     if self.paddle[-1] != self.line_right - 1:
                         for val in range(len(self.paddle)):
                             self.paddle[val] += 1
@@ -238,9 +233,36 @@ class Breakout:
 
                 # Handle the ball
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_ON)
-
                 screen.push()
                 yield
+
+            # Game Over
+            hscore = 0
+            with open("demos/breakout/high_score.txt", "r") as scores:
+                hscore = int(scores.read())
+            if score > hscore:
+                with open("demos/breakout/high_score.txt", "w") as scores:
+                    scores.write(str(score))
+
+            screen.clear()
+            screen.draw_text(
+                (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "GAME OVER"
+            )
+            screen.draw_text(
+                (screen.x_width // 2) - 4, (screen.y_height // 2) - 6, "---------"
+            )
+            screen.draw_text(
+                (screen.x_width // 2) - 4,
+                (screen.y_height // 2) - 4,
+                "SCORE " + str(score),
+            )
+            screen.draw_text(
+                (screen.x_width // 2) - 4,
+                (screen.y_height // 2) - 2,
+                "HISCORE " + str(hscore),
+            )
+            screen.push()
+            yield
 
     def stop(self):
         self.start = True
@@ -309,7 +331,7 @@ class Breakout:
             is_left = False
         else:
             spin = paddle.index(self.ball[0]) // 2
-            is_left = bool(self.getrandbits(1))
+            is_left = bool(getrandbits(1))
 
         return spin, is_left
 
