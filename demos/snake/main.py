@@ -1,6 +1,19 @@
 from demos.snake import snek_state
 import random
 from loguru import logger
+# import os, sys
+
+# # getting the name of the directory
+# # where the this file is present.
+# current = os.path.dirname(os.path.realpath(__file__))
+  
+# # Getting the parent directory name
+# # where the current directory is present.
+# parent = os.path.dirname(current)
+  
+# # adding the parent directory to 
+# # the sys.path.
+# sys.path.append(parent)
 
 
 class Snake:
@@ -29,7 +42,7 @@ class Snake:
         snek_list = [current_location]
         self.snek_length = 1
         self.h_score = 0
-        with open("/home/pi/sss/games/snake/high_score.txt", "r") as scores:
+        with open("demos/snake/high_score.txt", "r") as scores:
             self.h_score = int(scores.read())
 
         def get_new_food_location():
@@ -47,7 +60,7 @@ class Snake:
 
         current_food_location = get_new_food_location()
 
-        direction = b"a"
+        direction = 0
 
         # draw snek part
         self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -68,32 +81,29 @@ class Snake:
         # Generator Loop with raw yield
         while True:
             while not game_over:
-                if not self.input_queue.empty():
-                    temp = self.input_queue.get(block=False)
-                    direction = (
-                        temp
-                        if temp == b"a"
-                        or temp == b"h"
-                        or temp == b"d"
-                        or temp == b"k"
-                        or temp == b"s"
-                        or temp == b"j"
-                        or temp == b"w"
-                        or temp == b"u"
-                        else direction
-                    )
+                temp = self.get_input_buff()
+                # if len(temp) > 0:
+                for command in temp:
+                    if command == "LEFT_P":
+                        direction -= 1
+                    elif command == "RIGHT_P":
+                        direction += 1
+                if direction < 0:
+                    direction = 3
+                elif direction > 3:
+                    direction = 0
 
                 # Get new snake location based on trajectory
                 current_location = (
                     current_location[0] - 1
-                    if direction == b"a" or direction == b"h"
+                    if direction == 3
                     else current_location[0] + 1
-                    if direction == b"d" or direction == b"k"
+                    if direction == 1
                     else current_location[0],
                     current_location[1] + 1
-                    if direction == b"s" or direction == b"j"
+                    if direction == 2
                     else current_location[1] - 1
-                    if direction == b"w" or direction == b"u"
+                    if direction == 0
                     else current_location[1],
                 )
 
@@ -132,7 +142,7 @@ class Snake:
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
 
-                    self.output_queue("LIVES: Game Over")
+                    self.output_queue.put("LIVES: Game Over")
 
                     continue
 
@@ -161,7 +171,7 @@ class Snake:
                     "H-SCORE " + str(self.snek_length).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open("/home/pi/sss/games/snake/high_score.txt", "w") as scores:
+                with open("demos/snake/high_score.txt", "w") as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
                     self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)
@@ -190,7 +200,16 @@ class Snake:
 
             current_food_location = get_new_food_location()
 
-            direction = b"a"
+            direction = 0
+            self.screen.clear()
+                # draw banner at the top
+            self.screen.draw_hline(0, 2, self.screen.x_width, push=True)
+            self.screen.draw_hline(0, 3, self.screen.x_width, push=True)
+            self.screen.draw_text(0, 0, "SCORE 000")
+            self.screen.draw_text(
+                self.screen.x_width - 3 - 8, 0, "H-SCORE " + str(self.h_score).zfill(3)
+            )
+            self.screen.draw_text(self.screen.x_width // 2 - 2, 0, "SNAKE", push=True)
 
             # draw snek part
             self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -208,5 +227,10 @@ class Snake:
         # Reset the state of the demo if needed, else leave blank
         if self.snek_length > self.h_score:
             self.h_score = self.snek_length
-            with open("/home/pi/sss/games/snake/high_score.txt", "w") as scores:
+            with open("demos/snake/high_score.txt", "w") as scores:
                 scores.write(str(self.h_score))
+
+    
+    def get_input_buff(self):
+        # Get all input off the queue
+        return list(self.input_queue.queue)
