@@ -57,6 +57,8 @@ class Simulator:
         self.screen.blit(self.score_text, (300, 720))
         boards = [[Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)] for j in range(4)]
         self.disp = Display(boards, 16 * 3, 12 * 4)
+        self.demo_lst = []
+        self.demo_list_index = 0
         self.disp.clear()
         self._generate_buttons()
         self.demos = {}
@@ -72,7 +74,7 @@ class Simulator:
     @staticmethod
     def _reload_module(module):
         logger.info(f"Reloading {module}")
-        return reload(module)
+        return reload(module) 
 
     def _reload_demos(self):
         logger.info("Loading demos...")
@@ -91,6 +93,17 @@ class Simulator:
             module)
                       for
                       name, module in demos}
+        self._repopulate_demo_list()
+
+    def _repopulate_demo_list(self):
+        self.demo_lst.clear()
+        # create lists to display demos better
+        for index, key in enumerate(self.demos.keys()):
+            if index % 13 == 0:
+                print("new page:",index)
+                self.demo_lst.append([])
+            self.demo_lst[-1].append(key)
+        self.demo_list_index = 0
 
     def _load_game(self, game_name="template"):
         self.lives_text = self.text_font.render("LIVES: " +
@@ -110,8 +123,35 @@ class Simulator:
         self._reload_demos()
         # for i in range(1, (self.height - 50) // 50):
         #     self.buttons[i].set("text", )
-        for index, key in enumerate(self.demos.keys()):
-            # print(index, str(key))
+        # for index, key in enumerate(self.demos.keys()):
+        #     # print(index, str(key))
+        #     self.buttons[index + 1] = Button(
+        #         # Mandatory Parameters
+        #         self.screen,  # Surface to place button on
+        #         25 * 48,  # X-coordinate of top left corner
+        #         (index + 1) * 51,  # Y-coordinate of top left corner
+        #         150,  # Width
+        #         50,  # Height
+
+        #         # Optional Parameters
+        #         text=str(key),  # Text to display
+        #         fontSize=20,  # Size of font
+        #         margin=20,  # Minimum distance between text/image and edge of button
+        #         inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+        #         hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+        #         pressedColour=(0, 200, 20),  # Colour of button when being clicked
+        #         radius=20,  # Radius of border corners (leave empty for not curved)
+        #         onClick=lambda a: self._load_game(a),  # Function to call when clicked on
+        #         onClickParams=[key]
+        #     )
+        
+        for index in range(13):
+            if index >= len(self.demo_lst[self.demo_list_index]):
+                text_str = ""
+                key = "template"
+            else:
+                text_str = self.demo_lst[self.demo_list_index][index]
+                key = text_str
             self.buttons[index + 1] = Button(
                 # Mandatory Parameters
                 self.screen,  # Surface to place button on
@@ -121,16 +161,45 @@ class Simulator:
                 50,  # Height
 
                 # Optional Parameters
-                text=str(key),  # Text to display
-                fontSize=50,  # Size of font
+                text=str(text_str),  # Text to display
+                fontSize=20,  # Size of font
                 margin=20,  # Minimum distance between text/image and edge of button
                 inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
                 hoverColour=(150, 0, 0),  # Colour of button when being hovered over
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
                 onClick=lambda a: self._load_game(a),  # Function to call when clicked on
-                onClickParams=[key]
-            )
+                onClickParams=[key])
+
+    def _update_page_count(self):
+        self.demo_list_index += 1
+        if self.demo_list_index >= len(self.demo_lst):
+            self.demo_list_index = 0
+        for index in range(13):
+            if index >= len(self.demo_lst[self.demo_list_index]):
+                text_str = ""
+                key = "template"
+            else:
+                text_str = self.demo_lst[self.demo_list_index][index]
+                key = text_str
+            self.buttons[index + 1] = Button(
+                # Mandatory Parameters
+                self.screen,  # Surface to place button on
+                25 * 48,  # X-coordinate of top left corner
+                (index + 1) * 51,  # Y-coordinate of top left corner
+                150,  # Width
+                50,  # Height
+
+                # Optional Parameters
+                text=str(text_str),  # Text to display
+                fontSize=20,  # Size of font
+                margin=20,  # Minimum distance between text/image and edge of button
+                inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                pressedColour=(0, 200, 20),  # Colour of button when being clicked
+                radius=20,  # Radius of border corners (leave empty for not curved)
+                onClick=lambda a: self._load_game(a),  # Function to call when clicked on
+                onClickParams=[key])
 
     def _generate_buttons(self):
         self.buttons = [Button(
@@ -143,7 +212,7 @@ class Simulator:
 
             # Optional Parameters
             text='RELOAD',  # Text to display
-            fontSize=50,  # Size of font
+            fontSize=20,  # Size of font
             margin=20,  # Minimum distance between text/image and edge of button
             inactiveColour=(255, 165, 0),  # Colour of button when not being interacted with
             hoverColour=(150, 0, 0),  # Colour of button when being hovered over
@@ -151,13 +220,31 @@ class Simulator:
             radius=20,  # Radius of border corners (leave empty for not curved)
             onClick=lambda: self.repopulate()  # Function to call when clicked on
         )]
-        for i in range((self.height - 50) // 50):
+        for i in range(13):
             self.buttons.append(
                 Button(self.screen, 25 * 48, i * 51 + 51, 150, 50, fontSize=50, margin=20, inactiveColour=(200, 50, 0),
                        # Colour of button when not being interacted with
                        hoverColour=(150, 0, 0),  # Colour of button when being hovered over
                        pressedColour=(0, 200, 20),  # Colour of button when being clicked
                        radius=20, ))
+        self.buttons.append(Button(
+            # Mandatory Parameters
+            self.screen,  # Surface to place button on
+            25 * 48,  # X-coordinate of top left corner
+            51+13*51,  # Y-coordinate of top left corner
+            150,  # Width
+            35,  # Height
+
+            # Optional Parameters
+            text='MORE',  # Text to display
+            fontSize=20,  # Size of font
+            margin=20,  # Minimum distance between text/image and edge of button
+            inactiveColour=(255, 165, 0),  # Colour of button when not being interacted with
+            hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+            pressedColour=(0, 200, 20),  # Colour of button when being clicked
+            radius=20,  # Radius of border corners (leave empty for not curved)
+            onClick=lambda: self._update_page_count()  # Function to call when clicked on
+        ))
 
     def start(self):
         # Variable to keep the main loop running
