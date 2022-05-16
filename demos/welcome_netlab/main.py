@@ -5,7 +5,7 @@ PIXEL_TOP = 0x4
 PIXEL_RIGHT = 0x8
 
 
-class Under_Construction:
+class Welcome_Netlab:
     """This demo just displays an underconstruction sign"""
 
     # User input is passed through input_queue

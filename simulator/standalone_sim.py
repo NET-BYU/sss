@@ -30,6 +30,7 @@ from pygame.locals import (
     K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
+    KEYUP,
     QUIT,
 )
 
@@ -63,6 +64,10 @@ class Simulator:
         self._generate_buttons()
         self.demos = {}
         self._reload_demos()
+        self.game = getattr(self.demos["template"], "_".join([word.capitalize() for word in "template".split("_")]))(
+            self.input_q,
+            self.output_q,
+            self.disp)
         self.repopulate()
         self._load_game()
 
@@ -110,6 +115,7 @@ class Simulator:
         self.screen.blit(self.lives_text, (0, 720))
         self.score_text = self.text_font.render("SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0))
         self.screen.blit(self.score_text, (300, 720))
+        self.game.stop()
 
         self.game = getattr(self.demos[game_name], "_".join([word.capitalize() for word in game_name.split("_")]))(
             self.input_q,
@@ -259,14 +265,23 @@ class Simulator:
                     # If the Esc key is pressed, then exit the main loop
                     if event.key == K_ESCAPE:
                         running = False
+                    elif event.key == K_LEFT:
+                        self.input_q.put("LEFT_P")
+                    elif event.key == K_UP:
+                        self.input_q.put("UP_P")
+                    elif event.key == K_RIGHT:
+                        self.input_q.put("RIGHT_P")
+                    elif event.key == K_DOWN:
+                        self.input_q.put("DOWN_P")
+                if event.type == KEYUP:
                     if event.key == K_LEFT:
-                        self.input_q.put("l")
-                    if event.key == K_UP:
-                        self.input_q.put("u")
-                    if event.key == K_RIGHT:
-                        self.input_q.put("r")
-                    if event.key == K_DOWN:
-                        self.input_q.put("d")
+                        self.input_q.put("LEFT_R")
+                    elif event.key == K_UP:
+                        self.input_q.put("UP_R")
+                    elif event.key == K_RIGHT:
+                        self.input_q.put("RIGHT_R")
+                    elif event.key == K_DOWN:
+                        self.input_q.put("DOWN_R")
 
                 # Check for QUIT event. If QUIT, then set running to false.
                 elif event.type == QUIT:
