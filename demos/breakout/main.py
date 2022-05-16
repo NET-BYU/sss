@@ -1,4 +1,5 @@
 from random import getrandbits
+from re import X
 from loguru import logger
 
 ARENA_START = 14
@@ -49,8 +50,8 @@ class Breakout:
 
     def run(self):
 
+        # Set game session states
         screen = self.screen
-
         is_left = True
         is_down = True
         repeat_right = False
@@ -58,7 +59,8 @@ class Breakout:
         score = 0
         spin = 1
         lives = 5
-        restart_count = 10
+        restart = False
+        restart_cnt = 10
 
         # Waits for user ready
         screen.draw_text(
@@ -72,6 +74,7 @@ class Breakout:
         )
         screen.push()
 
+        # Don't start until user presses start
         while not self.start:
             if not self.input_queue.empty():
                 input_ = self.input_queue.get(block=False)
@@ -81,6 +84,7 @@ class Breakout:
                 self.start = True
             yield
 
+        # Erase startup text and initialize screen
         screen.draw_text(
             (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "        "
         )
@@ -91,15 +95,16 @@ class Breakout:
             (screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "        "
         )
         screen.push()
-
         self.init_screen(self.screen)
 
         while True:
             while not self.gameover:
                 if not self.input_queue.empty():
 
+                    # Check to see if there are any keypresses to read
                     for keypress in self.get_input_buff():
 
+                        # If there are directional buttons pressed
                         if keypress == "LEFT_P":
                             repeat_left = True
                         if keypress == "LEFT_R":
@@ -109,6 +114,7 @@ class Breakout:
                         if keypress == "RIGHT_R":
                             repeat_right = False
 
+                        # Pause and unpause routine
                         if keypress == "START_P":
                             screen.draw_text(
                                 (screen.x_width // 2) - 3,
@@ -117,8 +123,9 @@ class Breakout:
                                 push=True,
                             )
                             self.input_queue.queue.clear()
-                            # input_ = ""
                             unpause = False
+
+                            # Do nothing until start is pressed again
                             while not unpause:
                                 if not self.input_queue.empty():
                                     for keypress in self.get_input_buff():
@@ -133,11 +140,11 @@ class Breakout:
                                             break
                                 yield
 
-                    logger.debug(str(self.get_input_buff()))
-
+                # Update lives and score values
                 self.output_queue.put("SCORE " + str(score))
                 self.output_queue.put("LIVES " + str(lives))
 
+                # Checks to see if ball has hit bricks and increments the score
                 if self.ball[1] <= self.level + 2:
                     row = self.ball[1]
                     if row in self.bricks.keys():
@@ -154,6 +161,8 @@ class Breakout:
                             else:
                                 self.bricks[row].remove(self.ball[0] - 1)
                                 screen.draw_pixel(self.ball[0] - 1, row, PIXEL_OFF)
+
+                    # Checks to see if level accomplished
                     if self.level_up():
                         score += SCORE_INC * 20
                         self.level += 1
@@ -171,20 +180,21 @@ class Breakout:
                     is_left = True
                 if self.ball[1] == 0:
                     is_down = True
+
+                # Checks to see if ball hits paddle
                 if self.ball[1] == screen.y_height - 2:
                     if self.ball[0] in self.paddle:
                         spin, is_left = self.get_angle(self.paddle)
-                        self.frame_rate = self.frame_rate * spin // (1 + spin // 10)
+                        self.frame_rate = 20 + (spin // (1 + spin // 2))
                         is_down = False
+
+                # Checks to see if ball falls out of screen
                 if self.ball[1] >= screen.y_height - 1:
                     is_down = True
                     lives -= 1
                     self.frame_rate = 20
                     self.output_queue.put("LIVES " + str(lives))
-                    restart_count = 10
-                    # while restart_count > 0:
-                    #     restart_count -= 1
-                    #     yield
+                    restart = True
 
                     screen.draw_pixel(
                         self.ball[0], self.ball[1], PIXEL_OFF, combine=False, push=True
@@ -192,11 +202,21 @@ class Breakout:
                     if lives == 0:
                         self.gameover = True
                         break
-                    self.ball[0] = screen.x_width // 2
-                    self.ball[1] = screen.y_height // 2
+                    self.ball = [screen.x_width // 2, screen.y_height // 2]
 
+                # Calculates ball path
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
 
+                # Quick pause to reorient if life lost
+                if restart:
+                    logger.debug(str(restart_cnt))
+                    restart_cnt -= 1
+                    self.ball = [screen.x_width // 2, screen.y_height // 2]
+                    if restart_cnt == 0:
+                        restart_cnt = 10
+                        restart = False
+
+                # Logic to move paddle
                 if repeat_left:
                     if self.paddle[0] != self.line_left + 1:
                         for val in range(len(self.paddle)):
@@ -213,7 +233,6 @@ class Breakout:
                             PIXEL_OFF,
                             combine=False,
                         )
-
                 if repeat_right:
                     if self.paddle[-1] != self.line_right - 1:
                         for val in range(len(self.paddle)):
