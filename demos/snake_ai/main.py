@@ -1,11 +1,10 @@
-from turtle import Screen
-from demos.snake import snek_state, snek_ai
+from demos.snake_ai import snek_state, snek_ai
 import random
 from loguru import logger
 from copy import deepcopy
 
 
-class Snake_AI:
+class Snake_Ai:
     """This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
@@ -16,8 +15,8 @@ class Snake_AI:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 10
-        self.demo_time = 300  # None for a game
+        self.frame_rate = 60
+        self.demo_time = 600  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -31,7 +30,7 @@ class Snake_AI:
         snek_list = [current_location]
         self.snek_length = 1
         self.h_score = 0
-        with open("/home/pi/sss/games/snake_ai/ai_high_score.txt", "r") as scores:
+        with open("demos/snake_ai/ai_high_score.txt", "r") as scores:
             self.h_score = int(scores.read())
 
         def get_new_food_location():
@@ -101,15 +100,17 @@ class Snake_AI:
                         self.snek_length,
                     )
                 current_location = snek_path.pop(0)
+                # logger.info(str(current_location) + " " + str(current_food_location))
                 # game_state.add_snake_part(current_location)
                 game_state.add_snake_part2(current_location)
 
                 # check food situation
                 if current_food_location == current_location:
+                    logger.info("found some food")
                     self.snek_length += 1
 
                     # Publish score to output
-                    self.output_queue.put("SCORE: " + str(self.snek_length))
+                    self.output_queue.put("SCORE " + str(self.snek_length))
                     logger.info("SCORE: " + str(self.snek_length))
 
                     # calc new food location and draw on screen
@@ -124,6 +125,7 @@ class Snake_AI:
                         game_state,
                         self.snek_length,
                     )
+                    logger.info("found new snake path")
 
                     if snek_path is None or len(snek_path) == 0:
                         logger.info("Path was zero, no solution?")
@@ -146,23 +148,23 @@ class Snake_AI:
 
                 # check to make sure snek isn't in the weeds
                 if (
-                    current_location[0] >= self.screen.x_width
-                    or current_location[0] < 0
-                    or current_location[1] >= self.screen.y_height
-                    or current_location[1] < 4
-                    or current_location in snek_list[:-1]
+                        current_location[0] >= self.screen.x_width
+                        or current_location[0] < 0
+                        or current_location[1] >= self.screen.y_height
+                        or current_location[1] < 4
+                        or current_location in snek_list[:-1]
                 ):
-
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
 
-                    self.output_queue("LIVES: Game Over")
+                    self.output_queue.put("LIVES Game Over")
 
                     continue
 
                 # draw snek part and flush updates to the screen
                 self.screen.draw_pixel(current_location[0], current_location[1], 15)
                 self.screen.push()
+                # logger.info("yielding")
                 # yield here await next tick
                 yield
 
@@ -186,7 +188,7 @@ class Snake_AI:
                 )
                 self.h_score = self.snek_length
                 with open(
-                    "/home/pi/sss/games/snake_ai/ai_high_score.txt", "w"
+                        "demos/snake_ai/ai_high_score.txt", "w"
                 ) as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
@@ -200,6 +202,7 @@ class Snake_AI:
                 )
             self.screen.push()
             logger.info("Game over screen printed")
+            self.output_queue.put("LIVES Game Over")
             # draw this stuff to the screen and await next update
             yield
 
@@ -215,6 +218,21 @@ class Snake_AI:
             self.snek_length = 1
 
             current_food_location = get_new_food_location()
+            game_state = generate_game_state(
+                self.screen.x_width,
+                self.screen.y_height,
+                current_location,
+                current_food_location,
+            )
+
+            snek_path = snek_ai.run_Search2(
+                current_location[0],
+                current_location[1],
+                current_food_location,
+                game_state,
+                self.snek_length,
+            )
+            self.screen.clear()
 
             # draw snek part
             self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -225,6 +243,16 @@ class Snake_AI:
             self.screen.push()
             game_over = False
             logger.info("Game reset and starting again")
+            # draw banner at the top
+            self.screen.draw_hline(0, 2, self.screen.x_width, push=True)
+            self.screen.draw_hline(0, 3, self.screen.x_width, push=True)
+            self.screen.draw_text(0, 0, "SCORE 000")
+            self.screen.draw_text(
+                self.screen.x_width - 3 - 8, 0, "H-SCORE " + str(self.h_score).zfill(3)
+            )
+            self.screen.draw_text(self.screen.x_width // 2 - 2, 0, "SNAKE", push=True)
+            self.output_queue.put("SCORE                        ")
+            self.output_queue.put("LIVES                        ")
             # draw new snake in reset spot and get ready to start moving again
             yield
 
@@ -232,5 +260,5 @@ class Snake_AI:
         # Reset the state of the demo if needed, else leave blank
         if self.snek_length > self.h_score:
             self.h_score = self.snek_length
-            with open("/home/pi/sss/games/snake_ai/ai_high_score.txt", "w") as scores:
+            with open("demos/snake_ai/ai_high_score.txt", "w") as scores:
                 scores.write(str(self.h_score))

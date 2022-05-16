@@ -20,6 +20,7 @@ class Template:
     def run(self):
         # Create generator here
         while True:
+            self.screen.draw_text(self.screen.x_width // 2 - 5, self.screen.y_height // 2 - 4, "HELLO THERE", push=True)
             yield
 
     def stop(self):

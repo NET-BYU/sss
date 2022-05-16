@@ -1,9 +1,13 @@
+loguru~=0.6.0
+numpy~=1.22.3
+pygame~=2.1.2
+pygame-widgets~=1.0.0
 arrow==1.2.0
 certifi==2021.10.8
 inputs==0.5
 keyboard==0.13.5
-loguru==0.5.3
-numpy==1.21.2
+# loguru==0.5.3
+# numpy==1.21.2
 paho-mqtt==1.5.1
 pkg-resources==0.0.0
 python-dateutil==2.8.2

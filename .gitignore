@@ -1,3 +1,6 @@
+.idea/
+*venv
+#demos/
 *.pyc
 pico-go.json
 __pycache__
