@@ -134,7 +134,7 @@ def run_Search2(x, y, dst, state, len):
     )
     fringe = PriorityQueue()
     fringe.put((root.cost, root))
-    if len < 500:
+    if len < 200:
         goal = A_Star_Revised(state, fringe)
     else:
         print("gone long enough")
@@ -184,10 +184,10 @@ def A_Star_Revised(state, fringe):
         if curNode.loc == state.food_locs:
             del infringe
             return curNode
-        # if added > 400 or mem_added > 50000:
-        #     print("running to long")
-        #     del infringe
-        #     return curNode
+        if added > 400 or mem_added > 50000:
+            print("running to long")
+            del infringe
+            return curNode
 
         curNode.current_snake.pop(0)
         curNode.current_snake.append(curNode.loc)
