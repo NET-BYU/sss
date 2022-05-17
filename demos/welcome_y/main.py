@@ -1,6 +1,6 @@
+import random
+
 SIZE_MULTIPLIER = 1  # try 2 for better proportionality??
-STARTING_X = 0
-STARTING_Y = 10
 
 RIGHT_X_OFFSET = (
     6 * SIZE_MULTIPLIER
@@ -36,13 +36,16 @@ class Welcome_Y:
         # init demo/game specific variables here
 
     def run(self):
-        location = [STARTING_X, STARTING_Y]
-        isLeft = False
-        isDown = True
+        location = [random.randint(0, 41), random.randint(0, 42)]
+        isLeft = random.choice([True, False])
+        isDown = random.choice([True, False])
         self.draw_the_y(location[0], location[1], True)
         yield
-        # Create generator here
+
         while True:
+            # Hide the old Y
+            self.draw_the_y(location[0], location[1], False)
+
             if location[0] == 0:
                 isLeft = False
             if location[0] == self.screen.x_width - RIGHT_X_OFFSET - 1:
@@ -51,8 +54,6 @@ class Welcome_Y:
                 isDown = True
             if location[1] == self.screen.y_height - BOTTOM_Y_OFFSET - 1:
                 isDown = False
-
-            self.draw_the_y(location[0], location[1], False)
 
             if not isLeft:
                 location[0] += 1
@@ -64,6 +65,7 @@ class Welcome_Y:
             else:
                 location[1] -= 1
 
+            # Draw the new Y
             self.draw_the_y(location[0], location[1], True)
             yield
 
