@@ -9,7 +9,7 @@ keyboard==0.13.5
 # loguru==0.5.3
 # numpy==1.21.2
 paho-mqtt==1.5.1
-pkg-resources==0.0.0
+#pkg-resources==0.0.0
 python-dateutil==2.8.2
 six==1.16.0
 spidev==3.5
@@ -17,3 +17,4 @@ typing-extensions==3.10.0.2
 urllib3==1.26.7
 pyyaml
 black
+opencv-python==4.5.5.64
