@@ -205,6 +205,8 @@ class Display:
                     else:
                         self.display_buf[y_half][start_x] = 0x20
             self.changed_list.append((start_x, y_half))
+        if push:
+            self.push()
 
     def draw_shape_line(
         self, start_x, start_y, end_x, end_y, value, combine=True, push=False
