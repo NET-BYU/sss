@@ -1,6 +1,30 @@
 import pygame
 
 
+class VirtualSevenSegment:
+    def __init__(self, start_x, start_y, display):
+        self.digits = [
+            [Digit(display, start_x + j * 25, start_y + i * 30) for j in range(16)]
+            for i in range(6)
+        ]
+        self.x = start_x
+        self.y = start_y
+
+    @staticmethod
+    def flush():
+        pygame.display.flip()
+
+    def clear(self):
+        for row in self.digits:
+            for dig in row:
+                dig.update(0)
+
+    def raw2(self, x, y, value, flush=False):
+        self.digits[y][x].update(value)
+        if flush:
+            self.flush()
+
+
 class Digit:
     def __init__(self, display, x, y):
         self.display = display
@@ -73,27 +97,3 @@ class Digit:
                     2,
                 )
         self.state = value
-
-
-class VirtualSevenSegment:
-    def __init__(self, start_x, start_y, display):
-        self.digits = [
-            [Digit(display, start_x + j * 25, start_y + i * 30) for j in range(16)]
-            for i in range(6)
-        ]
-        self.x = start_x
-        self.y = start_y
-
-    @staticmethod
-    def flush():
-        pygame.display.flip()
-
-    def clear(self):
-        for row in self.digits:
-            for dig in row:
-                dig.update(0)
-
-    def raw2(self, x, y, value, flush=False):
-        self.digits[y][x].update(value)
-        if flush:
-            self.flush()
