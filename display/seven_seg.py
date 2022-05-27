@@ -1,5 +1,5 @@
 import spidev
-from display import symbols as sy # get_char2
+from display import symbols as sy  # get_char2
 
 MAX7219_DIGITS = 8
 
