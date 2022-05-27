@@ -75,7 +75,7 @@ class Digit:
         self.state = value
 
 
-class Panel:
+class VirtualSevenSegment:
     def __init__(self, start_x, start_y, display):
         self.digits = [
             [Digit(display, start_x + j * 25, start_y + i * 30) for j in range(16)]

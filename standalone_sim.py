@@ -18,7 +18,7 @@ from pygame.locals import (
     QUIT,
 )
 
-from display.display import create_virtual_screen
+from display import create_virtual_screen
 
 
 class Simulator:
