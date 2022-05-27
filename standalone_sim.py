@@ -1,27 +1,11 @@
-from display.display import create_virtual_screen
+from importlib import import_module, reload
+from pathlib import Path
+from queue import Queue, Empty
 
-import sys
-import os
-
-# getting the name of the directory
-# where the this file is present.
-current = os.path.dirname(os.path.realpath(__file__))
-
-# Getting the parent directory name
-# where the current directory is present.
-parent = os.path.dirname(current)
-
-# adding the parent directory to
-# the sys.path.
-sys.path.append(parent)
+from loguru import logger
 import pygame
 import pygame_widgets
 from pygame_widgets.button import Button
-from pathlib import Path
-from loguru import logger
-from importlib import import_module, reload
-from display.game_display import Display
-from queue import Queue, Empty
 from pygame.locals import (
     K_UP,
     K_DOWN,
@@ -33,6 +17,8 @@ from pygame.locals import (
     KEYUP,
     QUIT,
 )
+
+from display.display import create_virtual_screen
 
 
 class Simulator:
