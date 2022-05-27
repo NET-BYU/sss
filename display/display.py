@@ -1,8 +1,18 @@
-import display.seven_seg as ss
 import display.game_display as gd
 
 
-def create_screen():
+def create_virtual_screen(screen):
+    from display.simulator import Panel
+
+    boards = [
+        [Panel(i * 16 * 25, j * 30 * 6, screen) for i in range(3)] for j in range(4)
+    ]
+    return gd.Display(boards, 16 * 3, 12 * 4)
+
+
+def create_physical_screen():
+    import display.seven_seg as ss
+
     bright = 3  # brightness of of the panels (1-15)
     cs_num_lst = [
         5,

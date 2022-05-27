@@ -1,5 +1,4 @@
-from simulator import Panel
-import sys
+from display.display import create_virtual_screen
 
 import sys
 import os
@@ -65,11 +64,8 @@ class Simulator:
         self.score_prev = ""
         self.screen.blit(self.lives_text, (0, 720))
         self.screen.blit(self.score_text, (300, 720))
-        boards = [
-            [Panel(i * 16 * 25, j * 30 * 6, self.screen) for i in range(3)]
-            for j in range(4)
-        ]
-        self.disp = Display(boards, 16 * 3, 12 * 4)
+
+        self.disp = create_virtual_screen(self.screen)
 
         # variables for hot loadable demos
         self.demo_lst = []
