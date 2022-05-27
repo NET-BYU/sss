@@ -1,4 +1,5 @@
 from importlib import import_module
+import json
 from pathlib import Path
 from queue import Queue, Empty
 import random
@@ -12,9 +13,14 @@ import paho.mqtt.client as mqtt
 from display import frameRate
 
 
-def load_demo(module):
-    logger.debug(f"Loading {module}")
-    return import_module(module)
+def load_demo(name, module_name):
+    logger.debug(f"Loading {module_name}")
+    module = import_module(module_name)
+    demo_cls = getattr(
+        module, "_".join([word.capitalize() for word in name.split("_")])
+    )
+
+    return demo_cls
 
 
 def get_demo_list(demo_dir="demos"):
@@ -32,9 +38,12 @@ def load_demos(demo_dir="demos"):
     demos = get_demo_list(demo_dir)
 
     # Convert to module notation
-    demos = ((d, str(d).replace("/", ".") + ".main") for d in demos)
+    demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
 
-    return {str(name).split("/")[1]: load_demo(module) for name, module in demos}
+    # Load the module
+    demos = {name: load_demo(name, module) for name, module in demos}
+
+    return demos
 
 
 def get_random_demo(demos):
@@ -49,7 +58,22 @@ def get_random_demo(demos):
 
 def mqtt_input(system_queue, demo_input_queue, demo_output_queue):
     def on_message(client, userdata, message):
-        demo_input_queue.put(message.payload)
+        try:
+            data = json.loads(message.payload)
+            msg_type = data["type"]
+            msg_input = data["input"]
+
+            if msg_type == "system":
+                system_queue.put(msg_input)
+            elif msg_type == "demo":
+                demo_input_queue.put(msg_input)
+            else:
+                logger.error("Unknown MQTT message type: {}", msg_type)
+
+        except json.decoder.JSONDecodeError:
+            logger.error("MQTT message was not json.")
+        except KeyError:
+            logger.error("MQTT message did not have correct keys.")
 
     def on_connect(client, userdata, flags, rc):
         logger.info("MQTT Client connected ({})", rc)
@@ -63,16 +87,21 @@ def mqtt_input(system_queue, demo_input_queue, demo_output_queue):
         logger.info("MQTT Client disconnected ({})", rc)
         client.connected = False
 
+    with open("mqtt_config.json") as f:
+        config = json.load(f)
+
     client = mqtt.Client()
-    client.username_pw_set("sss", "***REMOVED***")
-    client.tls_set("/etc/ssl/certs/ca-certificates.crt")
+    client.username_pw_set(config["username"], config["password"])
+
+    if config["tls"]:
+        client.tls_set()
 
     client.on_message = on_message
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
     client.connected = False
 
-    client.connect_async("aq.byu.edu", 8883)
+    client.connect_async(config["host"], config["port"])
     client.loop_start()
 
     return client
@@ -136,66 +165,137 @@ def gamepad_input(system_queue, demo_input_queue, demo_output_queue):
 
 
 def start_loop(
-    system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300
+    screen, system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300
 ):
+    def tick_creator(frame_rate):
+        import pygame
+
+        clock = pygame.time.Clock()
+
+        while True:
+            pygame.display.flip()
+            clock.tick(frame_rate)
+            yield
+
+    def handle_input_creator():
+        import pygame
+        from pygame.locals import QUIT
+
+        while True:
+            events = pygame.event.get()
+
+            for event in events:
+                if event.type == QUIT:
+                    exit()
+
+            yield
+
+    def create_screen():
+        import pygame
+        import display
+
+        pygame.init()
+
+        screen = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
+        screen.fill((0, 0, 0))
+
+        disp = display.create_virtual_screen(screen)
+        disp.clear()
+
+        return disp
+
+    def close_screen(screen):
+        screen.clear()
+
+    def get_demo_from_user(system_queue, demos):
+        # Start the demo
+        try:
+            demo_name = system_queue.get(timeout=0.01)
+            logger.info("User selected {}", demo_name)
+            return demos[demo_name]
+        except KeyError:
+            logger.error(f"Unknown demo: {demo_name}")
+            return None
+        except Empty:
+            # If for some reason it is empty (shouldn't be), then start over
+            logger.error("Queue was empty even though it shouldn't have been.")
+            return None
+
+    def tick_demo(runner, frame_tick):
+        next(handle_input)
+
+        # Tick the demo
+        try:
+            next(runner)
+        except Exception:
+            logger.exception("Unknown error occurred!")
+
+        # Wait for next tick
+        next(frame_tick)
+
     demos = load_demos()
     random_demos = get_random_demo(demos)
+    handle_input = handle_input_creator()
     screen = create_screen()
 
-    while True:
-        if not system_queue.empty():
+    # FIXME: This is for testing
+    user_input_timeout = 5
 
-            # Start the demo
-            try:
-                demo_name = system_queue.get(timeout=0.01)
-                demo = demos[demo_name](demo_input_queue, demo_output_queue, screen)
-                demo_runner = demo.run()
-                # sleep_time = 1 / demo.frame_rate
-                frame_tick = frameRate(demo.frame_rate)
-                last_input_time = time.time()
-            except KeyError:
-                logger.error(f"Unknown demo: {demo_name}")
-                continue  # Start over
-            except Empty:
-                # If for some reason it is empty (shouldn't be), then start over
+    while True:
+        while not system_queue.empty():
+            logger.info("Got input from the user...")
+
+            demo_cls = get_demo_from_user(system_queue, demos)
+            if demo_cls is None:
                 continue
 
-            # As long as there is input from the user, keep passing it to the demo
+            demo = demo_cls(demo_input_queue, demo_output_queue, screen)
+            frame_tick = tick_creator(demo.frame_rate)
+            runner = demo.run()
+            last_input_time = time.time()
+
+            # As long as there is input from the user keep playing the demo
             while user_input_timeout > (time.time() - last_input_time):
-                # We need to be able to handle multiple inputs on the queue
-                while not system_queue.empty():
-                    try:
-                        input_ = system_queue.get(
-                            timeout=0.01
-                        )  # TODO: We need to detect if the input is for the game or for the system
+                logger.debug(
+                    "Playing demo while input is received ({})",
+                    time.time() - last_input_time,
+                )
 
-                        if input_ == "q":
-                            break
+                # System queue gets priority over demos
+                # This means someone is switching the demo
+                if not system_queue.empty():
+                    break
 
-                        demo_input_queue.put(input_)
-                        last_input_time = time.time()
-                    except Empty:
-                        break
+                # See if there has been new input from the user
+                # TODO: I am assuming that the demo_input_queue will get drained by the demo...
+                if not demo_input_queue.empty() and demo.demo_time is None:
+                    last_input_time = time.time()
 
-                # Tick the demo
-                try:
-                    next(demo_runner)
-                except Exception:
-                    logger.exception("Unknown error occurred!")
+                tick_demo(runner, frame_tick)
 
-                # Wait for next tick
-                # time.sleep(sleep_time)
-                next(frame_tick)
+            # Remove everything from the previous demo
+            screen.clear()
+            while not demo_input_queue.empty():
+                demo_input_queue.get()
 
         while system_queue.empty():
             # Pick a random demo and set up the environment
             random_demo = next(random_demos)(
                 demo_input_queue, demo_output_queue, screen
             )
-            random_demo_runner = random_demo.run()
+            frame_tick = tick_creator(random_demo.frame_rate)
+            runner = random_demo.run()
             demo_time = random_demo.demo_time
-            # sleep_time = 1 / random_demo.frame_rate
-            frame_tick = frameRate(random_demo.frame_rate)
+
+            # Skip demos that are not demos
+            # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
+            # TODO: Then I can filter it when I load the demo, not right here.
+            if demo_time is None:
+                continue
+
+            # FIXME: Used for testing
+            demo_time = 5
+
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
 
@@ -207,15 +307,7 @@ def start_loop(
                     screen.clear()
                     break
 
-                # Tick the demo
-                try:
-                    next(random_demo_runner)
-                except Exception:
-                    logger.exception("Unknown error occurred!")
-
-                # Wait for next tick
-                # time.sleep(sleep_time)
-                next(frame_tick)
+                tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
                 close_screen(screen)
@@ -248,7 +340,7 @@ def run(display):
     gamepad_input(system_queue, demo_input_queue, demo_output_queue)
     mqtt_input(system_queue, demo_input_queue, demo_output_queue)
 
-    start_loop(None, None, None)
+    start_loop(display, system_queue, demo_input_queue, demo_output_queue)
 
 
 if __name__ == "__main__":

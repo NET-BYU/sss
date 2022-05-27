@@ -49,9 +49,7 @@ def kiosk(simulate):
     if simulate:
         import pygame
 
-        pygame.init()
-        screen = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
-        display_obj = display.create_virtual_screen(screen)
+        display_obj = None  # display.create_virtual_screen(screen)
     else:
         display_obj = display.create_physical_screen()
 
