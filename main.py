@@ -2,8 +2,6 @@ from pathlib import Path
 
 import click
 
-from runners import simulator, kiosk, demo
-
 
 def get_demo_list(demo_dir="demos"):
     demo_path = Path(demo_dir)
@@ -22,12 +20,16 @@ def cli():
 
 @cli.command(name="simulator")
 def run_simulator():
+    from runners import simulator
+
     simulator.run()
 
 
 @cli.command(name="kiosk")
 @click.option("-s", "--simulate", is_flag=True, default=False)
 def run_kiosk(simulate):
+    from runners import kiosk
+
     kiosk.run(simulate)
 
 
@@ -35,6 +37,8 @@ def run_kiosk(simulate):
 @click.argument("name", type=click.Choice(get_demo_list(), case_sensitive=False))
 @click.option("-s", "--simulate", is_flag=True, default=False)
 def run_demo(name, simulate):
+    from runners import demo
+
     demo.run(name, simulate)
 
 
