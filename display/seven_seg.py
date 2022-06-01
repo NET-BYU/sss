@@ -1,4 +1,13 @@
-import spidev
+try:
+    import spidev
+except ModuleNotFoundError:
+    print("!" * 80)
+    print("Unable to import spidev.")
+    print("Are you running this on a Raspberry Pi?")
+    print("!" * 80)
+    exit()
+
+
 from display import symbols as sy  # get_char2
 
 MAX7219_DIGITS = 8
