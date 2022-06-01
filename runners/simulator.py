@@ -293,7 +293,6 @@ class Simulator:
         # Variable to keep the main loop running
         running = True
 
-        input_handler = self.screen.create_input_handler()
         tick = self.screen.create_tick(self.game.frame_rate)
 
         # Main loop
@@ -363,6 +362,7 @@ class Simulator:
                     self.score_prev = msg_content
                     self.screen.window.blit(self.score_text, (300, 720))
 
+            pygame_widgets.update(events)
             next(tick)
 
 
