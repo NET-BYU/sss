@@ -2,9 +2,6 @@ from importlib import import_module
 from pathlib import Path
 from queue import Queue, Empty
 
-from display.display_creator import create_screen, close_screen
-from display.game_functions import frameRate
-
 # TODO: Need to handle the input_q and output_q
 
 

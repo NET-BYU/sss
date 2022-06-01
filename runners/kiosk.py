@@ -271,7 +271,16 @@ def start_loop(
                 screen.refresh()
 
 
-def run(display):
+def run(simulate):
+    if simulate:
+        from display.virtual_screen import VirtualScreen
+
+        screen = VirtualScreen()
+    else:
+        from display.physical_screen import PhysicalScreen
+
+        screen = PhysicalScreen()
+
     # Start up logger
     logger.add(
         "logs/sss.log",
@@ -297,12 +306,8 @@ def run(display):
     gamepad_input(system_queue, demo_input_queue, demo_output_queue)
     mqtt_input(system_queue, demo_input_queue, demo_output_queue)
 
-    start_loop(display, system_queue, demo_input_queue, demo_output_queue)
+    start_loop(screen, system_queue, demo_input_queue, demo_output_queue)
 
 
 if __name__ == "__main__":
-    from display.virtual_screen import VirtualScreen
-
-    screen = VirtualScreen()
-
-    run(screen)
+    run(simulate=True)

@@ -2,6 +2,8 @@ from pathlib import Path
 
 import click
 
+from runners import simulator, kiosk, demo
+
 
 def get_demo_list(demo_dir="demos"):
     demo_path = Path(demo_dir)
@@ -27,44 +29,28 @@ def existing_demo(demo):
 
 
 @click.group()
-@click.option("--debug/--no-debug", default=False)
-def cli(debug):
+def cli():
     pass
 
 
-@cli.command()
-def simulator():
-    from runners.simulator import run
-
-    run()
+@cli.command(name="simulator")
+def run_simulator():
+    simulator.run()
 
 
-@cli.command()
+@cli.command(name="kiosk")
 @click.option("-s", "--simulate", is_flag=True, default=False)
-def kiosk(simulate):
-    from runners.kiosk import run
-
-    if simulate:
-        from display.virtual_screen import VirtualScreen
-
-        screen = VirtualScreen()
-    else:
-        from display.physical_screen import PhysicalScreen
-
-        screen = PhysicalScreen()
-
-    run(screen)
+def run_kiosk(simulate):
+    kiosk.run(simulate)
 
 
-@cli.command()
-@click.argument("demo", nargs=1)
-def display_demo(demo):
-    if not existing_demo(demo):
+@cli.command("demo")
+@click.argument("demo_name", nargs=1)
+def run_demo(demo_name):
+    if not existing_demo(demo_name):
         return
 
-    from runners.display_demo import run
-
-    run(demo)
+    demo.run(demo_name)
 
 
 if __name__ == "__main__":
