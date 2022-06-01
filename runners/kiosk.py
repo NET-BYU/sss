@@ -225,7 +225,6 @@ def start_loop(
                     break
 
                 # See if there has been new input from the user
-                # TODO: I am assuming that the demo_input_queue will get drained by the demo...
                 if not demo_input_queue.empty() and demo.demo_time is None:
                     last_input_time = time.time()
 
