@@ -46,11 +46,12 @@ def run_kiosk(simulate):
 
 @cli.command("demo")
 @click.argument("demo_name", nargs=1)
-def run_demo(demo_name):
+@click.option("-s", "--simulate", is_flag=True, default=False)
+def run_demo(demo_name, simulate):
     if not existing_demo(demo_name):
         return
 
-    demo.run(demo_name)
+    demo.run(demo_name, simulate)
 
 
 if __name__ == "__main__":
