@@ -167,46 +167,6 @@ def gamepad_input(system_queue, demo_input_queue, demo_output_queue):
 def start_loop(
     screen, system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300
 ):
-    def tick_creator(frame_rate):
-        import pygame
-
-        clock = pygame.time.Clock()
-
-        while True:
-            pygame.display.flip()
-            clock.tick(frame_rate)
-            yield
-
-    def handle_input_creator():
-        import pygame
-        from pygame.locals import QUIT
-
-        while True:
-            events = pygame.event.get()
-
-            for event in events:
-                if event.type == QUIT:
-                    exit()
-
-            yield
-
-    def create_screen():
-        import pygame
-        import display
-
-        pygame.init()
-
-        screen = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
-        screen.fill((0, 0, 0))
-
-        disp = display.create_virtual_screen(screen)
-        disp.clear()
-
-        return disp
-
-    def close_screen(screen):
-        screen.clear()
-
     def get_demo_from_user(system_queue, demos):
         # Start the demo
         try:
@@ -233,10 +193,14 @@ def start_loop(
         # Wait for next tick
         next(frame_tick)
 
+    from .virtual_screen import VirtualScreen
+
     demos = load_demos()
     random_demos = get_random_demo(demos)
-    handle_input = handle_input_creator()
-    screen = create_screen()
+
+    screen = VirtualScreen()
+
+    handle_input = screen.create_input_handler()
 
     # FIXME: This is for testing
     user_input_timeout = 5
@@ -249,8 +213,8 @@ def start_loop(
             if demo_cls is None:
                 continue
 
-            demo = demo_cls(demo_input_queue, demo_output_queue, screen)
-            frame_tick = tick_creator(demo.frame_rate)
+            demo = demo_cls(demo_input_queue, demo_output_queue, screen.display)
+            frame_tick = screen.create_tick(demo.frame_rate)
             runner = demo.run()
             last_input_time = time.time()
 
@@ -281,9 +245,9 @@ def start_loop(
         while system_queue.empty():
             # Pick a random demo and set up the environment
             random_demo = next(random_demos)(
-                demo_input_queue, demo_output_queue, screen
+                demo_input_queue, demo_output_queue, screen.display
             )
-            frame_tick = tick_creator(random_demo.frame_rate)
+            frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
             demo_time = random_demo.demo_time
 
@@ -310,8 +274,8 @@ def start_loop(
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
-                close_screen(screen)
-                screen = create_screen()
+                screen.close()
+                screen = VirtualScreen()
 
 
 def run(display):
