@@ -10,8 +10,6 @@ import time
 from loguru import logger
 import paho.mqtt.client as mqtt
 
-from display import frameRate
-
 
 def load_demo(name, module_name):
     logger.debug(f"Loading {module_name}")
@@ -193,12 +191,8 @@ def start_loop(
         # Wait for next tick
         next(frame_tick)
 
-    from .virtual_screen import VirtualScreen
-
     demos = load_demos()
     random_demos = get_random_demo(demos)
-
-    screen = VirtualScreen()
 
     handle_input = screen.create_input_handler()
 
@@ -274,8 +268,7 @@ def start_loop(
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
-                screen.close()
-                screen = VirtualScreen()
+                screen.refresh()
 
 
 def run(display):
@@ -308,11 +301,8 @@ def run(display):
 
 
 if __name__ == "__main__":
-    import pygame
-    import display
+    from display.virtual_screen import VirtualScreen
 
-    pygame.init()
-    screen = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
-    display_obj = display.create_virtual_screen(screen)
+    screen = VirtualScreen()
 
-    run(display_obj)
+    run(screen)

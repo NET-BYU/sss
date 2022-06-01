@@ -1,18 +1,22 @@
 import pygame
 from pygame.locals import QUIT
-from display.virtual_seven_seg import VirtualSevenSegment
-from display.display import Display
+
+from .virtual_seven_seg import VirtualSevenSegment
+from .display import Display
 
 
 class VirtualScreen:
     def __init__(self):
         pygame.init()
 
-        window = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
-        window.fill((0, 0, 0))
+        self.window = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
+        self.window.fill((0, 0, 0))
 
         boards = [
-            [VirtualSevenSegment(i * 16 * 25, j * 30 * 6, window) for i in range(3)]
+            [
+                VirtualSevenSegment(i * 16 * 25, j * 30 * 6, self.window)
+                for i in range(3)
+            ]
             for j in range(4)
         ]
 
@@ -36,5 +40,8 @@ class VirtualScreen:
                     exit()
             yield
 
-    def close(self):
+    def clear(self):
+        self.display.clear()
+
+    def refresh(self):
         self.display.clear()

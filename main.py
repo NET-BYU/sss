@@ -2,8 +2,6 @@ from pathlib import Path
 
 import click
 
-import display
-
 
 def get_demo_list(demo_dir="demos"):
     demo_path = Path(demo_dir)
@@ -47,13 +45,15 @@ def kiosk(simulate):
     from runners.kiosk import run
 
     if simulate:
-        import pygame
+        from display.virtual_screen import VirtualScreen
 
-        display_obj = None  # display.create_virtual_screen(screen)
+        screen = VirtualScreen()
     else:
-        display_obj = display.create_physical_screen()
+        from display.physical_screen import PhysicalScreen
 
-    run(display_obj)
+        screen = PhysicalScreen()
+
+    run(screen)
 
 
 @cli.command()

@@ -18,7 +18,7 @@ from pygame.locals import (
     QUIT,
 )
 
-from display import create_virtual_screen
+from display.virtual_screen import VirtualScreen
 
 
 class Simulator:
@@ -27,12 +27,7 @@ class Simulator:
         self.height = height
         self.demo_dir = demo_dir
 
-        # Pygame variables
-        pygame.init()
-        self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        self.screen.fill((0, 0, 0))
-        self.refresh = pygame.display.flip
+        self.screen = VirtualScreen()
 
         # input and output queues
         self.input_q = Queue(10)
@@ -48,10 +43,8 @@ class Simulator:
         )
         self.lives_prev = ""
         self.score_prev = ""
-        self.screen.blit(self.lives_text, (0, 720))
-        self.screen.blit(self.score_text, (300, 720))
-
-        self.disp = create_virtual_screen(self.screen)
+        self.screen.window.blit(self.lives_text, (0, 720))
+        self.screen.window.blit(self.score_text, (300, 720))
 
         # variables for hot loadable demos
         self.demo_lst = []
@@ -59,13 +52,13 @@ class Simulator:
         self.demos = {}
 
         # set up the start display
-        self.disp.clear()
+        self.screen.clear()
         self._generate_buttons()
         self._reload_demos()
         self.game = getattr(
             self.demos["template"],
             "_".join([word.capitalize() for word in "template".split("_")]),
-        )(self.input_q, self.output_q, self.disp)
+        )(self.input_q, self.output_q, self.screen.display)
         self.repopulate()
         self._load_game()
 
@@ -118,11 +111,11 @@ class Simulator:
         self.lives_text = self.text_font.render(
             "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
         )
-        self.screen.blit(self.lives_text, (0, 720))
+        self.screen.window.blit(self.lives_text, (0, 720))
         self.score_text = self.text_font.render(
             "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
         )
-        self.screen.blit(self.score_text, (300, 720))
+        self.screen.window.blit(self.score_text, (300, 720))
 
         # stop the current game
         self.game.stop()
@@ -130,9 +123,9 @@ class Simulator:
         self.game = getattr(
             self.demos[game_name],
             "_".join([word.capitalize() for word in game_name.split("_")]),
-        )(self.input_q, self.output_q, self.disp)
+        )(self.input_q, self.output_q, self.screen.display)
         self.game_runner = self.game.run()
-        self.disp.clear()
+        self.screen.clear()
 
     def repopulate(self):
         # Hot load demos and populate selection buttons on the screen
@@ -170,7 +163,7 @@ class Simulator:
                 key = text_str
             self.buttons[index + 1] = Button(
                 # Mandatory Parameters
-                self.screen,  # Surface to place button on
+                self.screen.window,  # Surface to place button on
                 25 * 48,  # X-coordinate of top left corner
                 (index + 1) * 51,  # Y-coordinate of top left corner
                 150,  # Width
@@ -207,7 +200,7 @@ class Simulator:
                 key = text_str
             self.buttons[index + 1] = Button(
                 # Mandatory Parameters
-                self.screen,  # Surface to place button on
+                self.screen.window,  # Surface to place button on
                 25 * 48,  # X-coordinate of top left corner
                 (index + 1) * 51,  # Y-coordinate of top left corner
                 150,  # Width
@@ -234,7 +227,7 @@ class Simulator:
         self.buttons = [
             Button(
                 # Mandatory Parameters
-                self.screen,  # Surface to place button on
+                self.screen.window,  # Surface to place button on
                 25 * 48,  # X-coordinate of top left corner
                 0,  # Y-coordinate of top left corner
                 150,  # Width
@@ -257,7 +250,7 @@ class Simulator:
         for i in range(13):
             self.buttons.append(
                 Button(
-                    self.screen,
+                    self.screen.window,
                     25 * 48,
                     i * 51 + 51,
                     150,
@@ -274,7 +267,7 @@ class Simulator:
         self.buttons.append(
             Button(
                 # Mandatory Parameters
-                self.screen,  # Surface to place button on
+                self.screen.window,  # Surface to place button on
                 25 * 48,  # X-coordinate of top left corner
                 51 + 13 * 51,  # Y-coordinate of top left corner
                 150,  # Width
@@ -299,6 +292,9 @@ class Simulator:
         # main pygame loop
         # Variable to keep the main loop running
         running = True
+
+        input_handler = self.screen.create_input_handler()
+        tick = self.screen.create_tick(self.game.frame_rate)
 
         # Main loop
         while running:
@@ -350,29 +346,24 @@ class Simulator:
                     self.lives_text = self.text_font.render(
                         "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
                     )
-                    self.screen.blit(self.lives_text, (0, 720))
+                    self.screen.window.blit(self.lives_text, (0, 720))
                     self.lives_text = self.text_font.render(
                         "LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0)
                     )
                     self.lives_prev = msg_content
-                    self.screen.blit(self.lives_text, (0, 720))
+                    self.screen.window.blit(self.lives_text, (0, 720))
                 if msg_type == "SCORE":
                     self.score_text = self.text_font.render(
                         "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
                     )
-                    self.screen.blit(self.score_text, (300, 720))
+                    self.screen.window.blit(self.score_text, (300, 720))
                     self.score_text = self.text_font.render(
                         "SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0)
                     )
                     self.score_prev = msg_content
-                    self.screen.blit(self.score_text, (300, 720))
+                    self.screen.window.blit(self.score_text, (300, 720))
 
-            # Do the button updates
-            pygame_widgets.update(events)
-
-            # draw everything to the screen and sleep until next frame
-            self.refresh()
-            self.clock.tick(self.game.frame_rate)
+            next(tick)
 
 
 def run():
