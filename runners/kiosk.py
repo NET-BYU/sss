@@ -89,7 +89,7 @@ def start_loop(screen, user_input_timeout=300):
 
     demos = load_demos()
     random_demos = get_random_demo(demos)
-    input_runner = controllers.start_inputs(system_queue, demo_input_queue)
+    handle_input = controllers.start_inputs(system_queue, demo_input_queue)
 
     # FIXME: This is for testing
     user_input_timeout = 5
@@ -98,7 +98,7 @@ def start_loop(screen, user_input_timeout=300):
         while not system_queue.empty():
             logger.info("Got input from the user...")
 
-            next(input_runner)
+            next(handle_input)
 
             demo_cls = get_demo_from_user(system_queue, demos)
             if demo_cls is None:
@@ -121,7 +121,7 @@ def start_loop(screen, user_input_timeout=300):
                 if not system_queue.empty():
                     break
 
-                next(input_runner)
+                next(handle_input)
 
                 # See if there has been new input from the user
                 if not demo_input_queue.empty() and demo.demo_time is None:
@@ -163,7 +163,7 @@ def start_loop(screen, user_input_timeout=300):
                     screen.clear()
                     break
 
-                next(input_runner)
+                next(handle_input)
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
