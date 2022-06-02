@@ -8,7 +8,7 @@ import pygame_widgets
 from pygame_widgets.button import Button
 
 from display.virtual_screen import VirtualScreen
-from controllers import keyboard
+from controllers import keyboard, mqtt
 
 
 class Simulator:
@@ -284,11 +284,13 @@ class Simulator:
         # Variable to keep the main loop running
         running = True
 
+        mqtt.start_process_input(self.system_q, self.input_q)
+
         tick = self.screen.create_tick(self.game.frame_rate)
 
         # Main loop
         while running:
-            # Read input
+            # Read input from keyboard
             keyboard.process_input(self.system_q, self.input_q)
 
             while not self.system_q.empty():

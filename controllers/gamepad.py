@@ -1,3 +1,5 @@
+import threading
+
 import inputs
 from loguru import logger
 
