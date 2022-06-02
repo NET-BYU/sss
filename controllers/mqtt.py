@@ -4,7 +4,7 @@ from loguru import logger
 import paho.mqtt.client as mqtt
 
 
-def start_process_input(system_queue, demo_input_queue):
+def start_processing_input(system_queue, demo_input_queue):
     def on_message(client, userdata, message):
         try:
             data = json.loads(message.payload)
@@ -12,6 +12,7 @@ def start_process_input(system_queue, demo_input_queue):
             msg_input = data["input"]
 
             if msg_type == "system":
+                logger.debug("Putting message into system queue: {}", msg_input)
                 system_queue.put(msg_input)
             elif msg_type == "demo":
                 logger.debug("Putting message into input queue: {}", msg_input)
@@ -47,5 +48,8 @@ def start_process_input(system_queue, demo_input_queue):
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
 
-    client.connect_async(config["host"], config["port"])
-    client.loop_start()
+    client.connect(config["host"], config["port"])
+
+    while True:
+        client.loop(timeout=0.01)
+        yield

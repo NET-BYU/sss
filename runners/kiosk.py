@@ -6,7 +6,7 @@ import time
 
 from loguru import logger
 
-from controllers import keyboard, mqtt  # , gamepad
+import controllers
 
 
 def load_demo(name, module_name):
@@ -52,9 +52,7 @@ def get_random_demo(demos):
             yield d
 
 
-def start_loop(
-    screen, system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300
-):
+def start_loop(screen, user_input_timeout=300):
     def get_demo_from_user(system_queue, demos):
         # Start the demo
         try:
@@ -84,8 +82,14 @@ def start_loop(
         # Wait for next tick
         next(frame_tick)
 
+    # Create queues
+    system_queue = Queue()
+    demo_input_queue = Queue()
+    demo_output_queue = Queue()
+
     demos = load_demos()
     random_demos = get_random_demo(demos)
+    input_runner = controllers.start_inputs(system_queue, demo_input_queue)
 
     # FIXME: This is for testing
     user_input_timeout = 5
@@ -93,6 +97,8 @@ def start_loop(
     while True:
         while not system_queue.empty():
             logger.info("Got input from the user...")
+
+            next(input_runner)
 
             demo_cls = get_demo_from_user(system_queue, demos)
             if demo_cls is None:
@@ -115,7 +121,7 @@ def start_loop(
                 if not system_queue.empty():
                     break
 
-                keyboard.process_input(system_queue, demo_input_queue)
+                next(input_runner)
 
                 # See if there has been new input from the user
                 if not demo_input_queue.empty() and demo.demo_time is None:
@@ -157,7 +163,7 @@ def start_loop(
                     screen.clear()
                     break
 
-                keyboard.process_input(system_queue, demo_input_queue)
+                next(input_runner)
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
@@ -190,16 +196,7 @@ def run(simulate):
     logger.info("   __________/ /")
     logger.info("-=:___________/")
 
-    # Create queues
-    system_queue = Queue()
-    demo_input_queue = Queue()
-    demo_output_queue = Queue()
-
-    # Set up queues for all devices
-    mqtt.start_process_input(system_queue, demo_input_queue)
-    # gamepad.start_processing_input(system_queue, demo_input_queue)
-
-    start_loop(screen, system_queue, demo_input_queue, demo_output_queue)
+    start_loop(screen)
 
 
 if __name__ == "__main__":
