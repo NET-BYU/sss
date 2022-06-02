@@ -2,7 +2,7 @@ import random
 
 class Pipe:
     def __init__(self,x):
-        self.gap_height = random.randint(10,38)
+        self.gap_height = random.randint(15,33)
         self.x = x
         self.velocity = .35
 
@@ -64,16 +64,43 @@ class Flappy_Pixel:
         return False
 
     def _update_pipes(self):
-        while len(self.pipes) < 1:
-            self.pipes.append(Pipe(self.pipes[-1]+20))
+        while len(self.pipes) < 6:
+            self.pipes.append(Pipe(self.pipes[-1].x+20))
         for pipe in self.pipes:
             pipe.move()
+            
             (x,y) = pipe.draw_locations()
+            if x < -5:
+                self.pipes.pop(0)
+                continue
+            if x > 50:
+                continue
             # clear the old pipe
+            if -5.5 < x < 42.5: 
+                self.screen.draw_pixel(round(x)+5,y, 0x0)
+                self.screen.draw_pixel(round(x)+5,y+10, 0x0)
+            if -1.5 < x < 46.5:
+                self.screen.draw_pixel(round(x)+1,y, 0x0)
+                self.screen.draw_pixel(round(x)+1,y+10, 0x0)
+            if -2.5 < x < 45.5:
+                for i in range(y):
+                    self.screen.draw_pixel(round(x)+2, i, 0x0)
+                for i in range(y+11,self.screen.y_height):
+                    self.screen.draw_pixel(round(x)+2, i , 0x0)
+            if -5.5 < x < 42.5:
+                for i in range(y):
+                    self.screen.draw_pixel(round(x)+4, i, 0x0)
+                for i in range(y+11,self.screen.y_height):
+                    self.screen.draw_pixel(round(x)+4, i, 0x0)
+                # self.screen.draw_pixel(round(x)+2,y-1,0x0)
+                # self.screen.draw_pixel(round(x)+2,y+11,0x0)
+                
+
             # if x -3 < 48:
             #     self.screen.draw_pixel(x-3)
+
             # draw the new Pipe
-            if 0 < x < 47.5:
+            if 0 <= x < 47.5:
                 # top pipe
                 self.screen.draw_hline(round(x),y,5 if x < 42.5 else self.screen.x_width-round(x))
                 self.screen.draw_hline(round(x),y, 5 if x < 42.5 else self.screen.x_width-round(x),False)
@@ -124,18 +151,18 @@ class Flappy_Pixel:
             x = -1
             y = 25
             
-
             self._draw_pixel(True)
             self._process_input()
             self._update_pos()
             if self._check_boundaries():
                 self._update_pipes()
                 self._draw_pixel()
+                self.screen.push()
                 yield
             else:
                 self.height = 14
                 self.velocity = 0
-                
+                self.screen.push()
                 self._draw_pixel()
                 
                 yield
