@@ -75,8 +75,6 @@ def start_loop(
             return None
 
     def tick_demo(runner, frame_tick):
-        keyboard.process_input(system_queue, demo_input_queue)
-
         # Tick the demo
         try:
             next(runner)
@@ -116,6 +114,8 @@ def start_loop(
                 # This means someone is switching the demo
                 if not system_queue.empty():
                     break
+
+                keyboard.process_input(system_queue, demo_input_queue)
 
                 # See if there has been new input from the user
                 if not demo_input_queue.empty() and demo.demo_time is None:
@@ -157,6 +157,7 @@ def start_loop(
                     screen.clear()
                     break
 
+                keyboard.process_input(system_queue, demo_input_queue)
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
