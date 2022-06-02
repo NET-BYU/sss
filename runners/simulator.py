@@ -6,19 +6,9 @@ from loguru import logger
 import pygame
 import pygame_widgets
 from pygame_widgets.button import Button
-from pygame.locals import (
-    K_UP,
-    K_DOWN,
-    K_LEFT,
-    K_RIGHT,
-    K_ESCAPE,
-    K_RETURN,
-    KEYDOWN,
-    KEYUP,
-    QUIT,
-)
 
 from display.virtual_screen import VirtualScreen
+from controllers import keyboard
 
 
 class Simulator:
@@ -30,6 +20,7 @@ class Simulator:
         self.screen = VirtualScreen()
 
         # input and output queues
+        self.system_q = Queue(10)
         self.input_q = Queue(10)
         self.output_q = Queue(10)
 
@@ -297,40 +288,13 @@ class Simulator:
 
         # Main loop
         while running:
-            # for loop through the event queue
-            events = pygame.event.get()
-            for event in events:
-                # Check for KEYDOWN event and pass into input queue
-                if event.type == KEYDOWN:
-                    # If the Esc key is pressed, then exit the main loop
-                    if event.key == K_ESCAPE:
-                        running = False
-                    elif event.key == K_LEFT:
-                        self.input_q.put("LEFT_P")
-                    elif event.key == K_UP:
-                        self.input_q.put("UP_P")
-                    elif event.key == K_RIGHT:
-                        self.input_q.put("RIGHT_P")
-                    elif event.key == K_DOWN:
-                        self.input_q.put("DOWN_P")
-                    # check for KEYUP event and pass into input queue
-                    elif event.key == K_RETURN:
-                        self.input_q.put("START_P")
-                if event.type == KEYUP:
-                    if event.key == K_LEFT:
-                        self.input_q.put("LEFT_R")
-                    elif event.key == K_UP:
-                        self.input_q.put("UP_R")
-                    elif event.key == K_RIGHT:
-                        self.input_q.put("RIGHT_R")
-                    elif event.key == K_DOWN:
-                        self.input_q.put("DOWN_R")
-                    elif event.key == K_RETURN:
-                        self.input_q.put("START_R")
+            # Read input
+            keyboard.process_input(self.system_q, self.input_q)
 
-                # Check for QUIT event. If QUIT, then set running to false.
-                elif event.type == QUIT:
-                    running = False
+            while not self.system_q.empty():
+                system_event = self.system_q.get()
+                if system_event == "QUIT":
+                    exit()
 
             # Tick the selected game function
             next(self.game_runner)
@@ -362,7 +326,6 @@ class Simulator:
                     self.score_prev = msg_content
                     self.screen.window.blit(self.score_text, (300, 720))
 
-            pygame_widgets.update(events)
             next(tick)
 
 
