@@ -1,5 +1,6 @@
+import queue
+
 from random import getrandbits
-from re import X
 from loguru import logger
 
 ARENA_START = 14
@@ -42,11 +43,10 @@ class Breakout:
         self.start = False
         self.gameover = False
 
-        self.init_screen(screen)
-
     def get_input_buff(self):
         # Get all input off the queue
-        return list(self.input_queue.queue)
+        while not self.input_queue.empty():
+            yield self.input_queue.get()
 
     def run(self):
 
@@ -75,13 +75,12 @@ class Breakout:
         screen.push()
 
         # Don't start until user presses start
-        while not self.start:
-            if not self.input_queue.empty():
-                input_ = self.input_queue.get(block=False)
-            else:
-                input_ = ""
-            if input_ == "START_P":
-                self.start = True
+        while True:
+            try:
+                if self.input_queue.get(block=False) == "START_P":
+                    break
+            except queue.Empty:
+                pass
             yield
 
         # Erase startup text and initialize screen
