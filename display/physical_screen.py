@@ -75,10 +75,6 @@ class PhysicalScreen:
 
             yield i, nextTime
 
-    def create_input_handler(self):
-        while True:
-            yield
-
     def clear(self):
         self.display.clear()
 

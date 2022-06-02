@@ -1,14 +1,12 @@
 from importlib import import_module
-import json
 from pathlib import Path
 from queue import Queue, Empty
 import random
-import threading
 import time
 
-# import inputs
 from loguru import logger
-import paho.mqtt.client as mqtt
+
+from controllers import keyboard, mqtt  # , gamepad
 
 
 def load_demo(name, module_name):
@@ -54,114 +52,6 @@ def get_random_demo(demos):
             yield d
 
 
-def mqtt_input(system_queue, demo_input_queue, demo_output_queue):
-    def on_message(client, userdata, message):
-        try:
-            data = json.loads(message.payload)
-            msg_type = data["type"]
-            msg_input = data["input"]
-
-            if msg_type == "system":
-                system_queue.put(msg_input)
-            elif msg_type == "demo":
-                demo_input_queue.put(msg_input)
-            else:
-                logger.error("Unknown MQTT message type: {}", msg_type)
-
-        except json.decoder.JSONDecodeError:
-            logger.error("MQTT message was not json.")
-        except KeyError:
-            logger.error("MQTT message did not have correct keys.")
-
-    def on_connect(client, userdata, flags, rc):
-        logger.info("MQTT Client connected ({})", rc)
-        client.connected = True
-
-        # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
-        client.subscribe("byu_sss/input")
-
-    def on_disconnect(client, userdata, rc):
-        logger.info("MQTT Client disconnected ({})", rc)
-        client.connected = False
-
-    with open("mqtt_config.json") as f:
-        config = json.load(f)
-
-    client = mqtt.Client()
-    client.username_pw_set(config["username"], config["password"])
-
-    if config["tls"]:
-        client.tls_set()
-
-    client.on_message = on_message
-    client.on_connect = on_connect
-    client.on_disconnect = on_disconnect
-    client.connected = False
-
-    client.connect_async(config["host"], config["port"])
-    client.loop_start()
-
-    return client
-
-
-def gamepad_input(system_queue, demo_input_queue, demo_output_queue):
-    # TODO: Handle start and select in system queue?
-
-    def gamepad_listener():
-        leftPressed = False
-        rightPressed = False
-        upPressed = False
-        downPressed = False
-        controllerFound = False
-        while True:
-            try:
-                events = inputs.get_gamepad()
-                if not controllerFound:
-                    logger.success("Controller detected")
-                    controllerFound = True
-                for event in events:
-                    if event.code == "ABS_X":
-                        if event.state == 0:
-                            demo_input_queue.put(b"h")
-                            leftPressed = True
-                        elif event.state == 127:
-                            if leftPressed:
-                                demo_input_queue.put(b"hh")
-                                leftPressed = False
-                            elif rightPressed:
-                                demo_input_queue.put(b"kk")
-                                rightPressed = False
-                        elif event.state == 255:
-                            demo_input_queue.put(b"k")
-                            rightPressed = True
-                    elif event.code == "ABS_Y":
-                        if event.state == 0:
-                            demo_input_queue.put(b"u")
-                            upPressed = True
-                        elif event.state == 127:
-                            if upPressed:
-                                demo_input_queue.put(b"uu")
-                                upPressed = False
-                            elif downPressed:
-                                demo_input_queue.put(b"jj")
-                                downPressed = False
-                        elif event.state == 255:
-                            demo_input_queue.put(b"j")
-                            downPressed = True
-                    elif event.code == "BTN_BASE4":
-                        if event.state:
-                            demo_input_queue.put(b"start")
-                        else:
-                            demo_input_queue.put(b"pause")
-            except inputs.UnpluggedError:
-                logger.warning("There is no controller plugged in")
-                break
-
-    gamepad_thread = threading.Thread(target=gamepad_listener, daemon=True)
-    gamepad_thread.start()
-
-
 def start_loop(
     screen, system_queue, demo_input_queue, demo_output_queue, user_input_timeout=300
 ):
@@ -169,6 +59,11 @@ def start_loop(
         # Start the demo
         try:
             demo_name = system_queue.get(timeout=0.01)
+
+            if demo_name == "QUIT":
+                # QUIT command was sent
+                exit()
+
             logger.info("User selected {}", demo_name)
             return demos[demo_name]
         except KeyError:
@@ -180,7 +75,7 @@ def start_loop(
             return None
 
     def tick_demo(runner, frame_tick):
-        next(handle_input)
+        keyboard.process_input(system_queue, demo_input_queue)
 
         # Tick the demo
         try:
@@ -193,8 +88,6 @@ def start_loop(
 
     demos = load_demos()
     random_demos = get_random_demo(demos)
-
-    handle_input = screen.create_input_handler()
 
     # FIXME: This is for testing
     user_input_timeout = 5
@@ -302,8 +195,8 @@ def run(simulate):
     demo_output_queue = Queue()
 
     # Set up queues for all devices
-    gamepad_input(system_queue, demo_input_queue, demo_output_queue)
-    mqtt_input(system_queue, demo_input_queue, demo_output_queue)
+    mqtt.start_process_input(system_queue, demo_input_queue)
+    # gamepad.start_processing_input(system_queue, demo_input_queue)
 
     start_loop(screen, system_queue, demo_input_queue, demo_output_queue)
 

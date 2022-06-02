@@ -31,15 +31,6 @@ class VirtualScreen:
             clock.tick(frame_rate)
             yield
 
-    def create_input_handler(self):
-        while True:
-            events = pygame.event.get()
-
-            for event in events:
-                if event.type == QUIT:
-                    exit()
-            yield
-
     def clear(self):
         self.display.clear()
 
