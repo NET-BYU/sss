@@ -1,10 +1,9 @@
 from importlib import import_module
-from pathlib import Path
 from queue import Queue, Empty
 
 from loguru import logger
 
-# TODO: Need to handle the input_q and output_q
+import controllers
 
 
 def run(demo_name, simulate):
@@ -17,6 +16,7 @@ def run(demo_name, simulate):
 
         screen = PhysicalScreen()
 
+    system_q = Queue()
     input_q = Queue()
     output_q = Queue()
 
@@ -27,13 +27,23 @@ def run(demo_name, simulate):
         demo_module, "_".join([word.capitalize() for word in demo_name.split("_")])
     )(input_q, output_q, screen.display)
 
+    # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
-    handle_input = screen.create_input_handler()
+    handle_input = controllers.start_inputs(system_q, input_q)
     runner = demo.run()
+
+    # Clear screen
     screen.clear()
 
     while True:
+        # Process input
         next(handle_input)
+
+        # Make sure they are not trying to exit
+        while not system_q.empty():
+            system_event = system_q.get()
+            if system_event == "QUIT":
+                exit()
 
         # Tick the demo
         try:
@@ -45,8 +55,6 @@ def run(demo_name, simulate):
 
         # Wait for next tick
         next(tick)
-
-    screen.refresh()
 
 
 if __name__ == "__main__":
