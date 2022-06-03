@@ -1,5 +1,7 @@
 import random
 
+from demos.utils import get_all_from_queue
+
 class Pipe:
     def __init__(self,x):
         self.gap_height = random.randint(15,33)
@@ -52,7 +54,7 @@ class Flappy_Pixel:
 
     def _process_input(self):
         # process the input looking for enter key to be pressed
-        temp = self.get_input_buff()
+        temp = get_all_from_queue(self.input_queue)
         
         if "START_P" in temp:
             self.velocity = -1.75
@@ -170,8 +172,4 @@ class Flappy_Pixel:
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-
-    def get_input_buff(self):
-        # Get all input off the queue
-        return list(self.input_queue.queue)
 
