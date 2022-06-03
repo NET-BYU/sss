@@ -1,10 +1,9 @@
 from loguru import logger
-from loguru import logger
 
 
 def start_inputs(system_queue, demo_input_queue):
     try:
-        logger.info("Loading mqtt input...")
+        logger.info("Loading MQTT input...")
         from . import mqtt
 
         mqtt_runner = mqtt.start_processing_input(system_queue, demo_input_queue)
@@ -12,12 +11,12 @@ def start_inputs(system_queue, demo_input_queue):
     except FileNotFoundError as e:
         mqtt_runner = None
         logger.warning(e)
-        logger.warning("Unable to open config file necessary to run mqtt input.")
+        logger.warning("Unable to open config file necessary to run MQTT input.")
         logger.warning("Program will continue to run without this input.")
     except ModuleNotFoundError as e:
         mqtt_runner = None
         logger.warning(e)
-        logger.warning("Unable to import modules necessary to run mqtt input.")
+        logger.warning("Unable to import modules necessary to run MQTT input.")
         logger.warning("Program will continue to run without this input.")
 
     try:
