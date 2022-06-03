@@ -50,6 +50,9 @@ def start_processing_input(system_queue, demo_input_queue):
 
     client.connect(config["host"], config["port"])
 
-    while True:
-        client.loop(timeout=0.01)
-        yield
+    def process():
+        while True:
+            client.loop(timeout=0.01)
+            yield
+
+    return process()

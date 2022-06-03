@@ -9,6 +9,11 @@ def start_inputs(system_queue, demo_input_queue):
 
         mqtt_runner = mqtt.start_processing_input(system_queue, demo_input_queue)
         logger.info("...done")
+    except FileNotFoundError as e:
+        mqtt_runner = None
+        logger.warning(e)
+        logger.warning("Unable to open config file necessary to run mqtt input.")
+        logger.warning("Program will continue to run without this input.")
     except ModuleNotFoundError as e:
         mqtt_runner = None
         logger.warning(e)
