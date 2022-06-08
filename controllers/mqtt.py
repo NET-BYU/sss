@@ -48,11 +48,20 @@ def start_processing_input(system_queue, demo_input_queue):
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
 
-    client.connect(config["host"], config["port"])
-
     def process():
         while True:
-            client.loop(timeout=0.01)
-            yield
+            try:
+                client.connect(config["host"], config["port"])
+
+                while True:
+                    client.loop(timeout=0.01)
+                    yield
+
+            except ConnectionRefusedError:
+                logger.warning("Unable to connect to broker... trying again later.")
+
+                for _ in range(100):
+                    yield
+                continue
 
     return process()
