@@ -9,6 +9,7 @@ from pygame_widgets.button import Button
 
 from display.virtual_screen import VirtualScreen
 import controllers
+import os
 
 
 class Simulator:
@@ -291,7 +292,8 @@ class Simulator:
             while not self.system_q.empty():
                 system_event = self.system_q.get()
                 if system_event == "QUIT":
-                    exit()
+                    pygame.quit()
+                    os._exit(0)
 
             # Tick the selected game function
             next(self.game_runner)

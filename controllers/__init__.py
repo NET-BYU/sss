@@ -30,6 +30,10 @@ def start_inputs(system_queue, demo_input_queue):
         logger.warning(e)
         logger.warning("Unable to import modules necessary to run gamepad input.")
         logger.warning("Program will continue to run without this input.")
+    except Exception as e:
+        logger.warning("Exception caught")
+        gamepad_runner = None
+        logger.warning(e)
 
     try:
         logger.info("Loading keyboard input...")
