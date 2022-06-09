@@ -3,6 +3,8 @@ import queue
 from random import getrandbits
 from loguru import logger
 
+from demos.utils import get_all_from_queue
+
 ARENA_START = 14
 ARENA_END = ARENA_START - 15
 LEFT_KEY = 0x61
@@ -42,11 +44,6 @@ class Breakout:
         self.rows = self.level + 2
         self.start = False
         self.gameover = False
-
-    def get_input_buff(self):
-        # Get all input off the queue
-        while not self.input_queue.empty():
-            yield self.input_queue.get()
 
     def run(self):
 
@@ -101,7 +98,7 @@ class Breakout:
                 if not self.input_queue.empty():
 
                     # Check to see if there are any keypresses to read
-                    for keypress in self.get_input_buff():
+                    for keypress in get_all_from_queue(self.input_queue):
 
                         # If there are directional buttons pressed
                         if keypress == "LEFT_P":
@@ -127,7 +124,9 @@ class Breakout:
                             # Do nothing until start is pressed again
                             while not unpause:
                                 if not self.input_queue.empty():
-                                    for keypress in self.get_input_buff():
+                                    for keypress in get_all_from_queue(
+                                        self.input_queue
+                                    ):
                                         if keypress == "START_P":
                                             screen.draw_text(
                                                 (screen.x_width // 2) - 3,
