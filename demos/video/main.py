@@ -24,7 +24,7 @@ class Video:
         self.screen = screen
 
         # init demo/game specific variables here
-        self.target = "Never_Gonna_Give_You_Up.avi.csv"
+        self.target = "asdfmovie.mp4.csv"
         self.pause = False
         self.previous_frame = np.full((2353), 0)
 
