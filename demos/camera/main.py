@@ -67,7 +67,7 @@ class Camera:
         for i in range(NUM_COLS):
             self.arr.append([])
             for j in range(NUM_COLS):
-                self.arr[i].append[0]
+                self.arr[i].append(0)
 
         self.connection = False
         self.http = urllib3.PoolManager()
