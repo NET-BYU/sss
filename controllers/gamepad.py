@@ -44,9 +44,6 @@ def start_processing_input(system_queue, demo_input_queue):
                 except Empty:
                     break
 
-                logger.info(event.code)
-                logger.info(event.state)
-
                 if event.code == "ABS_X":
                     if event.state == 0:
                         demo_input_queue.put("LEFT_P")
