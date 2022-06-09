@@ -4,7 +4,7 @@ from numpy.core.defchararray import zfill
 sys.path.append("../..")
 
 from display import seven_seg as ss  # import SevenSegment
-from display import game_display as gd  # import Display
+from display import display as gd  # import Display
 import random
 import time
 from copy import deepcopy
@@ -186,7 +186,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     if mqtt_client.connected:
                         mqtt_client.publish(topic=SCORE_TOPIC, payload=snek_length)
                     else:
-                        logger.info("MQTT Client is not connected so skipping publications.")
+                        logger.info(
+                            "MQTT Client is not connected so skipping publications."
+                        )
 
                     # temp = current_food_location
                     current_food_location = get_new_food_location()
@@ -257,7 +259,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     if mqtt_client.connected:
                         mqtt_client.publish(topic=LIFE_TOPIC, payload="Game Over")
                     else:
-                        logger.info("MQTT Client is not connected so skipping publications.")
+                        logger.info(
+                            "MQTT Client is not connected so skipping publications."
+                        )
 
                     continue
 
@@ -288,9 +292,7 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                 "H-SCORE " + str(snek_length).zfill(3),
             )
             h_score = snek_length
-            with open(
-                "games/snake/ai_high_score.txt", "w"
-            ) as scores:
+            with open("games/snake/ai_high_score.txt", "w") as scores:
                 scores.write(str(h_score))
             display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
         else:
