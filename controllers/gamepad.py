@@ -14,7 +14,9 @@ def get_input_from_gamepad(queue):
         except IndexError:
             logger.warning("There is no controller plugged in. Trying again later...")
             time.sleep(5)
-            continue
+            # continue
+            # TODO: Hotplug gamepad
+            return None
 
         # If it is plugged in, get events from it
         while True:
@@ -41,6 +43,9 @@ def start_processing_input(system_queue, demo_input_queue):
                     event = queue.get(block=False)
                 except Empty:
                     break
+
+                logger.info(event.code)
+                logger.info(event.state)
 
                 if event.code == "ABS_X":
                     if event.state == 0:
@@ -74,8 +79,22 @@ def start_processing_input(system_queue, demo_input_queue):
                     if event.state:
                         demo_input_queue.put("START_P")
                     else:
-                        demo_input_queue.put(b"pause")
-
+                        demo_input_queue.put("START_R")
+                elif event.code == "BTN_BASE3":
+                    if event.state:
+                        demo_input_queue.put("SEL_P")
+                    else:
+                        demo_input_queue.put("SEL_R")
+                elif event.code == "BTN_THUMB":
+                    if event.state:
+                        demo_input_queue.put("PRI_P")
+                    else:
+                        demo_input_queue.put("PRI_R")
+                elif event.code == "BTN_THUMB2":
+                    if event.state:
+                        demo_input_queue.put("SEC_P")
+                    else:
+                        demo_input_queue.put("SEC_R")
             yield
 
     return process()
