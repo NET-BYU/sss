@@ -413,81 +413,17 @@ class Tetris:
 
     def init_scoreboard(self):
         full_pixel = 15
+        self.screen.draw_hline(28, 3, 17)
+        self.screen.draw_hline(28, 15, 17)
+        self.screen.draw_hline(28, 17, 17)
+        self.screen.draw_hline(28, 21, 17)
+        self.screen.draw_hline(28, 25, 17)
+        self.screen.draw_hline(28, 29, 17)
+        self.screen.draw_vline(28, 3, 12)
+        self.screen.draw_vline(45, 3, 12)
+        self.screen.draw_vline(28, 17, 12)
+        self.screen.draw_vline(45, 17, 12)
 
-        for x in range(self.board_width - 4):
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset + 11,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset + 13,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset + 17,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset + 21,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                x + self.x_offset + self.board_width + 4,
-                self.y_offset + 25,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-        self.screen.push()
-        for y in range(12):
-            self.screen.draw_pixel(
-                self.x_offset - 1 + self.board_width + 4,
-                y + self.y_offset,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                self.x_offset + self.board_width + self.board_width,
-                y + self.y_offset,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-        for y in range(13):
-            self.screen.draw_pixel(
-                self.x_offset - 1 + self.board_width + 4,
-                y + self.y_offset + 13,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
-            self.screen.draw_pixel(
-                self.x_offset + self.board_width + self.board_width,
-                y + self.y_offset + 13,
-                full_pixel,
-                combine=True,
-                push=False,
-            )
         self.screen.push()
 
         self.screen.draw_text(29, 12, "NEXT", push=True)
