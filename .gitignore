@@ -1,3 +1,5 @@
+mqtt_config.json
+
 .idea/
 *venv
 #demos/

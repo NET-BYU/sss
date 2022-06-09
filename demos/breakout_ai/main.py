@@ -51,8 +51,6 @@ class Breakout_Ai:
         self.line_right = 0
         self.rows = self.level + 2
 
-        self.init_screen(screen)
-
     def run(self):
 
         screen = self.screen
