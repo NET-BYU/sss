@@ -1,10 +1,10 @@
-from display import game_functions
+# from display import utils
 import random
 import numpy as np
 
 
 def sound_visualizer(display, queue, sound_frames, fps):
-    tick = game_functions.frameRate(fps)
+    tick = utils.frameRate(fps)
     bottom = display.y_height - 1
     # Display first frame
     for x in range(display.x_width):
@@ -60,6 +60,8 @@ def sound_visualizer_run(display, queue, mqtt_client):
         frames,
         30,
     )
+
+
 class Sound_Visualizer:
     """This demo showcases a sound visualization."""
 

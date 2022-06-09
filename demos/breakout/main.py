@@ -1,5 +1,6 @@
+import queue
+
 from random import getrandbits
-from re import X
 from loguru import logger
 
 from demos.utils import get_all_from_queue
@@ -44,8 +45,6 @@ class Breakout:
         self.start = False
         self.gameover = False
 
-        self.init_screen(screen)
-
     def run(self):
 
         # Set game session states
@@ -73,13 +72,12 @@ class Breakout:
         screen.push()
 
         # Don't start until user presses start
-        while not self.start:
-            if not self.input_queue.empty():
-                input_ = self.input_queue.get(block=False)
-            else:
-                input_ = ""
-            if input_ == "START_P":
-                self.start = True
+        while True:
+            try:
+                if self.input_queue.get(block=False) == "START_P":
+                    break
+            except queue.Empty:
+                pass
             yield
 
         # Erase startup text and initialize screen
