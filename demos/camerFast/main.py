@@ -63,6 +63,12 @@ class Camerfast:
         self.screen_min = 0
         self.screen_max = 0
 
+        self.arr = []
+        for i in range(NUM_COLS):
+            self.arr.append([])
+            for j in range(NUM_COLS):
+                self.arr[i].append(0)
+
         self.connection = False
         self.http = urllib3.PoolManager()
         self.url_rets = {"url_ret": 0, "ret": False}
@@ -264,7 +270,10 @@ class Camerfast:
                         print(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
                         print(f"self.screen_max = {self.screen_max}")
                         pixel = 12
-                    self.screen.draw_pixel(j, i, self.num_to_pixel[pixel])
+
+                    if self.arr[i][j] != self.num_to_pixel[pixel]:
+                        self.screen.draw_pixel(j, i, self.num_to_pixel[pixel])
+                        self.arr[i][j] = self.num_to_pixel[pixel]
 
             self.screen.push()
             # self.cap.release()
