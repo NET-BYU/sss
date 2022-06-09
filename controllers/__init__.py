@@ -39,7 +39,7 @@ def start_inputs(system_queue, demo_input_queue):
             system_queue, demo_input_queue
         )
         logger.info("...done")
-    except ModuleNotFoundError as e:
+    except (ImportError, ModuleNotFoundError) as e:
         keyboard_runner = None
         logger.warning(e)
         logger.warning("Unable to import modules necessary to run keyboard input.")

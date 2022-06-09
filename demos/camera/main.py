@@ -1,9 +1,9 @@
 import threading
 import cv2
-import requests
-from pythonping import ping
+# import requests
+# from pythonping import ping
 import urllib3
-from multiprocessing.pool import ThreadPool
+# from multiprocessing.pool import ThreadPool
 
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
