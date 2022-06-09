@@ -3,7 +3,7 @@ import sys
 sys.path.append("../..")
 
 from display import seven_seg as ss  # import SevenSegment
-from display import game_display as gd  # import Display
+from display import display as gd  # import Display
 from random import getrandbits
 from loguru import logger
 
@@ -18,7 +18,7 @@ def nsh(screen, command_queue, mqtt_client, ai=False):
 
     print("NSH")
 
-    screen.draw_text(0,0,"Banana", combine=True)
+    screen.draw_text(0, 0, "Banana", combine=True)
 
     screen.push()
 

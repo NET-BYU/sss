@@ -1,6 +1,9 @@
 from demos.snake import snek_state
 import random
 from loguru import logger
+
+from demos.utils import get_all_from_queue
+
 # import os, sys
 
 # # getting the name of the directory
@@ -81,7 +84,7 @@ class Snake:
         # Generator Loop with raw yield
         while True:
             while not game_over:
-                temp = self.get_input_buff()
+                temp = get_all_from_queue(self.input_queue)
                 # if len(temp) > 0:
                 for command in temp:
                     if command == "LEFT_P":
@@ -229,8 +232,3 @@ class Snake:
             self.h_score = self.snek_length
             with open("demos/snake/high_score.txt", "w") as scores:
                 scores.write(str(self.h_score))
-
-    
-    def get_input_buff(self):
-        # Get all input off the queue
-        return list(self.input_queue.queue)
