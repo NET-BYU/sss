@@ -92,7 +92,7 @@ def start_loop(screen, user_input_timeout=300):
     handle_input = controllers.start_inputs(system_queue, demo_input_queue)
 
     # FIXME: This is for testing
-    user_input_timeout = 5
+    user_input_timeout = 60
 
     while True:
         while not system_queue.empty():
@@ -150,7 +150,7 @@ def start_loop(screen, user_input_timeout=300):
                 continue
 
             # FIXME: Used for testing
-            demo_time = 5
+            demo_time = 60
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
