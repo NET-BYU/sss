@@ -93,9 +93,6 @@ def start_loop(screen, user_input_timeout=300):
     random_demos = get_random_demo(demos)
     handle_input = controllers.start_inputs(system_queue, demo_input_queue)
 
-    # FIXME: This is for testing
-    user_input_timeout = 5
-
     while True:
         while not system_queue.empty():
             logger.info("Got input from the user...")
@@ -150,9 +147,6 @@ def start_loop(screen, user_input_timeout=300):
             # TODO: Then I can filter it when I load the demo, not right here.
             if demo_time is None:
                 continue
-
-            # FIXME: Used for testing
-            demo_time = 5
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
