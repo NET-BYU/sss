@@ -163,6 +163,7 @@ def start_loop(screen, user_input_timeout=300):
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
+                logger.info("Refreshing screen to remove any artifacts.")
                 screen.refresh()
 
 
