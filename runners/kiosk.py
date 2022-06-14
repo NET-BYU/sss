@@ -52,36 +52,38 @@ def get_random_demo(demos):
             yield d
 
 
+def get_demo_from_user(system_queue, demos):
+    # Start the demo
+    try:
+        demo_name = system_queue.get(timeout=0.01)
+
+        if demo_name == "QUIT":
+            # QUIT command was sent
+            exit()
+
+        logger.info("User selected {}", demo_name)
+        return demos[demo_name]
+    except KeyError:
+        logger.error(f"Unknown demo: {demo_name}")
+        return None
+    except Empty:
+        # If for some reason it is empty (shouldn't be), then start over
+        logger.error("Queue was empty even though it shouldn't have been.")
+        return None
+
+
+def tick_demo(runner, frame_tick):
+    # Tick the demo
+    try:
+        next(runner)
+    except Exception:
+        logger.exception("Unknown error occurred!")
+
+    # Wait for next tick
+    next(frame_tick)
+
+
 def start_loop(screen, user_input_timeout=300):
-    def get_demo_from_user(system_queue, demos):
-        # Start the demo
-        try:
-            demo_name = system_queue.get(timeout=0.01)
-
-            if demo_name == "QUIT":
-                # QUIT command was sent
-                exit()
-
-            logger.info("User selected {}", demo_name)
-            return demos[demo_name]
-        except KeyError:
-            logger.error(f"Unknown demo: {demo_name}")
-            return None
-        except Empty:
-            # If for some reason it is empty (shouldn't be), then start over
-            logger.error("Queue was empty even though it shouldn't have been.")
-            return None
-
-    def tick_demo(runner, frame_tick):
-        # Tick the demo
-        try:
-            next(runner)
-        except Exception:
-            logger.exception("Unknown error occurred!")
-
-        # Wait for next tick
-        next(frame_tick)
-
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
