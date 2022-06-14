@@ -27,10 +27,11 @@ def run_simulator():
 
 @cli.command(name="kiosk")
 @click.option("-s", "--simulate", is_flag=True, default=False)
-def run_kiosk(simulate):
+@click.option("-t", "--test", is_flag=True, default=False)
+def run_kiosk(simulate, test):
     from runners import kiosk
 
-    kiosk.run(simulate)
+    kiosk.run(simulate, testing=test)
 
 
 @cli.command("demo")

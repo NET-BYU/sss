@@ -83,7 +83,7 @@ def tick_demo(runner, frame_tick):
     next(frame_tick)
 
 
-def start_loop(screen, user_input_timeout=300):
+def start_loop(screen, user_input_timeout=300, demo_time=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -110,11 +110,6 @@ def start_loop(screen, user_input_timeout=300):
 
             # As long as there is input from the user keep playing the demo
             while user_input_timeout > (time.time() - last_input_time):
-                logger.debug(
-                    "Playing demo while input is received ({})",
-                    time.time() - last_input_time,
-                )
-
                 # System queue gets priority over demos
                 # This means someone is switching the demo
                 if not system_queue.empty():
@@ -140,7 +135,9 @@ def start_loop(screen, user_input_timeout=300):
             )
             frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
-            demo_time = random_demo.demo_time
+
+            if demo_time is None:
+                demo_time = random_demo.demo_time
 
             # Skip demos that are not demos
             # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
@@ -167,7 +164,7 @@ def start_loop(screen, user_input_timeout=300):
                 screen.refresh()
 
 
-def run(simulate):
+def run(simulate, testing=False):
     if simulate:
         from display.virtual_screen import VirtualScreen
 
@@ -193,8 +190,11 @@ def run(simulate):
     logger.info("   __________/ /")
     logger.info("-=:___________/")
 
-    start_loop(screen)
+    if testing:
+        start_loop(screen, user_input_timeout=5, demo_time=5)
+    else:
+        start_loop(screen)
 
 
 if __name__ == "__main__":
-    run(simulate=True)
+    run(simulate=True, testing=True)
