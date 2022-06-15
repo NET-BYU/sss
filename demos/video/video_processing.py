@@ -6,7 +6,7 @@ import subprocess
 
 
 # init demo/game specific variables here
-target = "LOTR.mp4"
+target = "doom.mp4"
 num_to_pixel = {
     0: 0x0,
     1: 0x0,
