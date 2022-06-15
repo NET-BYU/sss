@@ -52,36 +52,38 @@ def get_random_demo(demos):
             yield d
 
 
-def start_loop(screen, user_input_timeout=300):
-    def get_demo_from_user(system_queue, demos):
-        # Start the demo
-        try:
-            demo_name = system_queue.get(timeout=0.01)
+def get_demo_from_user(system_queue, demos):
+    # Start the demo
+    try:
+        demo_name = system_queue.get(timeout=0.01)
 
-            if demo_name == "QUIT":
-                # QUIT command was sent
-                exit()
+        if demo_name == "QUIT":
+            # QUIT command was sent
+            exit()
 
-            logger.info("User selected {}", demo_name)
-            return demos[demo_name]
-        except KeyError:
-            logger.error(f"Unknown demo: {demo_name}")
-            return None
-        except Empty:
-            # If for some reason it is empty (shouldn't be), then start over
-            logger.error("Queue was empty even though it shouldn't have been.")
-            return None
+        logger.info("User selected {}", demo_name)
+        return demos[demo_name]
+    except KeyError:
+        logger.error(f"Unknown demo: {demo_name}")
+        return None
+    except Empty:
+        # If for some reason it is empty (shouldn't be), then start over
+        logger.error("Queue was empty even though it shouldn't have been.")
+        return None
 
-    def tick_demo(runner, frame_tick):
-        # Tick the demo
-        try:
-            next(runner)
-        except Exception:
-            logger.exception("Unknown error occurred!")
 
-        # Wait for next tick
-        next(frame_tick)
+def tick_demo(runner, frame_tick):
+    # Tick the demo
+    try:
+        next(runner)
+    except Exception:
+        logger.exception("Unknown error occurred!")
 
+    # Wait for next tick
+    next(frame_tick)
+
+
+def start_loop(screen, user_input_timeout=300, demo_time=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -90,9 +92,6 @@ def start_loop(screen, user_input_timeout=300):
     demos = load_demos()
     random_demos = get_random_demo(demos)
     handle_input = controllers.start_inputs(system_queue, demo_input_queue)
-
-    # FIXME: This is for testing
-    user_input_timeout = 5
 
     while True:
         while not system_queue.empty():
@@ -111,11 +110,6 @@ def start_loop(screen, user_input_timeout=300):
 
             # As long as there is input from the user keep playing the demo
             while user_input_timeout > (time.time() - last_input_time):
-                logger.debug(
-                    "Playing demo while input is received ({})",
-                    time.time() - last_input_time,
-                )
-
                 # System queue gets priority over demos
                 # This means someone is switching the demo
                 if not system_queue.empty():
@@ -141,16 +135,15 @@ def start_loop(screen, user_input_timeout=300):
             )
             frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
-            demo_time = random_demo.demo_time
+
+            if demo_time is None:
+                demo_time = random_demo.demo_time
 
             # Skip demos that are not demos
             # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
             # TODO: Then I can filter it when I load the demo, not right here.
             if demo_time is None:
                 continue
-
-            # FIXME: Used for testing
-            demo_time = 5
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
@@ -167,10 +160,11 @@ def start_loop(screen, user_input_timeout=300):
                 tick_demo(runner, frame_tick)
             else:
                 # Refresh the screen when the demo time has run out
+                logger.info("Refreshing screen to remove any artifacts.")
                 screen.refresh()
 
 
-def run(simulate):
+def run(simulate, testing=False):
     if simulate:
         from display.virtual_screen import VirtualScreen
 
@@ -196,8 +190,11 @@ def run(simulate):
     logger.info("   __________/ /")
     logger.info("-=:___________/")
 
-    start_loop(screen)
+    if testing:
+        start_loop(screen, user_input_timeout=5, demo_time=5)
+    else:
+        start_loop(screen)
 
 
 if __name__ == "__main__":
-    run(simulate=True)
+    run(simulate=True, testing=True)
