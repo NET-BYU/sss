@@ -153,7 +153,7 @@ class Camera:
                 #    looks for the url. This last a second, so we have
                 #    it in a thread so that we can exit the demo during
                 #    the search.
-                url_thread = threading.Thread(target=self.check_url)
+                url_thread = threading.Thread(target=self.check_url, daemon=True)
                 url_thread.start()
                 while not self.url_rets["url_ret"]:
                     yield
