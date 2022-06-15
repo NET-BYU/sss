@@ -78,12 +78,12 @@ class Camera:
             "http://octopi.local", "http://octopi.local/webcam/?action=stream"
         )
         esp32_1 = Camera_Source(
-            "http://192.168.0.180", "http://192.168.0.180:81/stream"
+            "http://192.168.0.102", "http://192.168.0.102:81/stream"
         )
 
         self.cameras = [octopi, esp32_1]
 
-        self.current_camera_index = 0
+        self.current_camera_index = 1
         self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
         # self.cap = cv2.VideoCapture("http://192.168.0.180:81/stream")
