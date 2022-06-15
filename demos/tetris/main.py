@@ -1,6 +1,8 @@
 from enum import Enum
+from pickle import TRUE
 import random
-
+from re import T
+from demos.utils import get_all_from_queue
 from numpy import full
 
 # import numpy as np
@@ -18,7 +20,7 @@ class Tetris:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 5
-        self.demo_time = 300  # None for a game
+        self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -47,11 +49,15 @@ class Tetris:
     def run(self):
         # Create generator here
 
-        self.init_screen()
-        self.init_scoreboard()
-        self.draw_logo()
-
         while True:
+
+            self.init_screen()
+            self.init_scoreboard()
+            self.draw_logo()
+
+            self.score = 0
+            self.level = 1
+            self.lines = 0
 
             next_shape = random.choice(list(self.Shape))
 
@@ -103,7 +109,7 @@ class Tetris:
                     right_r = 0
                     rotate = 0
 
-                    for input in self.get_input_buff():
+                    for input in get_all_from_queue(self.input_queue):
                         if input == "LEFT_P":
                             left_p += 1
                             auto_left = True
@@ -183,6 +189,92 @@ class Tetris:
                 self.screen.push()
                 yield
 
+            self.draw_game_over_screen()
+            self.screen.push()
+
+            for i in range(10):
+                yield
+
+            if self.is_high_score():
+                self.draw_high_score_screen()
+                self.screen.push()
+
+                initials_done = False
+                first_letter = True
+                iterations = 0
+                pixel1 = 0
+                pixel2 = 0
+                x = 33
+                y = 20
+                letter = "A"
+                is_H = True
+                is_U = True
+                while not initials_done:
+                    for input in get_all_from_queue(self.input_queue):
+                        if input == "DOWN_R":
+                            char = ord(letter) + 1
+                            if char > 90 and char != ord("i") and char != ord("v"):
+                                char = 65
+                            letter = chr(char)
+                            if letter == "H":
+                                letter = "h"
+                            if letter == "U":
+                                letter = "u"
+                            if letter == "v":
+                                letter = "V"
+                            if letter == "i":
+                                letter = "I"
+                            self.screen.draw_text(x, y, letter, combine=False)
+                        if input == "UP_R":
+                            char = ord(letter) - 1
+                            if char < 65:
+                                char = 90
+                            letter = chr(char)
+                            if letter == "H":
+                                letter = "h"
+                            if letter == "U":
+                                letter = "u"
+                            if letter == "t":
+                                letter = "T"
+                            if letter == "g":
+                                letter = "G"
+                            self.screen.draw_text(x, y, letter, combine=False)
+                        if input == "RIGHT_R" or input == "LEFT_R":
+                            first_letter = not first_letter
+                        if input == "START_R":
+                            initials_done = True
+                            break
+
+                    if iterations % 4 == 0:
+                        if first_letter:
+                            x = 33
+                        else:
+                            x = 34
+                        letter = self.get_letter(x, y)
+                        self.screen.draw_pixel(x, y, 0)
+                        self.screen.draw_pixel(x, y + 1, 0)
+                        self.screen.push()
+                    if iterations % 4 == 2 or initials_done:
+                        self.screen.draw_text(x, y, letter, combine=False)
+                        self.screen.push()
+
+                    iterations += 1
+                    yield
+
+                self.update_highscoreboard()
+
+            self.display_high_scores()
+            self.screen.push()
+
+            start_over = False
+            while not start_over:
+                for input in get_all_from_queue(self.input_queue):
+                    if input == "START_R":
+                        start_over = True
+                yield
+
+            self.screen.clear()
+            self.screen.push()
             yield
 
     class Shape(Enum):
@@ -194,8 +286,31 @@ class Tetris:
         J = 6
         T = 7
 
+    def is_high_score(self):
+        with open("demos/tetris/high_scores.txt", "r") as scores:
+            for score in scores:
+                if self.score > int(score.split()[1]):
+                    return True
+        return False
+
+    def update_highscoreboard(self):
+        initials = self.get_letter(33, 20) + self.get_letter(34, 20)
+        new_score = initials + " " + str(self.score) + "\n"
+        position = 0
+        lines = []
+        with open("demos/tetris/high_scores.txt", "r") as scores:
+            lines = scores.readlines()
+            for score in lines:
+                if self.score > int(score.split()[1]):
+                    break
+                else:
+                    position += 1
+        lines.pop(4)
+        lines.insert(position, new_score)
+        with open("demos/tetris/high_scores.txt", "w") as scores:
+            scores.writelines(lines)
+
     def update_score(self, num_lines):
-        # self.lines += num_lines
         points = 0
         if num_lines == 1:
             points = 40
@@ -411,6 +526,66 @@ class Tetris:
             )
         self.screen.push()
 
+    def draw_game_over_screen(self):
+        self.screen.clear()
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 8, "GAME OVER"
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 6, "---------"
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 4,
+            (self.screen.y_height // 2) - 4,
+            "SCORE " + str(self.score),
+        )
+
+    def draw_high_score_screen(self):
+        self.screen.clear()
+        self.screen.draw_text(
+            (self.screen.x_width // 3),
+            (self.screen.y_height // 2) - 8,
+            "NEW hIGh SCORE",
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 3) - 2,
+            (self.screen.y_height // 2) - 6,
+            "--------------------",
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 3) - 4,
+            (self.screen.y_height // 2) - 4,
+            "ENTER YOuR INITIALS: " + "AA",
+        )
+
+    def display_high_scores(self):
+        self.screen.clear()
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 5,
+            (self.screen.y_height // 3) - 4,
+            "hIGh SCORES",
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 12,
+            (self.screen.y_height // 3) + 26,
+            "PRESS START TO PLAY AGAIN",
+        )
+        self.screen.draw_text(
+            (self.screen.x_width // 2) - 5,
+            (self.screen.y_height // 3) - 2,
+            "-----------",
+        )
+        with open("demos/tetris/high_scores.txt", "r") as scores:
+            offset = 0
+            for score in scores:
+                score = score.strip()
+                self.screen.draw_text(
+                    (self.screen.x_width // 2) - (len(score) // 2),
+                    (self.screen.y_height // 3) + offset,
+                    score,
+                )
+                offset += 4
+
     def init_scoreboard(self):
         full_pixel = 15
         self.screen.draw_hline(28, 3, 17)
@@ -505,10 +680,63 @@ class Tetris:
 
         self.screen.push()
 
+    def get_letter(self, x, y):
+        pixel1 = self.screen.get_pixel(x, y)
+        pixel2 = self.screen.get_pixel(x, y + 1)
+        if pixel1 == 15 and pixel2 == 14:
+            return "A"
+        if pixel1 == 3 and pixel2 == 15:
+            return "B"
+        if pixel1 == 6 and pixel2 == 3:
+            return "C"
+        if pixel1 == 9 and pixel2 == 15:
+            return "D"
+        if pixel1 == 7 and pixel2 == 7:
+            return "E"
+        if pixel1 == 7 and pixel2 == 6:
+            return "F"
+        if pixel1 == 6 and pixel2 == 11:
+            return "G"
+        if pixel1 == 3 and pixel2 == 14:
+            return "h"
+        if pixel1 == 2 and pixel2 == 2:
+            return "I"
+        if pixel1 == 8 and pixel2 == 11:
+            return "J"
+        if pixel1 == 7 and pixel2 == 14:
+            return "K"
+        if pixel1 == 2 and pixel2 == 3:
+            return "L"
+        if pixel1 == 4 and pixel2 == 10:
+            return "M"
+        if pixel1 == 14 and pixel2 == 10:
+            return "N"
+        if pixel1 == 14 and pixel2 == 11:
+            return "O"
+        if pixel1 == 15 and pixel2 == 6:
+            return "P"
+        if pixel1 == 15 and pixel2 == 5:
+            return "Q"
+        if pixel1 == 14 and pixel2 == 2:
+            return "R"
+        if pixel1 == 7 and pixel2 == 13:
+            return "S"
+        if pixel1 == 3 and pixel2 == 7:
+            return "T"
+        if pixel1 == 0 and pixel2 == 11:
+            return "u"
+        if pixel1 == 10 and pixel2 == 11:
+            return "V"
+        if pixel1 == 10 and pixel2 == 1:
+            return "W"
+        if pixel1 == 11 and pixel2 == 14:
+            return "X"
+        if pixel1 == 11 and pixel2 == 13:
+            return "Y"
+        if pixel1 == 13 and pixel2 == 7:
+            return "Z"
+        return None
+
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-
-    def get_input_buff(self):
-        # Get all input off the queue
-        return list(self.input_queue.queue)
