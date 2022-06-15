@@ -193,29 +193,16 @@ class Camera:
 
             # Okay, we found the camera, now let's use it
             try:
-                #################################################################
-                # Start with creating the thread and running it
-                #   In this thread, we want to try and capture data from the
-                #    camera and store it into the frame object. It is in a
-                #    thread because, if we lose the camera, we want to avoid
-                #    freezing the whole display.
-                cap_thread = threading.Thread(target=self.capture)
-                self.cap = cv2.VideoCapture(self.stream_url)
-                cap_thread.start()
-                while not self.cap_rets["cap_ret"]:
-                    yield
-                cap_thread.join()
-                # Thread is exiting, we have most likely received a frame;
-                #  proceed accordingly.
-                #################################################################
 
-                self.cap_rets["cap_ret"] = 0
-                if not self.cap_rets["ret"]:
+                self.cap = cv2.VideoCapture(self.stream_url)
+                ret, frame = self.cap.read()
+
+                if not ret:
                     print("Got to ret failure")
                     self.connection = False
                     yield
                     continue
-                grayFrame = cv2.cvtColor(self.cap_rets["frame"], cv2.COLOR_BGR2GRAY)
+                grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             except:
                 yield
                 continue
@@ -253,8 +240,8 @@ class Camera:
         # Reset the state of the demo if needed, else leave blank
         try:
             self.cap.release()
-            cv2.destroyAllWindows()
         except:
+            print("Ran into an issue on exit")
             pass
         pass
 
