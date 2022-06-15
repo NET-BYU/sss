@@ -12,3 +12,4 @@ __pycache__
 creds.yaml
 .idea/
 bryson_temp/
+demos/camera_fast
