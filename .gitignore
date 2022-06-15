@@ -11,5 +11,3 @@ __pycache__
 .venv
 creds.yaml
 .idea/
-bryson_temp/
-demos/camera_fast
