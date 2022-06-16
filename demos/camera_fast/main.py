@@ -285,8 +285,9 @@ class Camera_Fast:
             self.t.join()
             print("Joined successfully")
             self.cap.release()
-            cv2.destroyAllWindows()
+            # cv2.destroyAllWindows()
         except:
+            print("WE HAVE A PROBLEM!!!")
             pass
         pass
 
