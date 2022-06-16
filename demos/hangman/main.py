@@ -1,5 +1,6 @@
 from demos.hangman.trace import Trace
 from demos.hangman.guess import Guess
+from demos.utils import get_all_from_queue
 from loguru import logger
 
 class Hangman:
@@ -41,7 +42,7 @@ class Hangman:
         # Wait for the player to press the START button before going on
         while not self.start:
             if not self.input_queue.empty():
-                input_ = self.get_input_buff()
+                input_ = get_all_from_queue(self.input_queue)
             else:
                 input_ = ""
             if "START_P" in input_:
@@ -64,7 +65,7 @@ class Hangman:
             # Keep running until the game is over
             while not self.gameover:
                 if not self.input_queue.empty():
-                    input_ = self.get_input_buff()
+                    input_ = get_all_from_queue(self.input_queue)
 
                     # Check to see if there is any keypresses
                     for press in input_:
@@ -138,7 +139,7 @@ class Hangman:
             # This will wait until the player has pressed the START button again before restarting a new game
             while not self.restart:
                 if not self.input_queue.empty():
-                    input_ = self.get_input_buff()
+                    input_ = get_all_from_queue(self.input_queue)
                 else:
                     input_ = ""
                 if "START_P" in input_:
