@@ -3,6 +3,8 @@ import numpy as np
 import cv2
 import time
 from loguru import logger
+import os
+import random
 
 
 class Video:
@@ -24,7 +26,9 @@ class Video:
         self.screen = screen
 
         # init demo/game specific variables here
-        self.target = "doom.mp4.csv"
+        self.targets = os.listdir("./demos/video/resorces/pre-processed/")
+        self.address = random.randint(0, len(self.targets) - 1)
+        self.target = self.targets[self.address]
         self.pause = False
         self.previous_frame = np.full((2353), 0)
 
@@ -36,19 +40,44 @@ class Video:
                 self.pause = False
             if input == "UP_P":
                 self.pause = True
-                return False
-        return self.pause
+                return "FRAME"
+            if input == "DOWN_P":
+                if self.address < (len(self.targets) - 1):
+                    self.address += 1
+                    self.target = self.targets[self.address]
+                else:
+                    self.address = 0
+                    self.target = self.targets[self.address]
+                return "NEXT"
+        return "NONE"
 
     def run(self):
         # Create generator here
         while True:
+            self.next = False
+            self.screen.clear()
+            yield
             with open(
                 "./demos/video/resorces/pre-processed/" + self.target, "r"
             ) as input_file:
                 y = 0
                 for index, input_line in enumerate(input_file):
-                    while self.is_pause(self.get_input_buff()):
+                    while True:
+                        action = self.is_pause(self.get_input_buff())
+                        if action == "NONE":
+                            pass
+                        elif action == "FRAME":
+                            break
+                        elif action == "NEXT":
+                            self.next = True
+                            break
+                        if not self.pause:
+                            break
                         yield
+                        if not self.pause:
+                            break
+                    if self.next:
+                        break
 
                     input_data = input_line.strip("\n").split(",")
                     y = 0
@@ -66,6 +95,7 @@ class Video:
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
+        self.screen.clear()
         pass
 
     def get_input_buff(self):
