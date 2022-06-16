@@ -6,7 +6,7 @@ class Hangman:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = 300  # None for a game
+        self.demo_time = None
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -41,10 +41,10 @@ class Hangman:
         # Wait for the player to press the START button before going on
         while not self.start:
             if not self.input_queue.empty():
-                input_ = self.input_queue.get(block = False)
+                input_ = self.get_input_buff()
             else:
                 input_ = ""
-            if input_ == "START_P":
+            if "START_P" in input_:
                     self.start = True
             yield
 
@@ -58,15 +58,16 @@ class Hangman:
             trace.draw_choice(guess.letter_select(choice), True)
             word = guess.pick_word(seed_num)
             word = word.upper()
-            print(word)
+            logger.info(word)
             self.restart = False
 
             # Keep running until the game is over
             while not self.gameover:
                 if not self.input_queue.empty():
-                    
+                    input_ = self.get_input_buff()
+
                     # Check to see if there is any keypresses
-                    for press in self.get_input_buff():
+                    for press in input_:
 
                         if press == "LEFT_P":
                             repeat_left = True
@@ -137,10 +138,10 @@ class Hangman:
             # This will wait until the player has pressed the START button again before restarting a new game
             while not self.restart:
                 if not self.input_queue.empty():
-                    input_ = self.input_queue.get(block=False)
+                    input_ = self.get_input_buff()
                 else:
                     input_ = ""
-                if input_ == "START_P":
+                if "START_P" in input_:
                     self.restart= True
                 yield
 

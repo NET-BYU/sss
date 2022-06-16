@@ -20,68 +20,38 @@ class Digit_Clock:
         trace = Trace(self.screen)
 
 
+        def draw_time(current_time, draw):
+            hour = current_time[3]
+            min = current_time[4]
+            if(len(str(min)) == 1):
+                trace.draw_number(0, min, draw)
+                trace.draw_number(1, 0, draw)
+            if (len(str(min)) == 2):
+                trace.draw_number(0, int(str(min)[1]), draw)
+                trace.draw_number(1, int(str(min)[0]), draw)
+
+            if(hour >12):
+                hour = hour -12
+
+            if(len(str(hour)) == 1):
+                trace.draw_number(2, hour, draw)
+
+            if(len(str(hour)) == 2):
+                trace.draw_number(2, int(str(hour)[1]), draw)
+                trace.draw_number(3, int(str(hour)[0]), draw)
+        
+
         # Initialize current time on the clock
         current_time = time.localtime(None)
-        hour = current_time[3]
-        min = current_time[4]
-        draw = True
-        if(len(str(min)) == 1):
-            trace.draw_number(0, min, draw)
-            trace.draw_number(1, 0, draw)
-        if (len(str(min)) == 2):
-            trace.draw_number(0, int(str(min)[1]), draw)
-            trace.draw_number(1, int(str(min)[0]), draw)
-
-        if(hour >12):
-            hour = hour -12
-
-        if(len(str(hour)) == 1):
-            trace.draw_number(2, hour, draw)
-        
-        if(len(str(hour)) == 2):
-            trace.draw_number(2, int(str(hour)[1]), draw)
-            trace.draw_number(3, int(str(hour)[0]), draw)
+        draw_time(current_time, True)
 
 
         # Generator that will compare a new time with the current time and if there is a difference then the generator will update the clock
         while True:
             new_time = time.localtime(None)
             if(new_time[4] is not current_time[4]):
-                hour = current_time[3]
-                min = current_time[4]
-                draw = False
-                if(len(str(min)) == 1):
-                    trace.draw_number(0, min, draw)
-                    trace.draw_number(1, 0, draw)
-                if(len(str(min)) == 2):
-                    trace.draw_number(0, int(str(min)[1]), draw)
-                    trace.draw_number(1, int(str(min)[0]), draw)
-                if(hour >12):
-                    hour = hour -12
-                if(len(str(hour)) == 1):
-                    trace.draw_number(2, hour, draw)
-                if(len(str(hour)) == 2):
-                    trace.draw_number(2, int(str(hour)[1]), draw)
-                    trace.draw_number(3, int(str(hour)[0]), draw)
-                ###############################################################################
-                hour = new_time[3]
-                min = new_time[4]
-                draw = True
-                if(len(str(min)) == 1):
-                    trace.draw_number(0, min, draw)
-                    trace.draw_number(1, 0, draw)
-                if(len(str(min)) == 2):
-                    trace.draw_number(0, int(str(min)[1]), draw)
-                    trace.draw_number(1, int(str(min)[0]), draw)
-                if(hour > 12):
-                    hour = hour -12
-
-                if(len(str(hour)) == 1):
-                    trace.draw_number(2, hour, draw)
-                    
-                if(len(str(hour)) == 2):
-                    trace.draw_number(2, int(str(hour)[1]), draw)
-                    trace.draw_number(3, int(str(hour)[0]), draw)
+                draw_time(current_time, False)
+                draw_time(new_time, True)
                 current_time = new_time
             yield
 

@@ -3,6 +3,7 @@ import time
 
 from demos.hangman_ai.trace import Trace
 from demos.hangman_ai.guess import Guess
+from loguru import logger
 
 
 # Maybe I will have it guess the vowels first
@@ -13,7 +14,7 @@ class Hangman_Ai:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = 300  # None for a game
+        self.demo_time = None
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -88,7 +89,6 @@ class Hangman_Ai:
         def pick_choice(num_guessed):
             choice = prob_list[num_guessed-1]
             if(self.correct == 4):
-                print("Find the final letter")
                 num = random.choice(range(5))
                 letter = letter_list[num]
                 choice = guess.letter_number(letter)
@@ -100,7 +100,6 @@ class Hangman_Ai:
 
         # Create generator here
         while True:
-
             trace.draw_init()
             trace.draw_choice(guess.letter_select(choice), True)
             word = guess.pick_word(seed_num)
@@ -108,8 +107,7 @@ class Hangman_Ai:
             self.word = word
             for letter in range(len(self.word)):
                 letter_list.append(self.word[letter])
-            print(word)
-            print(self.word)
+            logger.info(word)
             num_guessed = 0
             self.restart = False
 
@@ -132,10 +130,16 @@ class Hangman_Ai:
                     self.gameover = True
                     self.win = True
                     trace.draw_endgame(True)
-                time.sleep(1.5)
-            yield
+                x = 0
+                while(x is not 15):
+                    x += 1
+                    yield
+                yield
             
-            time.sleep(3)
+            x = 0
+            while(x is not 25):
+                x += 1
+                yield
             # Erase the hangman, the guessed letters, and the word from the screen
             trace.erase_person()
             trace.erase_letters()
