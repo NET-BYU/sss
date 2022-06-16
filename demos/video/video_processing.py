@@ -1,12 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import cv2
-import time
-import subprocess
 
 
 # init demo/game specific variables here
-target = "doom.mp4"
+target = "I_Aint_Got_Rythm.mp4"
 num_to_pixel = {
     0: 0x0,
     1: 0x0,
@@ -41,7 +38,7 @@ screen_min = 0
 screen_max = 0
 pause = False
 cap = cv2.VideoCapture(f"./demos/video/resorces/videos/{target}")
-subprocess.run(["touch", "./demos/video/resorces/pre-processed/" + target + ".csv"])
+
 # Create generator here
 while True:
 
