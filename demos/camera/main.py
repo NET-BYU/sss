@@ -1,6 +1,7 @@
 import threading
 import cv2
 import urllib3
+from loguru import logger
 
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
@@ -24,10 +25,7 @@ class Camera_Source:
 
 
 class Camera:
-    """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
-    The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
-    The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
-    The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game"""
+    """This is a class to take the live feed from a web camera and display it on the sss."""
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -106,7 +104,9 @@ class Camera:
             else:
                 self.url_rets["url_ret"] = 1
                 self.url_rets["ret"] = False
-                print(r.status)
+                logger.error(
+                    "No connection to be made. Http return status: " + str(r.status)
+                )
                 return
         except:
             self.url_rets["url_ret"] = 1
@@ -123,15 +123,17 @@ class Camera:
             self.input_queue.get(False)
             num_stream_options = len(self.cameras)
             if keypress == "LEFT_P":
-                print("Left press!")
+                logger.debug("Left press!")
                 self.current_camera_index = (
                     self.current_camera_index - 1 + num_stream_options
                 ) % num_stream_options
             elif keypress == "RIGHT_P":
-                print("Right press!")
+                logger.debug("Right press!")
                 self.current_camera_index = (
                     self.current_camera_index + 1
                 ) % num_stream_options
+            else:
+                continue
             self.connection = False
             self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
@@ -164,17 +166,17 @@ class Camera:
                 #############################################################
 
                 if self.url_rets["ret"]:  # Found the url
-                    print("Found the camera!")
+                    logger.info("Found the camera!")
                     self.connection = True
                     self.first = True
                 else:  # Did not find the url
-                    print("Web site does not exist")
+                    logger.error("Web site does not exist")
 
                     # This block tells us if we need to print to the sss;
                     #  we only want to do this once, so based on variable
                     #  'first'
                     if self.first:
-                        print("Printing on screen")
+                        logger.debug("Printing on screen")
                         self.screen.clear()
                         self.screen.draw_text(
                             (self.screen.x_width // 2) - 4,
@@ -198,7 +200,7 @@ class Camera:
                 ret, frame = self.cap.read()
 
                 if not ret:
-                    print("Got to ret failure")
+                    logger.error("Got to ret failure")
                     self.connection = False
                     yield
                     continue
@@ -221,10 +223,10 @@ class Camera:
                         (graySmall[i][j] - self.screen_min) / (self.screen_max / 12)
                     )
                     if pixel > 12:
-                        print(f"\nself.screen_min = {self.screen_min}")
-                        print(f"pixel = {pixel}")
-                        print(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
-                        print(f"self.screen_max = {self.screen_max}")
+                        logger.debug(f"\nself.screen_min = {self.screen_min}")
+                        logger.debug(f"pixel = {pixel}")
+                        logger.debug(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
+                        logger.debug(f"self.screen_max = {self.screen_max}")
                         pixel = 12
 
                     if self.arr[i][j] != self.num_to_pixel[pixel]:
@@ -241,7 +243,7 @@ class Camera:
         try:
             self.cap.release()
         except:
-            print("Ran into an issue on exit")
+            logger.error("Ran into an issue on exit")
             pass
         pass
 
