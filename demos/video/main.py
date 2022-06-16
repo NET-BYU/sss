@@ -3,7 +3,6 @@ from loguru import logger
 import os
 import random
 
-
 class Video:
     """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
     The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
@@ -30,12 +29,16 @@ class Video:
         self.previous_frame = np.full((2353), 0)
 
     def is_pause(self, input_queue):
+        logger.info(input_queue)
         for input in input_queue:  # allows the user to pause the video
             if input == "LEFT_P":
+                #logger.info("Pause")
                 self.pause = True
             if input == "RIGHT_P":
+                #logger.info("Resume")
                 self.pause = False
             if input == "UP_P":
+                #logger.info("Frame")
                 self.pause = True
                 return "FRAME"
             if input == "DOWN_P":
@@ -45,6 +48,7 @@ class Video:
                 else:
                     self.address = 0
                     self.target = self.targets[self.address]
+                #logger.info("Next")
                 return "NEXT"
         return "NONE"
 
@@ -62,6 +66,9 @@ class Video:
                 for index, input_line in enumerate(input_file):
                     while True:
                         action = self.is_pause(self.get_input_buff())
+                        
+                        # FIXME: Remove this for input refactor
+                        self.input_queue.queue.clear()
                         if action == "NONE":
                             pass
                         elif action == "FRAME":
