@@ -19,7 +19,7 @@ class Tetris:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 5
+        self.frame_rate = 10
         self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
@@ -43,7 +43,7 @@ class Tetris:
         self.level = 1
         self.lines = 0
 
-        self.drop_rate = 4
+        self.drop_rate = 12
         self.shift_rate = 1
 
     def run(self):
@@ -62,6 +62,21 @@ class Tetris:
             next_shape = random.choice(list(self.Shape))
 
             while not self.is_game_over():
+
+                if self.level == 2:
+                    self.drop_rate = 10
+                if self.level == 3:
+                    self.drop_rate = 8
+                if self.level == 4:
+                    self.drop_rate = 6
+                if self.level == 5:
+                    self.drop_rate = 5
+                if self.level == 6:
+                    self.drop_rate = 4
+                if self.level == 7:
+                    self.drop_rate = 3
+                if self.level == 8:
+                    self.drop_rate = 2
 
                 shape = next_shape
                 next_shape = random.choice(list(self.Shape))
