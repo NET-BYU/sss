@@ -2,6 +2,7 @@ import numpy as np
 from loguru import logger
 import os
 import random
+from demos.utils import get_all_from_queue
 
 
 class Video:
@@ -27,17 +28,13 @@ class Video:
         self.pause = False
         self.previous_frame = np.full((2353), 0)
 
-    def is_pause(self, input_queue):
-        logger.info(input_queue)
+    def input_parsing(self, input_queue):
         for input in input_queue:  # allows the user to pause the video
             if input == "LEFT_P":
-                # logger.info("Pause")
                 self.pause = True
             if input == "RIGHT_P":
-                # logger.info("Resume")
                 self.pause = False
             if input == "UP_P":
-                # logger.info("Frame")
                 self.pause = True
                 return "FRAME"
             if input == "DOWN_P":
@@ -47,7 +44,6 @@ class Video:
                 else:
                     self.address = 0
                     self.target = self.targets[self.address]
-                # logger.info("Next")
                 return "NEXT"
         return "NONE"
 
@@ -63,24 +59,26 @@ class Video:
             ) as input_file:
                 y = 0
                 for index, input_line in enumerate(input_file):
-                    while True:
-                        action = self.is_pause(self.get_input_buff())
+                    if not self.input_queue.empty():
+                        while True:
+                            action = self.input_parsing(
+                                get_all_from_queue(self.input_queue)
+                            )
 
-                        # FIXME: Remove this for input refactor
-                        self.input_queue.queue.clear()
-                        if action == "NONE":
-                            pass
-                        elif action == "FRAME":
+                            # FIXME: Remove this for input refactor
+                            self.input_queue.queue.clear()
+                            if action == "NONE":
+                                pass
+                            elif action == "FRAME":
+                                break
+                            elif action == "NEXT":
+                                self.next = True
+                                break
+                            if not self.pause:
+                                break
+                            yield
+                        if self.next:
                             break
-                        elif action == "NEXT":
-                            self.next = True
-                            break
-                        if not self.pause:
-                            break
-                        yield
-
-                    if self.next:
-                        break
 
                     input_data = input_line.strip("\n").split(",")
                     y = 0
