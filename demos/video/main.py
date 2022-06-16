@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import cv2
-import time
 from loguru import logger
 import os
 import random
@@ -55,6 +52,7 @@ class Video:
         # Create generator here
         while True:
             self.next = False
+            self.pause = False
             self.screen.clear()
             yield
             with open(
@@ -74,8 +72,7 @@ class Video:
                         if not self.pause:
                             break
                         yield
-                        if not self.pause:
-                            break
+
                     if self.next:
                         break
 
