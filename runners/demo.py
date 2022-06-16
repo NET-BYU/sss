@@ -56,6 +56,8 @@ def run(demo_name, simulate):
         # Wait for next tick
         next(tick)
 
+    demo.stop()
+
 
 if __name__ == "__main__":
     run("snake_ai", simulate=True)
