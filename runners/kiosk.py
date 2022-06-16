@@ -123,7 +123,8 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
 
                 tick_demo(runner, frame_tick)
 
-            # Remove everything from the previous demo
+            # Stop demo and remove everything from the previous demo
+            demo.stop()
             screen.clear()
             while not demo_input_queue.empty():
                 demo_input_queue.get()
@@ -153,12 +154,17 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
                 # We have received input from the user, so we need to stop the demo
                 if not system_queue.empty():
                     logger.info("User input has been received. Exiting demo...")
+                    random_demo.stop()
                     screen.clear()
                     break
 
                 next(handle_input)
                 tick_demo(runner, frame_tick)
             else:
+                # This gets run when the while condition becomes false, not because of the break
+                logger.info("Demo time has ended. Exiting demo...")
+                random_demo.stop()
+
                 # Refresh the screen when the demo time has run out
                 logger.info("Refreshing screen to remove any artifacts.")
                 screen.refresh()
