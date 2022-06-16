@@ -5,6 +5,8 @@ from re import T
 from demos.utils import get_all_from_queue
 from numpy import full
 
+# from os.path import exists
+
 # import numpy as np
 
 
@@ -45,6 +47,15 @@ class Tetris:
 
         self.drop_rate = 12
         self.shift_rate = 1
+
+        try:
+            file = open("demos/tetris/high_scores.txt", "x")
+            file.close()
+            with open("demos/tetris/high_scores.txt", "w") as file:
+                for i in range(5):
+                    file.write("AA 0\n")
+        except FileExistsError:
+            pass
 
     def run(self):
         # Create generator here
