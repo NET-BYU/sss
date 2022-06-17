@@ -19,6 +19,12 @@ class Display:
         ]
         self.changed_list = []
 
+    def draw_raw(self, x, y, value, push=False):
+        self.display_buf[y][x] = value
+        self.changed_list.append((x, y))
+        if push:
+            self.push()
+
     def draw_pixel(self, x, y, value, combine=True, push=False):
         """Draw shape to one pixel location
 
