@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-import demos.utils as utils
+from display.segment_display import SegmentDisplay
 
 
 class Sine:
@@ -14,17 +14,10 @@ class Sine:
         self.output_queue = output_queue
         self.screen = screen
 
-        self.W = self.screen.x_width - 1
-        self.H = int(self.screen.y_height / 2)
-
-        self.C_W = 2 * self.W
-        self.C_H = 3 * self.H
+        self.display = SegmentDisplay(self.screen)
 
         self.density = 15
         self.rain_length = 2
-
-        self.CX = None
-        self.CY = None
 
     def run(self):
         paramx = 0.09
@@ -32,11 +25,9 @@ class Sine:
         increase_factor = 1
 
         while True:
-            self.CX, self.CY = utils.create_segment_buffer(self.screen)
-
-            sinPoints = self.C_W
+            sinPoints = self.display.width
             psinx = 0
-            psiny = int(self.C_H / 2)
+            psiny = int(self.display.height / 2)
 
             if sin == 30:
                 increase_factor = 1
@@ -48,27 +39,25 @@ class Sine:
             paramx += increase_factor * sin * 0.000176
 
             for i in range(sinPoints):
-                sinx = int(float(i) / sinPoints * self.C_W)
+                sinx = int(float(i) / sinPoints * self.display.width)
                 siny = int(
                     (1 + math.sin(math.pi * 2 * 3 / 4 + i * paramx * 0.75))
                     / 2
-                    * self.C_H
+                    * self.display.height
                 )
 
-                utils.draw_segment_line(
+                self.display.draw_line(
                     psinx,
                     psiny,
                     sinx,
                     siny,
-                    self.CX,
-                    self.CY,
                 )
                 psinx = sinx
                 psiny = siny
 
-            utils.display_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.draw()
             yield
-            utils.undraw_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.undraw()
 
     def stop(self):
         pass

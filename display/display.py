@@ -25,6 +25,9 @@ class Display:
         if push:
             self.push()
 
+    def get_raw(self, x, y):
+        return self.display_buf[y][x]
+
     def draw_pixel(self, x, y, value, combine=True, push=False):
         """Draw shape to one pixel location
 

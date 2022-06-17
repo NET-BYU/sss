@@ -4,7 +4,7 @@ import math
 import numpy as np
 from perlin_noise import PerlinNoise
 
-import demos.utils as utils
+from display.segment_display import SegmentDisplay
 
 
 @dataclass
@@ -23,14 +23,7 @@ class Cell:
         self.output_queue = output_queue
         self.screen = screen
 
-        self.W = self.screen.x_width - 1
-        self.H = int(self.screen.y_height / 2)
-
-        self.C_W = 2 * self.W
-        self.C_H = 3 * self.H
-
-        self.CX = None
-        self.CY = None
+        self.display = SegmentDisplay(self.screen)
 
         self.num_cell_points = 10
 
@@ -40,7 +33,6 @@ class Cell:
         noise = PerlinNoise()
 
         while True:
-            self.CX, self.CY = utils.create_segment_buffer(self.screen)
 
             pos = count * 0.025
 
@@ -51,18 +43,18 @@ class Cell:
                 cos = math.cos(math.pi * 2 * i / self.num_cell_points + pos)
 
                 x = (
-                    self.C_W / 2
-                    + self.C_W * 0.4 * sin
-                    + self.C_W
+                    self.display.width / 2
+                    + self.display.width * 0.4 * sin
+                    + self.display.width
                     * 0.15
                     * self._map(noise([sin * 5 * 0.5, 0, pos]), 0.2, 0.75, -1, 1)
                     + 30
                 )
 
                 y = (
-                    self.C_H / 2
-                    + self.C_H * 0.4 * cos
-                    + self.C_H
+                    self.display.height / 2
+                    + self.display.height * 0.4 * cos
+                    + self.display.height
                     * 0.15
                     * self._map(noise([sin * 5 * 0.5, 1, pos]), 0.2, 0.75, -1, 1)
                     + 20
@@ -71,27 +63,23 @@ class Cell:
                 cell.append(Point(x, y))
 
             for i in range(self.num_cell_points):
-                utils.draw_segment_line(
+                self.display.draw_line(
                     int(cell[i].x),
                     int(cell[i].y),
                     int(cell[i + 1].x),
                     int(cell[i + 1].y),
-                    self.CX,
-                    self.CY,
                 )
 
-                utils.draw_segment_line(
+                self.display.draw_line(
                     int(cell[self.num_cell_points - 1].x),
                     int(cell[self.num_cell_points - 1].y),
                     int(cell[0].x),
                     int(cell[0].y),
-                    self.CX,
-                    self.CY,
                 )
 
-            utils.display_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.draw()
             yield
-            utils.undraw_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.undraw()
 
             count += 1
 

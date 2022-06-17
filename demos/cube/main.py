@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-import demos.utils as utils
+from display.segment_display import SegmentDisplay
 
 
 class Cube:
@@ -14,14 +14,7 @@ class Cube:
         self.output_queue = output_queue
         self.screen = screen
 
-        self.W = self.screen.x_width - 1
-        self.H = int(self.screen.y_height / 2)
-
-        self.C_W = 2 * self.W
-        self.C_H = 3 * self.H
-
-        self.CX = None
-        self.CY = None
+        self.display = SegmentDisplay(self.screen)
 
     def run(self):
         rotation_speed = 0.5
@@ -49,8 +42,6 @@ class Cube:
         ]
 
         while True:
-            self.CX, self.CY = utils.create_segment_buffer(self.screen)
-
             angle += 0.1 + 3 * rotation_speed
             radiansX = math.radians(angle)
             radiansY = math.radians(angle)
@@ -76,8 +67,8 @@ class Cube:
 
                 # perspective projection
                 d = 30.0
-                rotxxx = rotxxx * d / (d - rotzzz) + self.C_W / 2
-                rotyyy = rotyyy * d / (d - rotzzz) + self.C_H / 2
+                rotxxx = rotxxx * d / (d - rotzzz) + self.display.width / 2
+                rotyyy = rotyyy * d / (d - rotzzz) + self.display.height / 2
 
                 points2d.append([int(rotxxx), int(rotyyy)])
 
@@ -90,31 +81,28 @@ class Cube:
                 if Sx <= 0:
                     Sx = 0
                 if Sx >= 127:
-                    Sx = self.C_W
+                    Sx = self.display.width
 
                 if Sy <= 0:
                     Sy = 0
                 if Sy >= 63:
-                    Sy = self.C_H
+                    Sy = self.display.height
 
                 if Ex <= 0:
                     Ex = 0
                 if Ex >= 127:
-                    Ex = self.C_W
+                    Ex = self.display.width
 
                 if Ey <= 0:
                     Ey = 0
                 if Ey >= 63:
-                    Ey = self.C_H
+                    Ey = self.display.height
 
-                utils.draw_segment_line(Sx, Sy, Ex, Ey, self.CX, self.CY)
+                self.display.draw_line(Sx, Sy, Ex, Ey)
 
-            # Draw the cube
-            utils.display_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.draw()
             yield
-
-            # Undraw the cube
-            utils.undraw_segment_buffer(self.CX, self.CY, self.screen)
+            self.display.undraw()
 
     def stop(self):
         pass
