@@ -1,12 +1,13 @@
 from importlib import import_module
 from queue import Queue, Empty
+import time
 
 from loguru import logger
 
 import controllers
 
 
-def run(demo_name, simulate):
+def run(demo_name, simulate, testing):
     if simulate:
         from display.virtual_screen import VirtualScreen
 
@@ -47,7 +48,7 @@ def run(demo_name, simulate):
 
         # Tick the demo
         try:
-            next(runner)
+            _tick(runner, demo, testing)
         except KeyboardInterrupt:
             break
         except Exception:
@@ -57,6 +58,22 @@ def run(demo_name, simulate):
         next(tick)
 
     demo.stop()
+
+
+def _tick(runner, demo, testing):
+    if testing:
+        before_time = time.time()
+
+    next(runner)
+
+    if testing:
+        after_time = time.time()
+
+        run_time = after_time - before_time
+        if run_time > 1 / demo.frame_rate:
+            logger.info(
+                f"Demo took too long to run compared to frame rate: {run_time} > {1 / demo.frame_rate}"
+            )
 
 
 if __name__ == "__main__":

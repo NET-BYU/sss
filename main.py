@@ -37,10 +37,11 @@ def run_kiosk(simulate, test):
 @cli.command("demo")
 @click.argument("name", type=click.Choice(get_demo_list(), case_sensitive=False))
 @click.option("-s", "--simulate", is_flag=True, default=False)
-def run_demo(name, simulate):
+@click.option("-t", "--test", is_flag=True, default=False)
+def run_demo(name, simulate, test):
     from runners import demo
 
-    demo.run(name, simulate)
+    demo.run(name, simulate, testing=test)
 
 
 if __name__ == "__main__":
