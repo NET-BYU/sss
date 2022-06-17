@@ -6,6 +6,10 @@ from display.segment_display import SegmentDisplay
 
 
 class Cube:
+    """
+    Shows an outline of a cube moving in three dimensions.
+    """
+
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 50
         self.demo_time = 300

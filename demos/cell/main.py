@@ -15,6 +15,11 @@ class Point:
 
 
 class Cell:
+    """
+    This simulates a cell moving around. It is a polygon that moves around to
+    different points in a random fashion.
+    """
+
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 10
         self.demo_time = 300

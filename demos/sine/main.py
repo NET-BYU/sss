@@ -6,6 +6,12 @@ from display.segment_display import SegmentDisplay
 
 
 class Sine:
+    """
+    Displays an animated sine wave that is increasing in frequency. When the
+    frequency gets to a certain point, it moves to a lower frequency. This
+    pattern is repeated.
+    """
+
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 10
         self.demo_time = 300
