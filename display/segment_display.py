@@ -23,6 +23,11 @@ class SegmentDisplay:
         self.y_buffer = np.zeros((self.width, self.height))
 
     def draw(self, push=True):
+        """
+        Updates the screen with all of the lines drawn using draw_line.
+
+        push -- when true all the recent changes are pushed to the display
+        """
         for x in range(self.screen_width):
             for y in range(self.screen_height):
 
@@ -52,6 +57,9 @@ class SegmentDisplay:
             self.screen.push()
 
     def undraw(self):
+        """
+        Clears all segments drawn both from the screen and from the underlying data structure.
+        """
         for x in range(self.screen_width):
             for y in range(self.screen_height):
                 if self.x_buffer[x * 2][y * 3]:
@@ -89,19 +97,29 @@ class SegmentDisplay:
                     self.screen.draw_raw(x, y, value - 2)
                     self.y_buffer[x * 2][y * 3] = False
 
-    def draw_line(self, x1, y1, x2, y2):
-        x1 = self._constrain(x1, 0, self.width - 1)
-        y1 = self._constrain(y1, 0, self.height - 1)
+    def draw_line(self, start_x, start_y, end_x, end_y):
+        """
+        Draws a line from coordinate to another. To display the line, you must
+        use the draw function. This function only updates the underlying data
+        buffer.
 
-        x2 = self._constrain(x2, 0, self.width - 1)
-        y2 = self._constrain(y2, 0, self.height - 1)
+        start_x -- the starting x point
+        start_y -- the starting y point
+        end_x -- the ending x point
+        end_y -- the ending y point
+        """
+        start_x = self._constrain(start_x, 0, self.width - 1)
+        start_y = self._constrain(start_y, 0, self.height - 1)
 
-        if x2 < x1:
-            x1, x2 = x2, x1
-            y1, y2 = y2, y1
+        end_x = self._constrain(end_x, 0, self.width - 1)
+        end_y = self._constrain(end_y, 0, self.height - 1)
 
-        dx = x2 - x1
-        dy = y2 - y1
+        if end_x < start_x:
+            start_x, end_x = end_x, start_x
+            start_y, end_y = end_y, start_y
+
+        dx = end_x - start_x
+        dy = end_y - start_y
 
         r = 0
         ny = 0
@@ -114,7 +132,7 @@ class SegmentDisplay:
         for i in range(dx + 1):
             r = int(round(t))
             pny = ny
-            ny = y1 + r
+            ny = start_y + r
 
             if i > 0:  # vertical lines connecting horizontal lines
 
@@ -124,10 +142,10 @@ class SegmentDisplay:
                     else:
                         nny = pny + j
 
-                    self.y_buffer[x1 + i][nny] = 1
+                    self.y_buffer[start_x + i][nny] = 1
 
             if i != dx:
-                self.x_buffer[x1 + i][ny] = 1
+                self.x_buffer[start_x + i][ny] = 1
             t += p
 
         if dx == 0 and dy != 0:  # in case of no vertical lines
@@ -139,7 +157,7 @@ class SegmentDisplay:
                 fe = 0
 
             for i in range(fs, fe):
-                self.y_buffer[x1][y1 + i] = 1
+                self.y_buffer[start_x][start_y + i] = 1
 
     def _constrain(self, val, min_val, max_val):
         """A helper function that constrains a value between two values"""
