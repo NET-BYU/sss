@@ -1,21 +1,10 @@
 from enum import Enum
-from pickle import TRUE
 import random
-from re import T
 from demos.utils import get_all_from_queue
-from numpy import full
-
-# from os.path import exists
-
-# import numpy as np
+from os.path import exists
 
 
 class Tetris:
-    """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
-    The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
-    The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
-    The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game"""
-
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
@@ -48,14 +37,13 @@ class Tetris:
         self.drop_rate = 12
         self.shift_rate = 1
 
-        try:
-            file = open("demos/tetris/high_scores.txt", "x")
+        self.high_score_file_path = "demos/tetris/high_scores.txt"
+
+        if not exists(self.high_score_file_path):
+            file = open(self.high_score_file_path, "x")
+            for i in range(5):
+                file.write("AA 0\n")
             file.close()
-            with open("demos/tetris/high_scores.txt", "w") as file:
-                for i in range(5):
-                    file.write("AA 0\n")
-        except FileExistsError:
-            pass
 
     def run(self):
         # Create generator here
@@ -228,13 +216,9 @@ class Tetris:
                 initials_done = False
                 first_letter = True
                 iterations = 0
-                pixel1 = 0
-                pixel2 = 0
                 x = 33
                 y = 20
                 letter = "A"
-                is_H = True
-                is_U = True
                 while not initials_done:
                     for input in get_all_from_queue(self.input_queue):
                         if input == "DOWN_R":
@@ -313,7 +297,7 @@ class Tetris:
         T = 7
 
     def is_high_score(self):
-        with open("demos/tetris/high_scores.txt", "r") as scores:
+        with open(self.high_score_file_path, "r") as scores:
             for score in scores:
                 if self.score > int(score.split()[1]):
                     return True
@@ -324,7 +308,7 @@ class Tetris:
         new_score = initials + " " + str(self.score) + "\n"
         position = 0
         lines = []
-        with open("demos/tetris/high_scores.txt", "r") as scores:
+        with open(self.high_score_file_path, "r") as scores:
             lines = scores.readlines()
             for score in lines:
                 if self.score > int(score.split()[1]):
@@ -333,7 +317,7 @@ class Tetris:
                     position += 1
         lines.pop(4)
         lines.insert(position, new_score)
-        with open("demos/tetris/high_scores.txt", "w") as scores:
+        with open(self.high_score_file_path, "w") as scores:
             scores.writelines(lines)
 
     def update_score(self, num_lines):
@@ -601,7 +585,7 @@ class Tetris:
             (self.screen.y_height // 3) - 2,
             "-----------",
         )
-        with open("demos/tetris/high_scores.txt", "r") as scores:
+        with open(self.high_score_file_path, "r") as scores:
             offset = 0
             for score in scores:
                 score = score.strip()
