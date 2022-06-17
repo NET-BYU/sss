@@ -5,7 +5,7 @@ import numpy as np
 import demos.utils as utils
 
 
-class Sin:
+class Sine:
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 10
         self.demo_time = 300
