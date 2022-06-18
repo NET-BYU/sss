@@ -50,13 +50,13 @@ targets = os.listdir(path)
 
 for target in targets:
     cap = cv2.VideoCapture(f"./demos/video/resorces/videos/{target}")
-    logger.info(f"processing {target}")
 
-    if os.path.exists(path + target):
+    if os.path.exists(path + target + ".csv"):
         processing = True
+        logger.info(f"processing {target}")
     else:
         processing = False
-        logger.info("Video has already been processed")
+        logger.info(f"{target} has already been processed")
     # Create generator here
 
     while processing:
