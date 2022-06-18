@@ -1,9 +1,10 @@
 import numpy as np
 import cv2
-
+import os
+from os.path import exists
+from loguru import logger
 
 # init demo/game specific variables here
-target = "I_Aint_Got_Rythm.mp4"
 num_to_pixel = {
     0: 0x0,
     1: 0x0,
@@ -37,39 +38,53 @@ num_to_pixel_inverted = {
 screen_min = 0
 screen_max = 0
 pause = False
-cap = cv2.VideoCapture(f"./demos/video/resorces/videos/{target}")
+processing = True
+path = "./demos/video/resorces/videos/"
+try:
+    os.mkdir(path)
+except:
+    pass
+else:
+    logger.info(f"Created directory {path}")
+targets = os.listdir(path)
 
-# Create generator here
-while True:
+for target in targets:
+    cap = cv2.VideoCapture(f"./demos/video/resorces/videos/{target}")
+    logger.info(f"processing {target}")
 
-    (ret, frame) = cap.read()
-    if not ret:
-        print(f"ret = {ret}")
-        break
-    grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    graySmall = np.array(cv2.resize(grayFrame, [48, 48]))
-    screen_max = graySmall.max()
-    screen_min = graySmall.min()
+    if os.path.exists(path + target):
+        processing = True
+    else:
+        processing = False
+        logger.info("Video has already been processed")
+    # Create generator here
 
-    if screen_max < 12:
-        screen_max = 12
+    while processing:
 
-    output = ""
-    for i in range(48):
-        for j in range(48):
-            pixel = int((graySmall[i][j] - screen_min) / (screen_max / 12))
-            if pixel > 12:
-                print(f"\nscreen_min = {screen_min}")
-                print(f"pixel = {pixel}")
-                print(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
-                print(f"screen_max = {screen_max}")
-                pixel = 12
-            output = output + f"{num_to_pixel[pixel]},"
-        output = output + ","
+        (ret, frame) = cap.read()
+        if not ret:
+            break
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        graySmall = np.array(cv2.resize(grayFrame, [48, 48]))
+        screen_max = graySmall.max()
+        screen_min = graySmall.min()
 
-    with open(
-        "./demos/video/resorces/pre-processed/" + target + ".csv", "a"
-    ) as output_file:
-        output_file.write(f"{output}\n")
+        if screen_max < 12:
+            screen_max = 12
 
-cap.release()
+        output = ""
+        for i in range(48):
+            for j in range(48):
+                pixel = int((graySmall[i][j] - screen_min) / (screen_max / 12))
+                if pixel > 12:
+                    logger.info("pixel > 12, set to 12")
+                    pixel = 12
+                output = output + f"{num_to_pixel[pixel]},"
+            output = output + ","
+
+        with open(
+            "./demos/video/resorces/pre-processed/" + target + ".csv", "a"
+        ) as output_file:
+            output_file.write(f"{output}\n")
+
+    cap.release()
