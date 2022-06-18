@@ -28,7 +28,7 @@ SCORE_TOPIC = "byu_sss/output/score"
 
 class Breakout_Ai:
 
-    """This is the checkboard demo. It just alternates a checker pattern on the display"""
+    """This is the breakout_ai demo. It plays the classic Atari game breakout"""
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -36,7 +36,7 @@ class Breakout_Ai:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 25
-        self.demo_time = None  # None for a game
+        self.demo_time = 300
 
         self.input_queue = input_queue
         self.output_queue = output_queue
