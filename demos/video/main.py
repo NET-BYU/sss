@@ -22,43 +22,48 @@ class Video:
         self.screen = screen
 
         # init demo/game specific variables here
-        self.targets = os.listdir("./demos/video/resorces/pre-processed/")
+        self.path = "./demos/video/resorces/pre-processed/"
+        self.targets = os.listdir(self.path)
         self.address = random.randint(0, len(self.targets) - 1)
         self.target = self.targets[self.address]
         self.pause = False
+        self.new_video = False
+        self.next_frame = False
         self.previous_frame = np.full((2353), 0)
+
+    def get_next_video(self):
+        if self.address < (len(self.targets) - 1):
+            self.address += 1
+            self.target = self.targets[self.address]
+        else:
+            self.address = 0
+            self.target = self.targets[self.address]
 
     def input_parsing(self, input_queue):
         for input in input_queue:  # allows the user to pause the video
             if input == "LEFT_P":
                 self.pause = True
-            if input == "RIGHT_P":
-                self.pause = False
             if input == "UP_P":
                 self.pause = True
-                return "FRAME"
+                self.next_frame = True
+            if input == "RIGHT_P":
+                self.pause = False
             if input == "DOWN_P":
-                if self.address < (len(self.targets) - 1):
-                    self.address += 1
-                    self.target = self.targets[self.address]
-                else:
-                    self.address = 0
-                    self.target = self.targets[self.address]
-                return "NEXT"
-        return "NONE"
+                self.new_video = True
 
     def run(self):
         # Create generator here
         while True:
-            self.next = False
+            self.new_video = False
             self.pause = False
             self.screen.clear()
+            self.screen.push()
             yield
-            with open(
-                "./demos/video/resorces/pre-processed/" + self.target, "r"
-            ) as input_file:
+
+            with open(self.path + self.target, "r") as input_file:
                 y = 0
                 for index, input_line in enumerate(input_file):
+                    self.next_frame = False
                     if not self.input_queue.empty():
                         while True:
                             action = self.input_parsing(
@@ -67,18 +72,12 @@ class Video:
 
                             # FIXME: Remove this for input refactor
                             self.input_queue.queue.clear()
-                            if action == "NONE":
-                                pass
-                            elif action == "FRAME":
-                                break
-                            elif action == "NEXT":
-                                self.next = True
-                                break
-                            if not self.pause:
+
+                            if (not self.pause) or self.next_frame or self.new_video:
                                 break
                             yield
-                        if self.next:
-                            break
+                    if self.new_video:
+                        break
 
                     input_data = input_line.strip("\n").split(",")
                     y = 0
@@ -93,6 +92,7 @@ class Video:
                             self.previous_frame[x_index] = pixel
                     self.screen.push()
                     yield
+                self.get_next_video()
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
