@@ -1,6 +1,4 @@
 import json
-from multiprocessing.sharedctypes import Value
-
 from loguru import logger
 import paho.mqtt.client as mqtt
 from yaml import safe_load
