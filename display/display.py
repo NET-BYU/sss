@@ -19,6 +19,27 @@ class Display:
         ]
         self.changed_list = []
 
+    def draw_raw(self, x, y, value, push=False):
+        """Draw to a specific segment on the screen
+
+        x -- x coordinate
+        y -- y coordinate
+        value -- which leds to turn on for the segment
+        push -- when true all the recent changes are pushed to the display
+        """
+        self.display_buf[y][x] = value
+        self.changed_list.append((x, y))
+        if push:
+            self.push()
+
+    def get_raw(self, x, y):
+        """Get the value of the segment
+
+        x -- x coordinate
+        y -- y coordinate
+        """
+        return self.display_buf[y][x]
+
     def draw_pixel(self, x, y, value, combine=True, push=False):
         """Draw shape to one pixel location
 
