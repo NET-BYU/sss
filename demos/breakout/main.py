@@ -1,8 +1,5 @@
 import queue
-
 from random import getrandbits
-from loguru import logger
-
 from demos.utils import get_all_from_queue
 
 ARENA_START = 14
@@ -207,7 +204,6 @@ class Breakout:
 
                 # Quick pause to reorient if life lost
                 if restart:
-                    logger.debug(str(restart_cnt))
                     restart_cnt -= 1
                     self.ball = [screen.x_width // 2, screen.y_height // 2]
                     if restart_cnt == 0:
