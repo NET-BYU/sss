@@ -12,4 +12,3 @@ __pycache__
 creds.yaml
 .idea/
 *high_score*
-mqtt_config.yaml
