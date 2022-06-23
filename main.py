@@ -26,8 +26,21 @@ def run_simulator():
 
 
 @cli.command(name="kiosk")
-@click.option("-s", "--simulate", is_flag=True, default=False)
-@click.option("-t", "--test", is_flag=True, default=False)
+@click.option(
+    "-s",
+    "--simulate",
+    is_flag=True,
+    default=False,
+    help="Run in simulated environment.",
+)
+@click.option(
+    "-t",
+    "--test",
+    is_flag=True,
+    default=False,
+    help="Run in test mode. This shortens the demo time and user input time "
+    "for testing purposes.",
+)
 def run_kiosk(simulate, test):
     from runners import kiosk
 
@@ -36,8 +49,21 @@ def run_kiosk(simulate, test):
 
 @cli.command("demo")
 @click.argument("name", type=click.Choice(get_demo_list(), case_sensitive=False))
-@click.option("-s", "--simulate", is_flag=True, default=False)
-@click.option("-t", "--test", is_flag=True, default=False)
+@click.option(
+    "-s",
+    "--simulate",
+    is_flag=True,
+    default=False,
+    help="Run in simulated environment.",
+)
+@click.option(
+    "-t",
+    "--test",
+    is_flag=True,
+    default=False,
+    help="Run in test mode. This provides feedback for if your demo is "
+    "running fast enough relative to the set frame rate.",
+)
 def run_demo(name, simulate, test):
     from runners import demo
 
