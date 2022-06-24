@@ -5,7 +5,7 @@ PIXEL_TOP = 0x4
 PIXEL_RIGHT = 0x8
 
 # This is actually the UNDER_CONSTRUCTION module used as a place holder until the demo in main_progress.py is completed
-class Welcome_Netlab:
+class WelcomeNetlab:
     """This demo just displays an underconstruction sign"""
 
     demo_time = None

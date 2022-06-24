@@ -15,7 +15,7 @@ class Pipe:
     def move(self):
         self.x -= self.velocity
 
-class Flappy_Pixel:
+class FlappyPixel:
     """This demo is supposed to mimic the mobile game Flappy bird. Press the enter key to jump"""
 
     demo_time = None

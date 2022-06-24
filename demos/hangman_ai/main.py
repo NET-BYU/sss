@@ -10,7 +10,7 @@ from loguru import logger
 # Then I will try and get it to guess the most common constants
 # Then it will try and fill in the rest
 # Is there an algorithim for something like that?
-class Hangman_Ai:
+class HangmanAi:
 
     demo_time = 300
 

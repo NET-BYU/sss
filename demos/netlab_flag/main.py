@@ -1,5 +1,5 @@
 
-class Netlab_Flag:
+class NetlabFlag:
     """This demo puts a cool netlab logo along with some checker pattern on the screen"""
 
     demo_time = 30

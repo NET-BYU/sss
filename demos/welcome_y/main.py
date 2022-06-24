@@ -19,7 +19,7 @@ SECTION_RIGHT = 0x8
 SECTION_LEFT = 0x2
 
 
-class Welcome_Y:
+class WelcomeY:
     """This demo moves a Y across the screen"""
 
     demo_time = 30

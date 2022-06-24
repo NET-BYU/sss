@@ -3,7 +3,7 @@ import copy
 import random
 
 
-class Game_Of_Life:
+class GameOfLife:
 
     demo_time = 300
 

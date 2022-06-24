@@ -26,7 +26,7 @@ SCORE_TOPIC = "byu_sss/output/score"
 # MQTT_CERT = config["mqtt"]["cert"]
 
 
-class Breakout_Ai:
+class BreakoutAi:
 
     """This is the breakout_ai demo. It plays the classic Atari game breakout"""
 

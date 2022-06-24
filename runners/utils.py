@@ -28,5 +28,5 @@ def get_demo_cls(demo_module):
     demo_name = demo_module.__name__.rsplit(".", 2)[-2]
 
     return getattr(
-        demo_module, "_".join([word.capitalize() for word in demo_name.split("_")])
+        demo_module, "".join([word.capitalize() for word in demo_name.split("_")])
     )

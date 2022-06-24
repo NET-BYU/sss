@@ -1,7 +1,7 @@
 import time
 from demos.digit_clock.trace import Trace
 
-class Digit_Clock:
+class DigitClock:
 
     demo_time = 10
 

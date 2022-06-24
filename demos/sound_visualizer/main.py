@@ -62,7 +62,7 @@ def sound_visualizer_run(display, queue, mqtt_client):
     )
 
 
-class Sound_Visualizer:
+class SoundVisualizer:
     """This demo showcases a sound visualization."""
 
     demo_time = 30

@@ -5,7 +5,7 @@ PIXEL_TOP = 0x4
 PIXEL_RIGHT = 0x8
 
 
-class Under_Construction:
+class UnderConstruction:
     """This demo just displays an underconstruction sign"""
 
     demo_time = None
