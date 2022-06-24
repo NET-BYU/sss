@@ -4,10 +4,12 @@ from demos.utils import get_all_from_queue
 from loguru import logger
 
 class Hangman:
+    
+    demo_time = None
+    
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = None
 
         self.input_queue = input_queue
         self.output_queue = output_queue

@@ -10,9 +10,10 @@ class Cube:
     Shows an outline of a cube moving in three dimensions.
     """
 
+    demo_time = 30
+
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 50
-        self.demo_time = 300
 
         self.input_queue = input_queue
         self.output_queue = output_queue

@@ -44,7 +44,7 @@ def load_demos(demo_dir="demos"):
 
 def get_random_demo(demos):
     # Filter out demos that can't be shown without input
-    demos = [d for d in demos.values()]  # if d.USER_INPUT == False]
+    demos = [d for d in demos.values() if d.demo_time is not None]
 
     while True:
         random.shuffle(demos)
@@ -139,12 +139,6 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
 
             if demo_time is None:
                 demo_time = random_demo.demo_time
-
-            # Skip demos that are not demos
-            # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
-            # TODO: Then I can filter it when I load the demo, not right here.
-            if demo_time is None:
-                continue
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")

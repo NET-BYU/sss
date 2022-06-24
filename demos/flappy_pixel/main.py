@@ -18,13 +18,14 @@ class Pipe:
 class Flappy_Pixel:
     """This demo is supposed to mimic the mobile game Flappy bird. Press the enter key to jump"""
 
+    demo_time = None
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
-        self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue

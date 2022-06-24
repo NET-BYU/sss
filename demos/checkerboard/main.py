@@ -3,13 +3,14 @@
 class Checkerboard:
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
+    demo_time = 30
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 5
-        self.demo_time = 30  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
