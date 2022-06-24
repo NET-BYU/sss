@@ -11,3 +11,5 @@ __pycache__
 .venv
 creds.yaml
 .idea/
+*high_score*
+mqtt_config.yaml
