@@ -7,6 +7,7 @@ import time
 from loguru import logger
 
 import controllers
+from runners import utils
 
 
 def load_demo(name, module_name):
@@ -19,22 +20,10 @@ def load_demo(name, module_name):
     return demo_cls
 
 
-def get_demo_list(demo_dir="demos"):
-    demo_path = Path(demo_dir)
-
-    demos = (d for d in demo_path.iterdir() if d.is_dir())  # Only import directories
-    demos = (d for d in demos if (d / "main.py").exists())  # Make sure there is a main
-
-    return demos
-
-
 def load_demos(demo_dir="demos"):
     logger.debug("Loading demos...")
 
-    demos = get_demo_list(demo_dir)
-
-    # Convert to module notation
-    demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
+    demos = utils.get_demos(demo_dir)
 
     # Load the module
     demos = {name: load_demo(name, module) for name, module in demos}
