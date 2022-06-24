@@ -19,3 +19,14 @@ def get_demos(demo_dir="demos"):
     demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
 
     return demos
+
+
+def get_demo_cls(demo_module):
+    """
+    For a given demo module, it gets the demo class.
+    """
+    demo_name = demo_module.__name__.rsplit(".", 2)[-2]
+
+    return getattr(
+        demo_module, "_".join([word.capitalize() for word in demo_name.split("_")])
+    )

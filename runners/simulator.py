@@ -47,10 +47,9 @@ class Simulator:
         self.screen.clear()
         self._generate_buttons()
         self._reload_demos()
-        self.game = getattr(
-            self.demos["template"],
-            "_".join([word.capitalize() for word in "template".split("_")]),
-        )(self.input_q, self.output_q, self.screen.display)
+        self.game = utils.get_demo_cls(self.demos["template"])(
+            self.input_q, self.output_q, self.screen.display
+        )
         self.repopulate()
         self._load_game()
 
@@ -102,10 +101,9 @@ class Simulator:
         # stop the current game
         self.game.stop()
 
-        self.game = getattr(
-            self.demos[game_name],
-            "_".join([word.capitalize() for word in game_name.split("_")]),
-        )(self.input_q, self.output_q, self.screen.display)
+        self.game = utils.get_demo_cls(self.demos[game_name])(
+            self.input_q, self.output_q, self.screen.display
+        )
         self.game_runner = self.game.run()
         self.screen.clear()
 

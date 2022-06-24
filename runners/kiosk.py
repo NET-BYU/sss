@@ -10,14 +10,9 @@ import controllers
 from runners import utils
 
 
-def load_demo(name, module_name):
+def load_demo(module_name):
     logger.debug(f"Loading {module_name}")
-    module = import_module(module_name)
-    demo_cls = getattr(
-        module, "_".join([word.capitalize() for word in name.split("_")])
-    )
-
-    return demo_cls
+    return utils.get_demo_cls(import_module(module_name))
 
 
 def load_demos(demo_dir="demos"):
@@ -26,7 +21,7 @@ def load_demos(demo_dir="demos"):
     demos = utils.get_demos(demo_dir)
 
     # Load the module
-    demos = {name: load_demo(name, module) for name, module in demos}
+    demos = {name: load_demo(module) for name, module in demos}
 
     return demos
 
