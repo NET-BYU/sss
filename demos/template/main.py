@@ -4,7 +4,7 @@ class Template:
     The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
     The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game"""
 
-    demo_time = 300  # None for a game
+    demo_time = None  # Number of seconds or None if its game
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

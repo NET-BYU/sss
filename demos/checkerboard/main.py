@@ -3,7 +3,7 @@
 class Checkerboard:
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
-    demo_time = 30
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

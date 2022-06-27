@@ -1,7 +1,7 @@
 class Sweep:
     """This demo sweeps back and forth across the screen"""
 
-    demo_time = 10
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

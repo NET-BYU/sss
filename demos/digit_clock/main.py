@@ -3,7 +3,7 @@ from demos.digit_clock.trace import Trace
 
 class DigitClock:
 
-    demo_time = 10
+    demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
         self.frame_rate = 20

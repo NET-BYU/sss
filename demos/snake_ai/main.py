@@ -10,7 +10,7 @@ class SnakeAi:
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written before exiting"""
 
-    demo_time = 600
+    demo_time = 120
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

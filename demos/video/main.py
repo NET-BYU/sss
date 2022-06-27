@@ -9,7 +9,7 @@ class Video:
     """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
     assets and allows the user to play, pause, go through the video frame by frame, and switch between videos"""
 
-    demo_time = 300
+    demo_time = 120
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

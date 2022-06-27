@@ -2,7 +2,7 @@
 class Circle:
     """This is a demo that just runs a circle around the perimeter"""
 
-    demo_time = 30
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

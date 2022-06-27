@@ -3,7 +3,7 @@ from loguru import logger
 class Spiral:
     """This demo that just spirals around"""
 
-    demo_time = 30
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

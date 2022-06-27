@@ -28,7 +28,7 @@ class Camera_Source:
 class Camera:
     """This is a class to take the live feed from a web camera and display it on the sss."""
 
-    demo_time = 300
+    demo_time = 120
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
