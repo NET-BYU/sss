@@ -73,22 +73,27 @@ class Camera:
         self.url_rets = {"url_ret": 0, "ret": False}
         self.cap_rets = {"cap_ret": 0, "ret": False, "frame": 0}
 
-        with open("demos/camera/camera.yaml") as f:
-            camera_ips = safe_load(f)
-
         self.cameras = []
         self.current_camera_index = 0
 
-        if type(camera_ips) == dict:
-            for cam in camera_ips:
-                cam_src = Camera_Source(
-                    camera_ips[cam]["host"], camera_ips[cam]["stream"]
-                )
-                self.cameras.append(cam_src)
-            self.stream_url = self.cameras[self.current_camera_index].get_stream()
+        try:
+            with open("demos/camera/camera.yaml") as f:
+                camera_ips = safe_load(f)
 
-            self.can_run = True
-        else:
+            if type(camera_ips) == dict:
+                for cam in camera_ips:
+                    cam_src = Camera_Source(
+                        camera_ips[cam]["host"], camera_ips[cam]["stream"]
+                    )
+                    self.cameras.append(cam_src)
+                self.stream_url = self.cameras[self.current_camera_index].get_stream()
+
+                self.can_run = True
+            else:
+                logger.error("No cameras available on the YAML file!")
+                self.can_run = False
+        except FileNotFoundError:
+            logger.error("No camera.yaml file found!")
             self.can_run = False
 
     def check_url(self):
@@ -159,7 +164,6 @@ class Camera:
         while True:
             if not self.can_run:
                 if self.first:
-                    logger.error("No cameras available on the YAML file!")
                     logger.debug("Printing on screen")
                     self.screen.clear()
                     self.screen.draw_text(
