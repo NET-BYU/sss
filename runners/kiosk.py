@@ -67,7 +67,7 @@ def tick_demo(runner, frame_tick):
     next(frame_tick)
 
 
-def start_loop(screen, user_input_timeout=300, demo_time=None):
+def start_loop(screen, user_input_timeout=300, demo_time_override=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -121,8 +121,7 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
             frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
 
-            if demo_time is None:
-                demo_time = random_demo.demo_time
+            demo_time = demo_time_override or random_demo.demo_time
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
@@ -175,7 +174,7 @@ def run(simulate, testing=False):
     logger.info("-=:___________/")
 
     if testing:
-        start_loop(screen, user_input_timeout=5, demo_time=5)
+        start_loop(screen, user_input_timeout=5, demo_time_override=5)
     else:
         start_loop(screen)
 
