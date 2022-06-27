@@ -1,7 +1,7 @@
 import json
-
 from loguru import logger
 import paho.mqtt.client as mqtt
+from yaml import safe_load
 
 
 def start_processing_input(system_queue, demo_input_queue):
@@ -35,8 +35,11 @@ def start_processing_input(system_queue, demo_input_queue):
     def on_disconnect(client, userdata, rc):
         logger.info("MQTT Client disconnected ({})", rc)
 
-    with open("mqtt_config.json") as f:
-        config = json.load(f)
+    with open("mqtt_config.yaml") as f:
+        config = safe_load(f)
+
+    if not config["host"] or not config["port"]:
+        raise ValueError("mqtt_config.yaml not set up")
 
     client = mqtt.Client()
     client.username_pw_set(config["username"], config["password"])

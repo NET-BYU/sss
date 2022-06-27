@@ -228,4 +228,6 @@ class Welcome_Y:
                 y + BOTTOM_Y_OFFSET - 1,
                 SECTION_LEFT,
             )  # Y stem left border
-        self.screen.push()
+
+        if draw:
+            self.screen.push()

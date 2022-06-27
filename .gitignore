@@ -9,6 +9,6 @@ __pycache__
 *.swp
 *.log
 .venv
-creds.yaml
 .idea/
 *.yaml
+*high_score*
