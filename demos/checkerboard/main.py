@@ -1,5 +1,3 @@
-
-
 class Checkerboard:
     """This is the checkboard demo. It just alternates a checker pattern on the display"""
 
@@ -42,8 +40,6 @@ class Checkerboard:
             self.screen.push()
             yield
 
-
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-

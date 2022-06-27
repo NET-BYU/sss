@@ -9,12 +9,12 @@ from demos.utils import get_all_from_queue
 # # getting the name of the directory
 # # where the this file is present.
 # current = os.path.dirname(os.path.realpath(__file__))
-  
+
 # # Getting the parent directory name
 # # where the current directory is present.
 # parent = os.path.dirname(current)
-  
-# # adding the parent directory to 
+
+# # adding the parent directory to
 # # the sys.path.
 # sys.path.append(parent)
 
@@ -206,7 +206,7 @@ class Snake:
 
             direction = 0
             self.screen.clear()
-                # draw banner at the top
+            # draw banner at the top
             self.screen.draw_hline(0, 2, self.screen.x_width, push=True)
             self.screen.draw_hline(0, 3, self.screen.x_width, push=True)
             self.screen.draw_text(0, 0, "SCORE 000")
