@@ -2,6 +2,7 @@ import threading
 import cv2
 import urllib3
 from loguru import logger
+from yaml import safe_load
 
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
@@ -72,25 +73,38 @@ class Camera:
         self.url_rets = {"url_ret": 0, "ret": False}
         self.cap_rets = {"cap_ret": 0, "ret": False, "frame": 0}
 
-        octopi = Camera_Source(
-            "http://octopi.local", "http://octopi.local/webcam/?action=stream"
-        )
-        esp32_1 = Camera_Source(
-            "http://192.168.0.102", "http://192.168.0.102:81/stream"
-        )
+        with open("demos/camera/camera.yaml") as f:
+            camera_ips = safe_load(f)
 
-        self.cameras = [octopi, esp32_1]
+        self.cameras = []
+        self.current_camera_index = 0
 
-        self.current_camera_index = 1
-        self.stream_url = self.cameras[self.current_camera_index].get_stream()
+        if type(camera_ips) == dict:
+            for cam in camera_ips:
+                cam_src = Camera_Source(
+                    camera_ips[cam]["host"], camera_ips[cam]["stream"]
+                )
+                self.cameras.append(cam_src)
+            self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
-        # self.cap = cv2.VideoCapture("http://192.168.0.180:81/stream")
+            self.can_run = True
+        else:
+            self.can_run = False
 
     def check_url(self):
+        # If we don't have any cameras in our yaml, just print so
+        if len(self.cameras) == 0:
+            self.url_rets["url_ret"] = 1
+            self.url_rets["ret"] = False
+            return
+
+        # Otherwise, find the corresponding camera
         host_url = self.cameras[self.current_camera_index].get_host()
         self.check_keys()
 
         try:
+            # Use a quick search, no retries and a timeout of 1 second so we aren't
+            #  wasting time. We will come back to this if we need to.
             r = self.http.request(
                 "GET",
                 host_url,
@@ -139,12 +153,25 @@ class Camera:
 
     def run(self):
         # Create generator here
-        # cap = cv2.VideoCapture("http://192.168.0.180:81/stream")
-        # cap = cv2.VideoCapture("http://octopi.local/webcam/?action=stream")
 
         self.first = True
 
         while True:
+            if not self.can_run:
+                if self.first:
+                    logger.error("No cameras available on the YAML file!")
+                    logger.debug("Printing on screen")
+                    self.screen.clear()
+                    self.screen.draw_text(
+                        (self.screen.x_width // 2) - 4,
+                        (self.screen.y_height // 2) - 6,
+                        "NO CAMERA",
+                    )
+                    self.screen.push()
+
+                    self.first = False
+                yield
+                continue
             self.check_keys()
 
             # We may need to check the camera
