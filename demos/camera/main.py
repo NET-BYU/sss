@@ -197,6 +197,12 @@ class Camera:
                 #############################################################
 
                 if self.url_rets["ret"]:  # Found the url
+                    self.screen.draw_text(
+                        (self.screen.x_width // 2) - 4,
+                        (self.screen.y_height // 2) - 6,
+                        "         ",
+                    )
+                    self.screen.push()
                     logger.info("Found the camera!")
                     self.connection = True
                     self.first = True
