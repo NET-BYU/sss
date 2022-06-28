@@ -28,14 +28,15 @@ class Camera_Source:
 class Camera:
     """This is a class to take the live feed from a web camera and display it on the sss."""
 
+    demo_time = 120
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = 300  # None for a game
-
+        
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.screen = screen

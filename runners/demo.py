@@ -5,6 +5,7 @@ import time
 from loguru import logger
 
 import controllers
+from runners import utils
 
 
 def run(demo_name, simulate, testing):
@@ -24,9 +25,7 @@ def run(demo_name, simulate, testing):
     # Set up the game
     demo_module_name = f"demos.{demo_name}.main"
     demo_module = import_module(demo_module_name)
-    demo = getattr(
-        demo_module, "_".join([word.capitalize() for word in demo_name.split("_")])
-    )(input_q, output_q, screen.display)
+    demo = utils.get_demo_cls(demo_module)(input_q, output_q, screen.display)
 
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)

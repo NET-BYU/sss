@@ -7,44 +7,28 @@ import time
 from loguru import logger
 
 import controllers
+from runners import utils
 
 
-def load_demo(name, module_name):
+def load_demo(module_name):
     logger.debug(f"Loading {module_name}")
-    module = import_module(module_name)
-    demo_cls = getattr(
-        module, "_".join([word.capitalize() for word in name.split("_")])
-    )
-
-    return demo_cls
-
-
-def get_demo_list(demo_dir="demos"):
-    demo_path = Path(demo_dir)
-
-    demos = (d for d in demo_path.iterdir() if d.is_dir())  # Only import directories
-    demos = (d for d in demos if (d / "main.py").exists())  # Make sure there is a main
-
-    return demos
+    return utils.get_demo_cls(import_module(module_name))
 
 
 def load_demos(demo_dir="demos"):
     logger.debug("Loading demos...")
 
-    demos = get_demo_list(demo_dir)
-
-    # Convert to module notation
-    demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
+    demos = utils.get_demos(demo_dir)
 
     # Load the module
-    demos = {name: load_demo(name, module) for name, module in demos}
+    demos = {name: load_demo(module) for name, module in demos}
 
     return demos
 
 
 def get_random_demo(demos):
     # Filter out demos that can't be shown without input
-    demos = [d for d in demos.values()]  # if d.USER_INPUT == False]
+    demos = [d for d in demos.values() if d.demo_time is not None]
 
     while True:
         random.shuffle(demos)
@@ -83,7 +67,7 @@ def tick_demo(runner, frame_tick):
     next(frame_tick)
 
 
-def start_loop(screen, user_input_timeout=300, demo_time=None):
+def start_loop(screen, user_input_timeout=300, demo_time_override=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -137,14 +121,7 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
             frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
 
-            if demo_time is None:
-                demo_time = random_demo.demo_time
-
-            # Skip demos that are not demos
-            # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
-            # TODO: Then I can filter it when I load the demo, not right here.
-            if demo_time is None:
-                continue
+            demo_time = demo_time_override or random_demo.demo_time
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
@@ -197,7 +174,7 @@ def run(simulate, testing=False):
     logger.info("-=:___________/")
 
     if testing:
-        start_loop(screen, user_input_timeout=5, demo_time=5)
+        start_loop(screen, user_input_timeout=5, demo_time_override=5)
     else:
         start_loop(screen)
 
