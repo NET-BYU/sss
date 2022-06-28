@@ -1,4 +1,4 @@
-from sysv_ipc import SharedMemory, Semaphore
+from sysv_ipc import SharedMemory
 import numpy as np
 from loguru import logger
 import cv2
@@ -62,10 +62,6 @@ class Doom:
             buf = buf.reshape(SCREENHEIGHT, SCREENWIDTH)
             buf = buf[12:156, 16:304]
             buf = cv2.resize(buf, (48, 48))
-
-            # logger.info(buf)
-            # imsave("screenshot" + str(count) + ".png", buf[12:156, 16:304])
-            #    sem.release()
 
             self.screen_min = buf.min()
             self.screen_max = buf.max()
