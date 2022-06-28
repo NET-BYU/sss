@@ -20,7 +20,6 @@ arrow==1.2.0
 certifi==2021.10.8
 inputs==0.5
 keyboard==0.13.5
-paho-mqtt==1.5.1
 python-dateutil==2.8.2
 six==1.16.0
 spidev==3.5
