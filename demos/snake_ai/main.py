@@ -149,11 +149,11 @@ class SnakeAi:
 
                 # check to make sure snek isn't in the weeds
                 if (
-                        current_location[0] >= self.screen.x_width
-                        or current_location[0] < 0
-                        or current_location[1] >= self.screen.y_height
-                        or current_location[1] < 4
-                        or current_location in snek_list[:-1]
+                    current_location[0] >= self.screen.x_width
+                    or current_location[0] < 0
+                    or current_location[1] >= self.screen.y_height
+                    or current_location[1] < 4
+                    or current_location in snek_list[:-1]
                 ):
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
@@ -188,9 +188,7 @@ class SnakeAi:
                     "H-SCORE " + str(self.snek_length).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open(
-                        "demos/snake_ai/ai_high_score.txt", "w"
-                ) as scores:
+                with open("demos/snake_ai/ai_high_score.txt", "w") as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
                     self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)

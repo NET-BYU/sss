@@ -1,5 +1,6 @@
 from loguru import logger
 
+
 class Spiral:
     """This demo that just spirals around"""
 

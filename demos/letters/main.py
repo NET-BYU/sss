@@ -1,5 +1,6 @@
 import random
 
+
 class Letters:
     """This is demo draws random symbols on the screen. Kind of fun to watch"""
 
@@ -21,9 +22,17 @@ class Letters:
 
         while True:
             for _ in range(4):
-                self.screen.draw_text(random.randint(0,self.screen.x_width-1),random.randint(0,self.screen.y_height-2),chr(random.randint(33, 126)))
+                self.screen.draw_text(
+                    random.randint(0, self.screen.x_width - 1),
+                    random.randint(0, self.screen.y_height - 2),
+                    chr(random.randint(33, 126)),
+                )
             for _ in range(4):
-                self.screen.draw_text(random.randint(0,self.screen.x_width-1),random.randint(0,self.screen.y_height-2)," ")
+                self.screen.draw_text(
+                    random.randint(0, self.screen.x_width - 1),
+                    random.randint(0, self.screen.y_height - 2),
+                    " ",
+                )
             self.screen.push()
             yield
 

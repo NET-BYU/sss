@@ -1,4 +1,3 @@
-
 class Circle:
     """This is a demo that just runs a circle around the perimeter"""
 
@@ -36,9 +35,8 @@ class Circle:
             for y in range(height - 1, 0, -1):
                 self.screen.draw_pixel(0, y - 1, 0xF, combine=False, push=True)
                 self.screen.draw_pixel(0, y, 0x0, combine=False, push=True)
-                yield            
+                yield
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-

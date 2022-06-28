@@ -1,4 +1,3 @@
-
 class NetlabFlag:
     """This demo puts a cool netlab logo along with some checker pattern on the screen"""
 
@@ -135,8 +134,6 @@ class NetlabFlag:
             self.screen.push()
             yield
 
-
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-
