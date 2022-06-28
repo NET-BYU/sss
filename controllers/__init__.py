@@ -1,4 +1,5 @@
 from loguru import logger
+from pygame import error
 
 
 def start_inputs(system_queue, demo_input_queue):
@@ -58,8 +59,13 @@ def start_inputs(system_queue, demo_input_queue):
             next(gamepad_runner)
 
         if keyboard_runner:
-            from pygame import error
-
-            next(keyboard_runner)
+            try:
+                next(keyboard_runner)
+            except error as e:
+                keyboard_runner = None
+                logger.warning(e)
+                logger.warning(
+                    "Not running in simulator mode. The keyboard has been disabled."
+                )
 
         yield
