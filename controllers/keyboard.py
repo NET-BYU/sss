@@ -18,8 +18,7 @@ def check_if_sim():
     try:
         pygame.event.get()
         return True
-    except pygame.error as e:
-        logger.warning(e)
+    except pygame.error:
         logger.warning("Not running in simulator mode. The keyboard has been disabled.")
         return False
 

@@ -45,8 +45,6 @@ def start_inputs(system_queue, demo_input_queue):
             keyboard_runner = keyboard.start_processing_input(
                 system_queue, demo_input_queue
             )
-
-        logger.info(keyboard_runner)
         logger.info("...done")
     except (ImportError, ModuleNotFoundError) as e:
         keyboard_runner = None
