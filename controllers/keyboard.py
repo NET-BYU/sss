@@ -14,17 +14,20 @@ from pygame.locals import (
 import pygame_widgets
 
 
+def check_if_sim():
+    try:
+        pygame.event.get()
+        return True
+    except pygame.error as e:
+        logger.warning(e)
+        logger.warning("Not running in simulator mode. The keyboard has been disabled.")
+        return False
+
+
 def start_processing_input(system_queue, demo_input_queue):
     while True:
 
-        try:
-            events = pygame.event.get()
-        except pygame.error as e:
-            logger.warning(e)
-            logger.warning(
-                "Not running in simulator mode. The keyboard has been disabled."
-            )
-            return None
+        events = pygame.event.get()
 
         for event in events:
             # Check for KEYDOWN event and pass into input queue
