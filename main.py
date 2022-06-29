@@ -67,5 +67,12 @@ def run_demo(name, simulate, test):
     demo.run(name, simulate, testing=test)
 
 
+@cli.command("test")
+def run_test():
+    from runners import test
+
+    test.run()
+
+
 if __name__ == "__main__":
     cli()
