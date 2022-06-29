@@ -1,9 +1,14 @@
-from sysv_ipc import SharedMemory
+from sysv_ipc import SharedMemory, ExistentialError
 import numpy as np
 from loguru import logger
 import cv2
+from demos.utils import get_all_from_queue
 
-DOOM_ID = 666
+
+DOOM_VIDEO_ID = 666
+DOOM_INPUT_ID = 667
+DOOM_OUTPUT_ID = 668
+
 SCREENWIDTH = 320
 SCREENHEIGHT = 200
 NUM_COLS = 48
@@ -24,9 +29,24 @@ class Doom:
         self.output_queue = output_queue
         self.screen = screen
 
-        # init demo/game specific variables here
-        self.shm = SharedMemory(DOOM_ID, 0, 0)
-        self.shm.attach(0, 0)
+        self.shared_mem_init = False
+
+        # init a connection to shared memory locations here
+        try:
+            self.shm = SharedMemory(DOOM_VIDEO_ID, 0, 0)
+            self.shm.attach(0, 0)
+
+            self.shm_input = SharedMemory(DOOM_INPUT_ID, 0, 0)
+            self.shm_input.attach(0, 0)
+
+            self.shm_output = SharedMemory(DOOM_OUTPUT_ID, 0, 0)
+            self.shm_output.attach(0, 0)
+
+            self.shared_mem_init = True
+        except (ExistentialError, Exception) as e:
+            logger.error("Could not establish connection with shared memory")
+            logger.error(e)
+            exit(0)
 
         self.num_to_pixel = {
             0: 0x0,
@@ -55,13 +75,24 @@ class Doom:
 
     def run(self):
         # Create generator here
-        while True:
+        while self.shared_mem_init:
             #    sem.acquire()
             buf = self.shm.read(SCREENWIDTH * SCREENHEIGHT)
             buf = np.frombuffer(bytearray(buf), dtype=np.uint8)
             buf = buf.reshape(SCREENHEIGHT, SCREENWIDTH)
             buf = buf[12:156, 16:304]
             buf = cv2.resize(buf, (48, 48))
+
+            presses = []
+
+            for keypress in get_all_from_queue(self.input_queue):
+                presses.append(keypress)
+
+            print(str(presses))
+
+            # self.shm_input.write(str(2000 * " "))
+
+            self.shm_input.write(str(presses) + "\0")
 
             self.screen_min = buf.min()
             self.screen_max = buf.max()
@@ -84,5 +115,17 @@ class Doom:
 
             yield
 
+        self.screen.draw_text(
+            self.screen.x_width // 2 - 10,
+            self.screen.y_height // 2 - 4,
+            "ERROR INITIALIZING DOOM",
+            push=True,
+        )
+        while True:
+            yield
+
     def stop(self):
-        self.shm.detach()
+        if self.shared_mem_init:
+            self.shm.detach()
+            self.shm_input.detach()
+            self.shm_output.detach()
