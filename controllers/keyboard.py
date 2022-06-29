@@ -24,6 +24,7 @@ def start_processing_input(system_queue, demo_input_queue):
             logger.warning(
                 "Not running in simulator mode. The keyboard has been disabled."
             )
+            return None
 
         for event in events:
             # Check for KEYDOWN event and pass into input queue
