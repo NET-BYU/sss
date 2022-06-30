@@ -1,5 +1,4 @@
 from importlib import import_module
-from pathlib import Path
 from queue import Queue
 import sys
 from unittest.mock import MagicMock
@@ -10,6 +9,10 @@ from runners import utils
 
 
 def test_demo(demo_name, demo_module_name):
+    """
+    Given a demo name and module, it runs the demo for a couple of ticks to
+    make sure it doesn't crash.
+    """
     logger.info(f"Testing {demo_name}...")
     display = MagicMock()
     display.y_height = 48
@@ -30,7 +33,7 @@ def test_demo(demo_name, demo_module_name):
             next(runner)
 
         demo.stop()
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         logger.exception(f"{demo_name} failed!")
         return False
     else:
@@ -39,12 +42,14 @@ def test_demo(demo_name, demo_module_name):
 
 
 def run():
-    if not all([test_demo(*demo) for demo in utils.get_demos()]):
+    """Main function that runs the test."""
+
+    if not all(test_demo(*demo) for demo in utils.get_demos()):
         # One of the demos failed
         sys.exit(-1)
-
-    # All of the demos worked
-    sys.exit()
+    else:
+        # All of the demos worked
+        sys.exit()
 
 
 if __name__ == "__main__":
