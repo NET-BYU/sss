@@ -43,8 +43,8 @@ class Snake:
         game_over = False
         self.screen.clear()
         current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-        snek_list = [current_location]
-        self.snek_length = 1
+        snek_list = [(current_location[0]-2,current_location[1]),(current_location[0]-1,current_location[1]),current_location]
+        self.snek_length = 3
         self.h_score = 0
         with open("demos/snake/high_score.txt", "r") as scores:
             self.h_score = int(scores.read())
@@ -64,7 +64,8 @@ class Snake:
 
         current_food_location = get_new_food_location()
 
-        direction = 0
+        direction = 2
+        prev_direction = 2
 
         # draw snek part
         self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
@@ -89,25 +90,30 @@ class Snake:
                 # if len(temp) > 0:
                 for command in temp:
                     if command == "LEFT_P":
-                        direction -= 1
+                        direction = 0
                     elif command == "RIGHT_P":
-                        direction += 1
-                if direction < 0:
-                    direction = 3
-                elif direction > 3:
-                    direction = 0
+                        direction = 2
+                    elif command == "UP_P":
+                        direction = 1
+                    elif command == "DOWN_P":
+                        direction = 3
+                # Check if the command needs to be restored
+                if (direction == 2 and prev_direction == 0) or (direction == 0 and prev_direction == 2) or (direction == 1 and prev_direction == 3) or (direction == 3 and prev_direction == 1):
+                    direction = prev_direction
+                else:
+                    prev_direction = direction
 
                 # Get new snake location based on trajectory
                 current_location = (
                     current_location[0] - 1
-                    if direction == 3
+                    if direction == 0
                     else current_location[0] + 1
-                    if direction == 1
+                    if direction == 2
                     else current_location[0],
                     current_location[1] + 1
-                    if direction == 2
+                    if direction == 3
                     else current_location[1] - 1
-                    if direction == 0
+                    if direction == 1
                     else current_location[1],
                 )
 
@@ -116,7 +122,7 @@ class Snake:
                     self.snek_length += 1
 
                     # Publish score to output
-                    self.output_queue.put("SCORE: " + str(self.snek_length))
+                    self.output_queue.put("SCORE " + str(self.snek_length-3))
 
                     # calc new food location and draw on screen
                     current_food_location = get_new_food_location()
@@ -146,7 +152,7 @@ class Snake:
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
 
-                    self.output_queue.put("LIVES: Game Over")
+                    self.output_queue.put("LIVES Game Over")
 
                     continue
 
@@ -221,6 +227,8 @@ class Snake:
             self.screen.draw_pixel(
                 current_food_location[0], current_food_location[1], 15, push=True
             )
+            self.output_queue.put("SCORE                        ")
+            self.output_queue.put("LIVES                        ")
             self.screen.push()
             game_over = False
             logger.info("Game reset and starting again")

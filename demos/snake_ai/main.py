@@ -28,7 +28,7 @@ class SnakeAi:
         game_over = False
         self.screen.clear()
         current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-        snek_list = [current_location]
+        snek_list = [(current_location[0]-2,current_location[1]),(current_location[0]-1,current_location[1]),current_location]
         self.snek_length = 1
         self.h_score = 0
         with open("demos/snake_ai/ai_high_score.txt", "r") as scores:
@@ -47,9 +47,10 @@ class SnakeAi:
             # print(food_location)
             return food_location
 
-        def generate_game_state(width, height, start_loc, food_loc):
+        def generate_game_state(width, height, snake, food_loc):
             game_state = snek_state.snek_state(width, height)
-            game_state.add_snake_part2(start_loc)
+            for part in snake:
+                game_state.add_snake_part2(part)
             game_state.add_food2(food_loc)
             return game_state
 
@@ -58,7 +59,7 @@ class SnakeAi:
         game_state = generate_game_state(
             self.screen.x_width,
             self.screen.y_height,
-            current_location,
+            snek_list,
             current_food_location,
         )
 
@@ -213,14 +214,14 @@ class SnakeAi:
 
             # reset the state and start the game again
             current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-            snek_list = [current_location]
+            snek_list = [(current_location[0]-2,current_location[1]),(current_location[0]-1,current_location[1]),current_location]
             self.snek_length = 1
 
             current_food_location = get_new_food_location()
             game_state = generate_game_state(
                 self.screen.x_width,
                 self.screen.y_height,
-                current_location,
+                snek_list,
                 current_food_location,
             )
 
