@@ -1,7 +1,7 @@
 from importlib import import_module
-from pathlib import Path
 from queue import Queue, Empty
 import random
+import sys
 import time
 
 from loguru import logger
@@ -11,11 +11,19 @@ from runners import utils
 
 
 def load_demo(module_name):
+    """
+    Given a module name it will load the module and get the modules demo
+    class.
+    """
     logger.debug(f"Loading {module_name}")
     return utils.get_demo_cls(import_module(module_name))
 
 
 def load_demos(demo_dir="demos"):
+    """
+    Loads all demos for a given directory. It returns the demos in a dictionary
+    with the name of the demo as key and the demo module as the value.
+    """
     logger.debug("Loading demos...")
 
     demos = utils.get_demos(demo_dir)
@@ -27,23 +35,29 @@ def load_demos(demo_dir="demos"):
 
 
 def get_random_demo(demos):
+    """
+    Generator that gets a random demo. It makes sure all demos have been
+    provided before it repeats a demo, so it's not truly random.
+    """
+
     # Filter out demos that can't be shown without input
     demos = [d for d in demos.values() if d.demo_time is not None]
 
     while True:
         random.shuffle(demos)
-        for d in demos:
-            yield d
+        for demo in demos:
+            yield demo
 
 
 def get_demo_from_user(system_queue, demos):
-    # Start the demo
+    """Receives input from user and returns the selected demo."""
+
     try:
         demo_name = system_queue.get(timeout=0.01)
 
         if demo_name == "QUIT":
             # QUIT command was sent
-            exit()
+            sys.exit()
 
         logger.info("User selected {}", demo_name)
         return demos[demo_name]
@@ -56,18 +70,9 @@ def get_demo_from_user(system_queue, demos):
         return None
 
 
-def tick_demo(runner, frame_tick):
-    # Tick the demo
-    try:
-        next(runner)
-    except Exception:
-        logger.exception("Unknown error occurred!")
+def run_loop(screen, user_input_timeout=300, demo_time_override=None):
+    """Runs the event loop that takes care of input and running the demos."""
 
-    # Wait for next tick
-    next(frame_tick)
-
-
-def start_loop(screen, user_input_timeout=300, demo_time_override=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -105,7 +110,8 @@ def start_loop(screen, user_input_timeout=300, demo_time_override=None):
                 if not demo_input_queue.empty() and demo.demo_time is None:
                     last_input_time = time.time()
 
-                tick_demo(runner, frame_tick)
+                next(runner)
+                next(frame_tick)
 
             # Stop demo and remove everything from the previous demo
             demo.stop()
@@ -135,8 +141,8 @@ def start_loop(screen, user_input_timeout=300, demo_time_override=None):
                     screen.clear()
                     break
 
-                next(handle_input)
-                tick_demo(runner, frame_tick)
+                next(runner)
+                next(frame_tick)
             else:
                 # This gets run when the while condition becomes false, not because of the break
                 logger.info("Demo time has ended. Exiting demo...")
@@ -148,12 +154,18 @@ def start_loop(screen, user_input_timeout=300, demo_time_override=None):
 
 
 def run(simulate, testing=False):
+    """Runs the kiosk"""
+
     if simulate:
-        from display.virtual_screen import VirtualScreen
+        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
+            VirtualScreen,
+        )
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import PhysicalScreen
+        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
+        )
 
         screen = PhysicalScreen()
 
@@ -168,15 +180,15 @@ def run(simulate, testing=False):
     )
     logger.info("             ____")
     logger.info("            / . .\\")
-    logger.info("            \  ---<   Starting SSS")
-    logger.info("             \  /")
+    logger.info("            \\  ---<   Starting SSS")
+    logger.info("             \\  /")
     logger.info("   __________/ /")
     logger.info("-=:___________/")
 
     if testing:
-        start_loop(screen, user_input_timeout=5, demo_time_override=5)
+        run_loop(screen, user_input_timeout=5, demo_time_override=5)
     else:
-        start_loop(screen)
+        run_loop(screen)
 
 
 if __name__ == "__main__":

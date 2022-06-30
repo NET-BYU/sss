@@ -1,19 +1,16 @@
-from pathlib import Path
-
 import click
 
-import runners.utils
+from runners import simulator, kiosk, demo, test, utils
 
 
 @click.group()
 def cli():
-    pass
+    """CLI group."""
 
 
 @cli.command(name="simulator")
 def run_simulator():
-    from runners import simulator
-
+    """CLI command to run simulator."""
     simulator.run()
 
 
@@ -26,6 +23,7 @@ def run_simulator():
     help="Run in simulated environment.",
 )
 @click.option(
+    "testing",
     "-t",
     "--test",
     is_flag=True,
@@ -33,18 +31,15 @@ def run_simulator():
     help="Run in test mode. This shortens the demo time and user input time "
     "for testing purposes.",
 )
-def run_kiosk(simulate, test):
-    from runners import kiosk
-
-    kiosk.run(simulate, testing=test)
+def run_kiosk(simulate, testing):
+    """CLI command to run kiosk."""
+    kiosk.run(simulate, testing=testing)
 
 
 @cli.command("demo")
 @click.argument(
     "name",
-    type=click.Choice(
-        [name for name, _ in runners.utils.get_demos()], case_sensitive=False
-    ),
+    type=click.Choice([name for name, _ in utils.get_demos()], case_sensitive=False),
 )
 @click.option(
     "-s",
@@ -54,6 +49,7 @@ def run_kiosk(simulate, test):
     help="Run in simulated environment.",
 )
 @click.option(
+    "testing",
     "-t",
     "--test",
     is_flag=True,
@@ -61,16 +57,14 @@ def run_kiosk(simulate, test):
     help="Run in test mode. This provides feedback for if your demo is "
     "running fast enough relative to the set frame rate.",
 )
-def run_demo(name, simulate, test):
-    from runners import demo
-
-    demo.run(name, simulate, testing=test)
+def run_demo(name, simulate, testing):
+    """CLI command to run demo."""
+    demo.run(name, simulate, testing=testing)
 
 
 @cli.command("test")
 def run_test():
-    from runners import test
-
+    """CLI command to run test."""
     test.run()
 
 
