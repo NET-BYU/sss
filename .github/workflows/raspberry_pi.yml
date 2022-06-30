@@ -7,16 +7,19 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get install libatlas-base-dev python3-pip python3-venv
+
       - name: Set up environment
         run: |
           rm -rf /tmp/test
           mkdir /tmp/test
-          cd /tmp/test
-          python -m venv .venv
+          python -m venv /tmp/test/.venv
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: |
-          sudo apt-get install libatlas-base-dev
           /tmp/test/.venv/bin/python -m pip install -r requirements.txt
 
       - name: Run all demos to make sure they load
