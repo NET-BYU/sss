@@ -1,4 +1,4 @@
-name: Black
+name: Check formatting
 
 on: [push]
 
