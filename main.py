@@ -1,6 +1,6 @@
 import click
 
-from runners import simulator, kiosk, demo, test, utils
+from runners import kiosk, demo, test, utils
 
 
 @click.group()
@@ -11,6 +11,9 @@ def cli():
 @cli.command(name="simulator")
 def run_simulator():
     """CLI command to run simulator."""
+
+    from runners import simulator  # pylint: disable=import-outside-toplevel
+
     simulator.run()
 
 
