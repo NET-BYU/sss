@@ -83,16 +83,18 @@ class Doom:
             buf = buf[12:156, 16:304]
             buf = cv2.resize(buf, (48, 48))
 
-            presses = []
+            presses = ""
 
             for keypress in get_all_from_queue(self.input_queue):
-                presses.append(keypress)
+                presses += keypress + ","
 
-            print(str(presses))
+            presses = presses[:-1]
+
+            print(presses)
 
             # self.shm_input.write(str(2000 * " "))
 
-            self.shm_input.write(str(presses) + "\0")
+            self.shm_input.write(presses + "\0")
 
             self.screen_min = buf.min()
             self.screen_max = buf.max()
