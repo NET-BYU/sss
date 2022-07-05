@@ -32,7 +32,7 @@ def run_Search(x, y, dst, state, len):
 
         return path
     else:
-        logger.info("NO PATH FOUND!")
+        logger.debug("NO PATH FOUND!")
         return []
 
 
@@ -138,7 +138,7 @@ def run_Search2(x, y, dst, state, len):
     if len < 500:
         goal = A_Star_Revised(state, fringe)
     else:
-        logger.info("gone long enough")
+        logger.debug("gone long enough")
         return []
     if goal:
         cur = goal
@@ -161,7 +161,7 @@ def run_Search2(x, y, dst, state, len):
 
         return path
     else:
-        logger.info("NO PATH FOUND!")
+        logger.debug("NO PATH FOUND!")
         return []
 
 
@@ -186,7 +186,7 @@ def A_Star_Revised(state, fringe):
             del infringe
             return curNode
         if added > 400 or mem_added > 50000:
-            logger.info("running to long")
+            logger.debug("running to long")
             del infringe
             return curNode
 
