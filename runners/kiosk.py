@@ -141,6 +141,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                     screen.clear()
                     break
 
+                next(handle_input)
                 next(runner)
                 next(frame_tick)
             else:
