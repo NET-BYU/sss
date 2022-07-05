@@ -64,9 +64,10 @@ class Snake:
         self.screen.clear()
         current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
         snek_list = [
-            (current_location[0]-2,current_location[1]),
-            (current_location[0]-1,current_location[1]),
-            current_location]
+            (current_location[0] - 2, current_location[1]),
+            (current_location[0] - 1, current_location[1]),
+            current_location,
+        ]
         self.snek_length = 3
         self.h_score = 0
         with open("demos/snake/high_score.txt", "r", encoding="utf8") as scores:
@@ -93,9 +94,7 @@ class Snake:
         # draw snek part
         self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
         # draw food
-        self.screen.draw_pixel(
-            current_food_location[0], current_food_location[1], 15, push=True
-        )
+        self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
 
         # draw banner at the top
         self._draw_set_up()
@@ -115,11 +114,13 @@ class Snake:
                     elif command == "DOWN_P":
                         direction = 3
                 # Check if the command needs to be restored
-                if (direction == 2 and prev_direction == 0) or \
-                    (direction == 0 and prev_direction == 2):
+                if (direction == 2 and prev_direction == 0) or (
+                    direction == 0 and prev_direction == 2
+                ):
                     direction = prev_direction
-                elif (direction == 1 and prev_direction == 3) or \
-                    (direction == 3 and prev_direction == 1):
+                elif (direction == 1 and prev_direction == 3) or (
+                    direction == 3 and prev_direction == 1
+                ):
                     direction = prev_direction
                 else:
                     prev_direction = direction
@@ -143,13 +144,11 @@ class Snake:
                     self.snek_length += 1
 
                     # Publish score to output
-                    self.output_queue.put("SCORE " + str(self.snek_length-3))
+                    self.output_queue.put("SCORE " + str(self.snek_length - 3))
 
                     # calc new food location and draw on screen
                     current_food_location = get_new_food_location()
-                    self.screen.draw_pixel(
-                        current_food_location[0], current_food_location[1], 15
-                    )
+                    self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15)
 
                     # update score on screen
                     self.screen.draw_text(6, 0, str(self.snek_length).zfill(3))
@@ -187,9 +186,7 @@ class Snake:
             # Erase the snake from the screen
             for i in snek_list[:-1]:
                 self.screen.draw_pixel(i[0], i[1], 0)
-            self.screen.draw_pixel(
-                current_food_location[0], current_food_location[1], 0
-            )
+            self.screen.draw_pixel(current_food_location[0], current_food_location[1], 0)
             self.screen.draw_text(
                 self.screen.x_width // 2 - 4, self.screen.y_height // 2 - 2, "GAME OVER"
             )
@@ -202,11 +199,9 @@ class Snake:
                     "H-SCORE " + str(self.snek_length).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open("demos/snake/high_score.txt", "w",encoding="utf8") as scores:
+                with open("demos/snake/high_score.txt", "w", encoding="utf8") as scores:
                     scores.write(str(self.h_score))
-                self.screen.draw_text(
-                    self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)
-                )
+                self.screen.draw_text(self.screen.x_width - 3, 0, str(self.snek_length).zfill(3))
             else:
                 self.screen.draw_text(
                     self.screen.x_width // 2 - 6,

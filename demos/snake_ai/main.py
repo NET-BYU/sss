@@ -47,15 +47,17 @@ class SnakeAi:
         game_over = False
         self.screen.clear()
         current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-        snek_list = [(current_location[0]-2,current_location[1]),
-                    (current_location[0]-1,current_location[1]),
-                    current_location]
+        snek_list = [
+            (current_location[0] - 2, current_location[1]),
+            (current_location[0] - 1, current_location[1]),
+            current_location,
+        ]
         self.snek_length = 1
         self.h_score = 0
         with open("demos/snake_ai/ai_high_score.txt", "r") as scores:
             self.h_score = int(scores.read())
 
-        def get_new_food_location( ):
+        def get_new_food_location():
             food_location = (
                 round(random.randrange(0, self.screen.x_width - 1)),
                 round(random.randrange(4, self.screen.y_height - 1)),
@@ -95,9 +97,7 @@ class SnakeAi:
         # draw snek part
         self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
         # draw food
-        self.screen.draw_pixel(
-            current_food_location[0], current_food_location[1], 15, push=True
-        )
+        self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
 
         # draw banner at the top
         self._draw_set_up()
@@ -149,9 +149,7 @@ class SnakeAi:
                         game_over = True
                         continue
 
-                    self.screen.draw_pixel(
-                        current_food_location[0], current_food_location[1], 15
-                    )
+                    self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15)
 
                     # update score on screen
                     self.screen.draw_text(6, 0, str(self.snek_length).zfill(3))
@@ -189,9 +187,7 @@ class SnakeAi:
             # Erase the snake from the screen
             for i in snek_list[:-1]:
                 self.screen.draw_pixel(i[0], i[1], 0)
-            self.screen.draw_pixel(
-                current_food_location[0], current_food_location[1], 0
-            )
+            self.screen.draw_pixel(current_food_location[0], current_food_location[1], 0)
             self.screen.draw_text(
                 self.screen.x_width // 2 - 4, self.screen.y_height // 2 - 2, "GAME OVER"
             )
@@ -206,9 +202,7 @@ class SnakeAi:
                 self.h_score = self.snek_length
                 with open("demos/snake_ai/ai_high_score.txt", "w") as scores:
                     scores.write(str(self.h_score))
-                self.screen.draw_text(
-                    self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)
-                )
+                self.screen.draw_text(self.screen.x_width - 3, 0, str(self.snek_length).zfill(3))
             else:
                 self.screen.draw_text(
                     self.screen.x_width // 2 - 6,
@@ -231,7 +225,11 @@ class SnakeAi:
 
             # reset the state and start the game again
             current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-            snek_list = [(current_location[0]-2,current_location[1]),(current_location[0]-1,current_location[1]),current_location]
+            snek_list = [
+                (current_location[0] - 2, current_location[1]),
+                (current_location[0] - 1, current_location[1]),
+                current_location,
+            ]
             self.snek_length = 1
 
             current_food_location = get_new_food_location()
@@ -259,7 +257,7 @@ class SnakeAi:
             )
             self.screen.push()
             game_over = False
-            
+
             # draw new snake in reset spot and get ready to start moving again
             yield
 
