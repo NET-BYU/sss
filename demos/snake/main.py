@@ -92,7 +92,8 @@ class Snake:
         prev_direction = 2
 
         # draw snek part
-        self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
+        for part in snek_list:
+            self.screen.draw_pixel(part[0], part[1], 15)
         # draw food
         self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
 
@@ -151,7 +152,7 @@ class Snake:
                     self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15)
 
                     # update score on screen
-                    self.screen.draw_text(6, 0, str(self.snek_length).zfill(3))
+                    self.screen.draw_text(6, 0, str(self.snek_length - 3).zfill(3))
 
                 snek_list.append(current_location)
 
@@ -169,7 +170,7 @@ class Snake:
                     or current_location in snek_list[:-1]
                 ):
 
-                    logger.debug("Snake killed itself in the weeds")
+                    logger.debug("Snake killed itself in the weeds:" + str(current_location))
                     game_over = True
 
                     self.output_queue.put("LIVES Game Over")
@@ -196,17 +197,19 @@ class Snake:
                 self.screen.draw_text(
                     self.screen.x_width // 2 - 6,
                     self.screen.y_height // 2,
-                    "H-SCORE " + str(self.snek_length).zfill(3),
+                    "H-SCORE " + str(self.snek_length - 3).zfill(3),
                 )
                 self.h_score = self.snek_length
                 with open("demos/snake/high_score.txt", "w", encoding="utf8") as scores:
                     scores.write(str(self.h_score))
-                self.screen.draw_text(self.screen.x_width - 3, 0, str(self.snek_length).zfill(3))
+                self.screen.draw_text(
+                    self.screen.x_width - 3, 0, str(self.snek_length - 3).zfill(3)
+                )
             else:
                 self.screen.draw_text(
                     self.screen.x_width // 2 - 6,
                     self.screen.y_height // 2,
-                    "SCORE " + str(self.snek_length).zfill(3),
+                    "SCORE " + str(self.snek_length - 3).zfill(3),
                 )
             self.screen.push()
             logger.debug("Game over screen printed")
@@ -221,17 +224,23 @@ class Snake:
 
             # reset the state and start the game again
             current_location = (self.screen.x_width // 2, self.screen.y_height // 2)
-            snek_list = [current_location]
-            self.snek_length = 1
+            snek_list = [
+                (current_location[0] - 2, current_location[1]),
+                (current_location[0] - 1, current_location[1]),
+                current_location,
+            ]
+            self.snek_length = 3
 
             current_food_location = get_new_food_location()
 
-            direction = 0
+            direction = 2
+            prev_direction = 2
             self.screen.clear()
             # draw banner at the top
             self._draw_set_up()
             # draw snek part
-            self.screen.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
+            for part in snek_list:
+                self.screen.draw_pixel(part[0], part[1], 15)
             # draw food
             self.screen.draw_pixel(
                 current_food_location[0], current_food_location[1], 15, push=True
