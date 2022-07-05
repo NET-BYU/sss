@@ -1,9 +1,5 @@
 {
     "python.formatting.provider": "black",
     "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {},
-    "python.formatting.blackArgs": [
-        "--line-length",
-        "100"
-    ]
+    "editor.codeActionsOnSave": {}
 }

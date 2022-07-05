@@ -97,7 +97,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     # draw snek part
     display.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
     # draw food
-    display.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
+    display.draw_pixel(
+        current_food_location[0], current_food_location[1], 15, push=True
+    )
 
     # draw banner at the top
     display.draw_hline(0, 2, display.x_width, push=True)
@@ -184,13 +186,17 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     if mqtt_client.connected:
                         mqtt_client.publish(topic=SCORE_TOPIC, payload=snek_length)
                     else:
-                        logger.info("MQTT Client is not connected so skipping publications.")
+                        logger.info(
+                            "MQTT Client is not connected so skipping publications."
+                        )
 
                     # temp = current_food_location
                     current_food_location = get_new_food_location()
                     # print("new food location", current_food_location)
                     # draw food
-                    display.draw_pixel(current_food_location[0], current_food_location[1], 15)
+                    display.draw_pixel(
+                        current_food_location[0], current_food_location[1], 15
+                    )
                     display.draw_text(6, 0, str(snek_length).zfill(3))
                     if ai:
                         if snek_length > 200:
@@ -253,7 +259,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     if mqtt_client.connected:
                         mqtt_client.publish(topic=LIFE_TOPIC, payload="Game Over")
                     else:
-                        logger.info("MQTT Client is not connected so skipping publications.")
+                        logger.info(
+                            "MQTT Client is not connected so skipping publications."
+                        )
 
                     continue
 
@@ -274,7 +282,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
         for i in snek_list[:-1]:
             display.draw_pixel(i[0], i[1], 0)
         display.draw_pixel(current_food_location[0], current_food_location[1], 0)
-        display.draw_text(display.x_width // 2 - 4, display.y_height // 2 - 2, "GAME OVER")
+        display.draw_text(
+            display.x_width // 2 - 4, display.y_height // 2 - 2, "GAME OVER"
+        )
         if snek_length > h_score:
             display.draw_text(
                 display.x_width // 2 - 6,
@@ -373,7 +383,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
         # draw snek part
         display.draw_pixel(snek_list[0][0], snek_list[0][1], 15)
         # draw food
-        display.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
+        display.draw_pixel(
+            current_food_location[0], current_food_location[1], 15, push=True
+        )
 
     display.clear()
 

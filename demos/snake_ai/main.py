@@ -100,7 +100,9 @@ class SnakeAi:
         for part in snek_list:
             self.screen.draw_pixel(part[0], part[1], 15)
         # draw food
-        self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
+        self.screen.draw_pixel(
+            current_food_location[0], current_food_location[1], 15, push=True
+        )
 
         # draw banner at the top
         self._draw_set_up()
@@ -152,7 +154,9 @@ class SnakeAi:
                         game_over = True
                         continue
 
-                    self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15)
+                    self.screen.draw_pixel(
+                        current_food_location[0], current_food_location[1], 15
+                    )
 
                     # update score on screen
                     self.screen.draw_text(6, 0, str(self.snek_length - 3).zfill(3))
@@ -190,7 +194,9 @@ class SnakeAi:
             # Erase the snake from the screen
             for i in snek_list[:-1]:
                 self.screen.draw_pixel(i[0], i[1], 0)
-            self.screen.draw_pixel(current_food_location[0], current_food_location[1], 0)
+            self.screen.draw_pixel(
+                current_food_location[0], current_food_location[1], 0
+            )
             self.screen.draw_text(
                 self.screen.x_width // 2 - 4, self.screen.y_height // 2 - 2, "GAME OVER"
             )
@@ -203,7 +209,9 @@ class SnakeAi:
                     "H-SCORE " + str(self.snek_length - 3).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open("demos/snake_ai/ai_high_score.txt", "w", encoding="utf8") as scores:
+                with open(
+                    "demos/snake_ai/ai_high_score.txt", "w", encoding="utf8"
+                ) as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
                     self.screen.x_width - 3, 0, str(self.snek_length - 3).zfill(3)
@@ -272,5 +280,7 @@ class SnakeAi:
         # Reset the state of the demo if needed, else leave blank
         if self.snek_length > self.h_score:
             self.h_score = self.snek_length
-            with open("demos/snake_ai/ai_high_score.txt", "w", encoding="utf8") as scores:
+            with open(
+                "demos/snake_ai/ai_high_score.txt", "w", encoding="utf8"
+            ) as scores:
                 scores.write(str(self.h_score))

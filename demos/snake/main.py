@@ -95,7 +95,9 @@ class Snake:
         for part in snek_list:
             self.screen.draw_pixel(part[0], part[1], 15)
         # draw food
-        self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15, push=True)
+        self.screen.draw_pixel(
+            current_food_location[0], current_food_location[1], 15, push=True
+        )
 
         # draw banner at the top
         self._draw_set_up()
@@ -149,7 +151,9 @@ class Snake:
 
                     # calc new food location and draw on screen
                     current_food_location = get_new_food_location()
-                    self.screen.draw_pixel(current_food_location[0], current_food_location[1], 15)
+                    self.screen.draw_pixel(
+                        current_food_location[0], current_food_location[1], 15
+                    )
 
                     # update score on screen
                     self.screen.draw_text(6, 0, str(self.snek_length - 3).zfill(3))
@@ -170,7 +174,9 @@ class Snake:
                     or current_location in snek_list[:-1]
                 ):
 
-                    logger.debug("Snake killed itself in the weeds:" + str(current_location))
+                    logger.debug(
+                        "Snake killed itself in the weeds:" + str(current_location)
+                    )
                     game_over = True
 
                     self.output_queue.put("LIVES Game Over")
@@ -187,7 +193,9 @@ class Snake:
             # Erase the snake from the screen
             for i in snek_list[:-1]:
                 self.screen.draw_pixel(i[0], i[1], 0)
-            self.screen.draw_pixel(current_food_location[0], current_food_location[1], 0)
+            self.screen.draw_pixel(
+                current_food_location[0], current_food_location[1], 0
+            )
             self.screen.draw_text(
                 self.screen.x_width // 2 - 4, self.screen.y_height // 2 - 2, "GAME OVER"
             )

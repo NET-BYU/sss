@@ -8,7 +8,9 @@ PATH_COST = 1
 
 
 def run_Search(x, y, dst, state, len):
-    root = snek_state.snek_Node(x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0)
+    root = snek_state.snek_Node(
+        x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
+    )
     fringe = PriorityQueue()
     fringe.put((root.cost, root))
     if len < 200:
@@ -128,7 +130,9 @@ def getChildren2(node, state, goal):
 
 
 def run_Search2(x, y, dst, state, len):
-    root = snek_state.snek_Node(x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0)
+    root = snek_state.snek_Node(
+        x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
+    )
     fringe = PriorityQueue()
     fringe.put((root.cost, root))
     if len < 500:
