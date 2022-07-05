@@ -113,9 +113,10 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                 next(runner)
                 next(frame_tick)
 
-            # Stop demo and remove everything from the previous demo
+            logger.info("Stopping current demo and get ready for next one...")
             demo.stop()
             screen.clear()
+            screen.refresh()
             while not demo_input_queue.empty():
                 demo_input_queue.get()
 
