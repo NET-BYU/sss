@@ -90,10 +90,6 @@ class Doom:
 
             presses = presses[:-1]
 
-            print(presses)
-
-            # self.shm_input.write(str(2000 * " "))
-
             self.shm_input.write(presses + "\0")
 
             self.screen_min = buf.min()
