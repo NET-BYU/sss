@@ -88,6 +88,7 @@ class Doom:
             outbuf = str(outbuf).split("|")[0][2:]
             outjson = loads(outbuf)
             self.output_queue.put(outjson)
+            logger.info(outjson)
 
             presses = ""
 
