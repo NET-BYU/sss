@@ -3,6 +3,7 @@ import numpy as np
 from loguru import logger
 import cv2
 from demos.utils import get_all_from_queue
+from json import loads
 
 
 DOOM_VIDEO_ID = 666
@@ -82,6 +83,11 @@ class Doom:
             buf = buf.reshape(SCREENHEIGHT, SCREENWIDTH)
             buf = buf[12:156, 16:304]
             buf = cv2.resize(buf, (48, 48))
+
+            outbuf = self.shm_output.read()
+            outbuf = str(outbuf).split("|")[0][2:]
+            outjson = loads(outbuf)
+            self.output_queue.put(outjson)
 
             presses = ""
 
