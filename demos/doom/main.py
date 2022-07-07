@@ -4,6 +4,9 @@ from loguru import logger
 import cv2
 from demos.utils import get_all_from_queue
 from json import loads
+from os.path import exists
+from os import environ
+from subprocess import Popen
 
 
 DOOM_VIDEO_ID = 666
@@ -18,37 +21,47 @@ NUM_COLS = 48
 class Doom:
     """This is an interactive demo that adapts the Doom game for the SSS by capturing the game's video output"""
 
+    demo_time = 50  # None for a game
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 30
-        self.demo_time = None  # None for a game
+        self.frame_rate = 50
 
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.screen = screen
 
+        self.game_installed = exists("demos/doom/chocolate-doom")
+
         self.shared_mem_init = False
 
-        # init a connection to shared memory locations here
-        try:
-            self.shm = SharedMemory(DOOM_VIDEO_ID, 0, 0)
-            self.shm.attach(0, 0)
+        # Initialize game and allocate shared memory
+        if self.game_installed:
 
-            self.shm_input = SharedMemory(DOOM_INPUT_ID, 0, 0)
-            self.shm_input.attach(0, 0)
+            environ["SDL_VIDEODRIVER"] = "dummy"
+            Popen(["./demos/doom/chocolate-doom", "-iwad", "assets/miniwad.wad"])
 
-            self.shm_output = SharedMemory(DOOM_OUTPUT_ID, 0, 0)
-            self.shm_output.attach(0, 0)
+            # init a connection to shared memory locations here
+            try:
+                self.shm = SharedMemory(DOOM_VIDEO_ID, 0, 0)
+                self.shm.attach(0, 0)
 
-            self.shared_mem_init = True
-        except (ExistentialError, Exception) as e:
-            logger.error("Could not establish connection with shared memory")
-            logger.error(e)
-            exit(0)
+                self.shm_input = SharedMemory(DOOM_INPUT_ID, 0, 0)
+                self.shm_input.attach(0, 0)
 
+                self.shm_output = SharedMemory(DOOM_OUTPUT_ID, 0, 0)
+                self.shm_output.attach(0, 0)
+
+                self.shared_mem_init = True
+            except (ExistentialError, Exception) as e:
+                logger.error("Could not establish connection with shared memory")
+                logger.error(e)
+                exit(0)
+
+        # Color map for the SSS
         self.num_to_pixel = {
             0: 0x0,
             1: 0x0,
@@ -68,6 +81,7 @@ class Doom:
         self.screen_max = 0
         self.screen_min = 0
 
+        # Init numpy array for screen
         self.arr = []
         for i in range(NUM_COLS):
             self.arr.append([])
@@ -76,29 +90,30 @@ class Doom:
 
     def run(self):
         # Create generator here
-        while self.shared_mem_init:
-            #    sem.acquire()
+        while self.game_installed and self.shared_mem_init:
+
+            # Reading screen details from screen shared memory buffer
             buf = self.shm.read(SCREENWIDTH * SCREENHEIGHT)
             buf = np.frombuffer(bytearray(buf), dtype=np.uint8)
             buf = buf.reshape(SCREENHEIGHT, SCREENWIDTH)
             buf = buf[12:156, 16:304]
             buf = cv2.resize(buf, (48, 48))
 
+            # Load keypresses into shared memory for input to game
             outbuf = self.shm_output.read()
             outbuf = str(outbuf).split("|")[0][2:]
             outjson = loads(outbuf)
             self.output_queue.put(outjson)
-            logger.info(outjson)
 
             presses = ""
 
             for keypress in get_all_from_queue(self.input_queue):
                 presses += keypress + ","
-
             presses = presses[:-1]
 
             self.shm_input.write(presses + "\0")
 
+            # Normalize color values on screen and write
             self.screen_min = buf.min()
             self.screen_max = buf.max()
 
@@ -120,6 +135,7 @@ class Doom:
 
             yield
 
+        # In case memory cannot be initialized correctly or game is not found
         self.screen.draw_text(
             self.screen.x_width // 2 - 10,
             self.screen.y_height // 2 - 4,
@@ -130,7 +146,10 @@ class Doom:
             yield
 
     def stop(self):
+        # Close game, release memory to OS, and close processes attached
         if self.shared_mem_init:
+            self.shm_input.write("QUIT_P")
+            Popen(["pkill", "chocolate-doom"])
             self.shm.detach()
             self.shm_input.detach()
             self.shm_output.detach()
