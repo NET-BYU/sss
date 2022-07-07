@@ -270,16 +270,13 @@ class Simulator:
 
     def start(self):
         handle_input = controllers.start_inputs(self.system_q, self.input_q)
-        handle_output = broadcasters.start_outputs(self.system_q, self.output_q)
+
         tick = self.screen.create_tick(self.game.frame_rate)
 
         # Main loop
         while True:
             # Read input from different input devices
             next(handle_input)
-
-            # Write to diferent output devices
-            next(handle_output)
 
             while not self.system_q.empty():
                 system_event = self.system_q.get()

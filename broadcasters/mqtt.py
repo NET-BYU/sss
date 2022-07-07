@@ -4,7 +4,7 @@ from yaml import safe_load
 from . import utils
 
 
-def start_processing_output(system_queue, demo_output_queue):
+def start_processing_output(system_queue, mqtt_q):
     def on_connect(client, userdata, flags, rc):
         logger.info("MQTT Client connected ({})", rc)
 
@@ -34,10 +34,10 @@ def start_processing_output(system_queue, demo_output_queue):
                 while True:
                     client.loop(timeout=0.01)
 
-                    if not demo_output_queue.empty():
+                    if not mqtt_q.empty():
                         client.publish(
                             "byu_sss/output",
-                            str(next(utils.get_all_from_queue(demo_output_queue))),
+                            payload=str(next(utils.get_all_from_queue(mqtt_q))),
                         )
 
                     yield
