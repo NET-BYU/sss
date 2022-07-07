@@ -1,19 +1,27 @@
 from importlib import import_module
-from queue import Queue, Empty
+from queue import Queue
+import sys
 import time
 
 from loguru import logger
 
 import controllers
+from runners import utils
 
 
 def run(demo_name, simulate, testing):
+    """Main function that runs the demo."""
+
     if simulate:
-        from display.virtual_screen import VirtualScreen
+        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
+            VirtualScreen,
+        )
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import PhysicalScreen
+        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
+        )
 
         screen = PhysicalScreen()
 
@@ -22,11 +30,8 @@ def run(demo_name, simulate, testing):
     output_q = Queue()
 
     # Set up the game
-    demo_module_name = f"demos.{demo_name}.main"
-    demo_module = import_module(demo_module_name)
-    demo = getattr(
-        demo_module, "_".join([word.capitalize() for word in demo_name.split("_")])
-    )(input_q, output_q, screen.display)
+    demo_module = import_module(f"demos.{demo_name}.main")
+    demo = utils.get_demo_cls(demo_module)(input_q, output_q, screen.display)
 
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
@@ -44,15 +49,13 @@ def run(demo_name, simulate, testing):
         while not system_q.empty():
             system_event = system_q.get()
             if system_event == "QUIT":
-                exit()
+                sys.exit()
 
         # Tick the demo
         try:
             _tick(runner, demo, testing)
         except KeyboardInterrupt:
             break
-        except Exception:
-            logger.exception("Unknown error occurred!")
 
         # Wait for next tick
         next(tick)
@@ -72,9 +75,10 @@ def _tick(runner, demo, testing):
         run_time = after_time - before_time
         if run_time > 1 / demo.frame_rate:
             logger.info(
-                f"Demo took too long to run compared to frame rate: {run_time} > {1 / demo.frame_rate}"
+                "Demo took too long to run compared to frame rate: "
+                f"{run_time} > {1 / demo.frame_rate}"
             )
 
 
 if __name__ == "__main__":
-    run("snake_ai", simulate=True)
+    run("snake_ai", simulate=True, testing=True)

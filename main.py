@@ -1,26 +1,18 @@
-from pathlib import Path
-
 import click
 
-
-def get_demo_list(demo_dir="demos"):
-    demo_path = Path(demo_dir)
-
-    demos = (d for d in demo_path.iterdir() if d.is_dir())  # Only import directories
-    demos = (d for d in demos if (d / "main.py").exists())  # Make sure there is a main
-    demos = [d.name for d in demos]  # Only show name of demo
-
-    return demos
+from runners import kiosk, demo, test, utils
 
 
 @click.group()
 def cli():
-    pass
+    """CLI group."""
 
 
 @cli.command(name="simulator")
 def run_simulator():
-    from runners import simulator
+    """CLI command to run simulator."""
+
+    from runners import simulator  # pylint: disable=import-outside-toplevel
 
     simulator.run()
 
@@ -34,6 +26,7 @@ def run_simulator():
     help="Run in simulated environment.",
 )
 @click.option(
+    "testing",
     "-t",
     "--test",
     is_flag=True,
@@ -41,14 +34,16 @@ def run_simulator():
     help="Run in test mode. This shortens the demo time and user input time "
     "for testing purposes.",
 )
-def run_kiosk(simulate, test):
-    from runners import kiosk
-
-    kiosk.run(simulate, testing=test)
+def run_kiosk(simulate, testing):
+    """CLI command to run kiosk."""
+    kiosk.run(simulate, testing=testing)
 
 
 @cli.command("demo")
-@click.argument("name", type=click.Choice(get_demo_list(), case_sensitive=False))
+@click.argument(
+    "name",
+    type=click.Choice([name for name, _ in utils.get_demos()], case_sensitive=False),
+)
 @click.option(
     "-s",
     "--simulate",
@@ -57,6 +52,7 @@ def run_kiosk(simulate, test):
     help="Run in simulated environment.",
 )
 @click.option(
+    "testing",
     "-t",
     "--test",
     is_flag=True,
@@ -64,10 +60,15 @@ def run_kiosk(simulate, test):
     help="Run in test mode. This provides feedback for if your demo is "
     "running fast enough relative to the set frame rate.",
 )
-def run_demo(name, simulate, test):
-    from runners import demo
+def run_demo(name, simulate, testing):
+    """CLI command to run demo."""
+    demo.run(name, simulate, testing=testing)
 
-    demo.run(name, simulate, testing=test)
+
+@cli.command("test")
+def run_test():
+    """CLI command to run test."""
+    test.run()
 
 
 if __name__ == "__main__":

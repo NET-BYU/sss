@@ -1,65 +1,63 @@
 from importlib import import_module
-from pathlib import Path
 from queue import Queue, Empty
 import random
+import sys
 import time
 
 from loguru import logger
 
 import controllers
+from runners import utils
 
 
-def load_demo(name, module_name):
+def load_demo(module_name):
+    """
+    Given a module name it will load the module and get the modules demo
+    class.
+    """
     logger.debug(f"Loading {module_name}")
-    module = import_module(module_name)
-    demo_cls = getattr(
-        module, "_".join([word.capitalize() for word in name.split("_")])
-    )
-
-    return demo_cls
-
-
-def get_demo_list(demo_dir="demos"):
-    demo_path = Path(demo_dir)
-
-    demos = (d for d in demo_path.iterdir() if d.is_dir())  # Only import directories
-    demos = (d for d in demos if (d / "main.py").exists())  # Make sure there is a main
-
-    return demos
+    return utils.get_demo_cls(import_module(module_name))
 
 
 def load_demos(demo_dir="demos"):
+    """
+    Loads all demos for a given directory. It returns the demos in a dictionary
+    with the name of the demo as key and the demo module as the value.
+    """
     logger.debug("Loading demos...")
 
-    demos = get_demo_list(demo_dir)
-
-    # Convert to module notation
-    demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
+    demos = utils.get_demos(demo_dir)
 
     # Load the module
-    demos = {name: load_demo(name, module) for name, module in demos}
+    demos = {name: load_demo(module) for name, module in demos}
 
     return demos
 
 
 def get_random_demo(demos):
+    """
+    Generator that gets a random demo. It makes sure all demos have been
+    provided before it repeats a demo, so it's not truly random.
+    """
+
     # Filter out demos that can't be shown without input
-    demos = [d for d in demos.values()]  # if d.USER_INPUT == False]
+    demos = [d for d in demos.values() if d.demo_time is not None]
 
     while True:
         random.shuffle(demos)
-        for d in demos:
-            yield d
+        for demo in demos:
+            yield demo
 
 
 def get_demo_from_user(system_queue, demos):
-    # Start the demo
+    """Receives input from user and returns the selected demo."""
+
     try:
         demo_name = system_queue.get(timeout=0.01)
 
         if demo_name == "QUIT":
             # QUIT command was sent
-            exit()
+            sys.exit()
 
         logger.info("User selected {}", demo_name)
         return demos[demo_name]
@@ -72,18 +70,9 @@ def get_demo_from_user(system_queue, demos):
         return None
 
 
-def tick_demo(runner, frame_tick):
-    # Tick the demo
-    try:
-        next(runner)
-    except Exception:
-        logger.exception("Unknown error occurred!")
+def run_loop(screen, user_input_timeout=300, demo_time_override=None):
+    """Runs the event loop that takes care of input and running the demos."""
 
-    # Wait for next tick
-    next(frame_tick)
-
-
-def start_loop(screen, user_input_timeout=300, demo_time=None):
     # Create queues
     system_queue = Queue()
     demo_input_queue = Queue()
@@ -121,11 +110,13 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
                 if not demo_input_queue.empty() and demo.demo_time is None:
                     last_input_time = time.time()
 
-                tick_demo(runner, frame_tick)
+                next(runner)
+                next(frame_tick)
 
-            # Stop demo and remove everything from the previous demo
+            logger.info("Stopping current demo and get ready for next one...")
             demo.stop()
             screen.clear()
+            screen.refresh()
             while not demo_input_queue.empty():
                 demo_input_queue.get()
 
@@ -137,14 +128,7 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
             frame_tick = screen.create_tick(random_demo.frame_rate)
             runner = random_demo.run()
 
-            if demo_time is None:
-                demo_time = random_demo.demo_time
-
-            # Skip demos that are not demos
-            # TODO: Make demo_time a class variable so I can filter it out without creating an instance of it
-            # TODO: Then I can filter it when I load the demo, not right here.
-            if demo_time is None:
-                continue
+            demo_time = demo_time_override or random_demo.demo_time
 
             start_time = time.time()
             logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
@@ -159,7 +143,8 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
                     break
 
                 next(handle_input)
-                tick_demo(runner, frame_tick)
+                next(runner)
+                next(frame_tick)
             else:
                 # This gets run when the while condition becomes false, not because of the break
                 logger.info("Demo time has ended. Exiting demo...")
@@ -171,12 +156,18 @@ def start_loop(screen, user_input_timeout=300, demo_time=None):
 
 
 def run(simulate, testing=False):
+    """Runs the kiosk"""
+
     if simulate:
-        from display.virtual_screen import VirtualScreen
+        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
+            VirtualScreen,
+        )
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import PhysicalScreen
+        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
+        )
 
         screen = PhysicalScreen()
 
@@ -191,15 +182,15 @@ def run(simulate, testing=False):
     )
     logger.info("             ____")
     logger.info("            / . .\\")
-    logger.info("            \  ---<   Starting SSS")
-    logger.info("             \  /")
+    logger.info("            \\  ---<   Starting SSS")
+    logger.info("             \\  /")
     logger.info("   __________/ /")
     logger.info("-=:___________/")
 
     if testing:
-        start_loop(screen, user_input_timeout=5, demo_time=5)
+        run_loop(screen, user_input_timeout=5, demo_time_override=5)
     else:
-        start_loop(screen)
+        run_loop(screen)
 
 
 if __name__ == "__main__":

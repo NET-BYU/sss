@@ -1,15 +1,15 @@
 from importlib import import_module, reload
 from pathlib import Path
-from queue import Queue, Empty
+from queue import Queue
+import sys
 
 from loguru import logger
 import pygame
-import pygame_widgets
 from pygame_widgets.button import Button
 
 from display.virtual_screen import VirtualScreen
 import controllers
-import os
+from runners import utils
 
 
 class Simulator:
@@ -47,10 +47,9 @@ class Simulator:
         self.screen.clear()
         self._generate_buttons()
         self._reload_demos()
-        self.game = getattr(
-            self.demos["template"],
-            "_".join([word.capitalize() for word in "template".split("_")]),
-        )(self.input_q, self.output_q, self.screen.display)
+        self.game = utils.get_demo_cls(self.demos["template"])(
+            self.input_q, self.output_q, self.screen.display
+        )
         self.repopulate()
         self._load_game()
 
@@ -69,21 +68,11 @@ class Simulator:
     def _reload_demos(self):
         # Hot load all the demos in the demo folder
         logger.info("Loading demos...")
-        demo_path = Path(self.demo_dir)
+        demos = utils.get_demos(self.demo_dir)
 
-        # Only import directories
-        demos = (d for d in demo_path.iterdir() if d.is_dir())
-
-        # Make sure there is a main in the folder
-        demos = (d for d in demos if (d / "main.py").exists())
-
-        # Convert to module notation
-        demos = [
-            (d, str(d).replace("/", ".").replace("\\", ".") + ".main") for d in demos
-        ]
         self.demos = {
-            str(name)[6:]: self._reload_module(self.demos[str(name)[6:]])
-            if str(name)[6:] in self.demos
+            name: self._reload_module(self.demos[name])
+            if name in self.demos
             else self._import_module(module)
             for name, module in demos
         }
@@ -112,10 +101,9 @@ class Simulator:
         # stop the current game
         self.game.stop()
 
-        self.game = getattr(
-            self.demos[game_name],
-            "_".join([word.capitalize() for word in game_name.split("_")]),
-        )(self.input_q, self.output_q, self.screen.display)
+        self.game = utils.get_demo_cls(self.demos[game_name])(
+            self.input_q, self.output_q, self.screen.display
+        )
         self.game_runner = self.game.run()
         self.screen.clear()
 
@@ -293,7 +281,7 @@ class Simulator:
                 system_event = self.system_q.get()
                 if system_event == "QUIT":
                     pygame.quit()
-                    os._exit(0)
+                    sys.exit(0)
 
             # Tick the selected game function
             next(self.game_runner)

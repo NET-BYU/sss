@@ -9,12 +9,12 @@ from demos.utils import get_all_from_queue
 # # getting the name of the directory
 # # where the this file is present.
 # current = os.path.dirname(os.path.realpath(__file__))
-  
+
 # # Getting the parent directory name
 # # where the current directory is present.
 # parent = os.path.dirname(current)
-  
-# # adding the parent directory to 
+
+# # adding the parent directory to
 # # the sys.path.
 # sys.path.append(parent)
 
@@ -25,13 +25,14 @@ class Snake:
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written before exiting"""
 
+    demo_time = None
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -205,7 +206,7 @@ class Snake:
 
             direction = 0
             self.screen.clear()
-                # draw banner at the top
+            # draw banner at the top
             self.screen.draw_hline(0, 2, self.screen.x_width, push=True)
             self.screen.draw_hline(0, 3, self.screen.x_width, push=True)
             self.screen.draw_text(0, 0, "SCORE 000")

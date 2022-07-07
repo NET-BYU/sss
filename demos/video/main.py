@@ -9,13 +9,14 @@ class Video:
     """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
     assets and allows the user to play, pause, go through the video frame by frame, and switch between videos"""
 
+    demo_time = 120
+
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 25
-        self.demo_time = 300  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue

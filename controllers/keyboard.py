@@ -1,3 +1,4 @@
+from loguru import logger
 import pygame
 from pygame.locals import (
     K_UP,
@@ -16,8 +17,18 @@ from pygame.locals import (
 import pygame_widgets
 
 
+def check_if_sim():
+    try:
+        pygame.event.get()
+        return True
+    except pygame.error:
+        logger.warning("Not running in simulator mode. The keyboard has been disabled.")
+        return False
+
+
 def start_processing_input(system_queue, demo_input_queue):
     while True:
+
         events = pygame.event.get()
 
         for event in events:

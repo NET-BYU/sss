@@ -1,7 +1,10 @@
 import random
 
+
 class Letters:
     """This is demo draws random symbols on the screen. Kind of fun to watch"""
+
+    demo_time = 30
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -9,7 +12,6 @@ class Letters:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
-        self.demo_time = 30  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -20,9 +22,17 @@ class Letters:
 
         while True:
             for _ in range(4):
-                self.screen.draw_text(random.randint(0,self.screen.x_width-1),random.randint(0,self.screen.y_height-2),chr(random.randint(33, 126)))
+                self.screen.draw_text(
+                    random.randint(0, self.screen.x_width - 1),
+                    random.randint(0, self.screen.y_height - 2),
+                    chr(random.randint(33, 126)),
+                )
             for _ in range(4):
-                self.screen.draw_text(random.randint(0,self.screen.x_width-1),random.randint(0,self.screen.y_height-2)," ")
+                self.screen.draw_text(
+                    random.randint(0, self.screen.x_width - 1),
+                    random.randint(0, self.screen.y_height - 2),
+                    " ",
+                )
             self.screen.push()
             yield
 

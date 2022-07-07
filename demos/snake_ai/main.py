@@ -4,11 +4,13 @@ from loguru import logger
 from copy import deepcopy
 
 
-class Snake_Ai:
+class SnakeAi:
     """This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written before exiting"""
+
+    demo_time = 120
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -16,7 +18,6 @@ class Snake_Ai:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 60
-        self.demo_time = 600  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -148,11 +149,11 @@ class Snake_Ai:
 
                 # check to make sure snek isn't in the weeds
                 if (
-                        current_location[0] >= self.screen.x_width
-                        or current_location[0] < 0
-                        or current_location[1] >= self.screen.y_height
-                        or current_location[1] < 4
-                        or current_location in snek_list[:-1]
+                    current_location[0] >= self.screen.x_width
+                    or current_location[0] < 0
+                    or current_location[1] >= self.screen.y_height
+                    or current_location[1] < 4
+                    or current_location in snek_list[:-1]
                 ):
                     logger.info("Snake killed itself in the weeds")
                     game_over = True
@@ -187,9 +188,7 @@ class Snake_Ai:
                     "H-SCORE " + str(self.snek_length).zfill(3),
                 )
                 self.h_score = self.snek_length
-                with open(
-                        "demos/snake_ai/ai_high_score.txt", "w"
-                ) as scores:
+                with open("demos/snake_ai/ai_high_score.txt", "w") as scores:
                     scores.write(str(self.h_score))
                 self.screen.draw_text(
                     self.screen.x_width - 3, 0, str(self.snek_length).zfill(3)

@@ -1,0 +1,32 @@
+name: Test on Raspberry Pi
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get install libatlas-base-dev python3-pip python3-venv
+
+      - name: Set up environment
+        run: |
+          rm -rf /tmp/test
+          mkdir /tmp/test
+          python -m venv /tmp/test/.venv
+
+      - name: Install project dependencies
+        run: |
+          /tmp/test/.venv/bin/python -m pip install -r requirements.txt
+
+      - name: Run all demos to make sure they load
+        run: |
+          /tmp/test/.venv/bin/python main.py test
+
+      - name: Clean up code
+        if: always()
+        run: |
+          rm -rf /tmp/test

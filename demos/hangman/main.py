@@ -3,23 +3,25 @@ from demos.hangman.guess import Guess
 from demos.utils import get_all_from_queue
 from loguru import logger
 
+
 class Hangman:
+
+    demo_time = None
+
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = None
 
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.screen = screen
         self.start = False
         self.gameover = False
-        self.restart = False                      
+        self.restart = False
 
     def get_input_buff(self):
         # Get all input off the queue
         return list(self.input_queue.queue)
-
 
     def run(self):
         # Initialize variables for choice, the number of correct guesses, the number of incorrect guesses and the random generator seed number
@@ -33,9 +35,6 @@ class Hangman:
         trace = Trace(self.screen)
         guess = Guess()
 
-
-
-
         # Start the game by first drawing the instructions on the screen.
         trace.draw_instruct()
 
@@ -46,7 +45,7 @@ class Hangman:
             else:
                 input_ = ""
             if "START_P" in input_:
-                    self.start = True
+                self.start = True
             yield
 
         # Erase the instructions on the screen right now
@@ -82,58 +81,67 @@ class Hangman:
                             select = True
                         if press == "START_R":
                             select = False
-                        
+
                     # Check to see if the player has guessed too many incorrect letters and the game is over
-                    if(num_errors == 7):
+                    if num_errors == 7:
                         self.gameover = True
                         trace.draw_endgame(False)
                         for i in range(len(word)):
                             trace.draw_letter(i, word[i], True)
-                    
+
                     # Check to see if the player has guessed all the letters in the word and the game is over
-                    if(num_correct == 5):
+                    if num_correct == 5:
                         self.gameover = True
                         self.win = True
                         trace.draw_endgame(True)
 
                     # If the player presses the LEFT key then the game will scroll through the alphabet backwards
-                    if(repeat_left):
+                    if repeat_left:
                         trace.draw_choice(guess.letter_select(choice), False)
-                        if(choice == 0):
+                        if choice == 0:
                             choice = 25
                             trace.draw_choice(guess.letter_select(choice), True)
                         else:
-                            choice = choice -1
+                            choice = choice - 1
                             trace.draw_choice(guess.letter_select(choice), True)
-                    
-                    # If the player pressed the RIGHT key then the game will scroll through the alphabet forwards 
-                    if(repeat_right):
+
+                    # If the player pressed the RIGHT key then the game will scroll through the alphabet forwards
+                    if repeat_right:
                         trace.draw_choice(guess.letter_select(choice), False)
-                        if(choice == 25):
+                        if choice == 25:
                             choice = 0
                             trace.draw_choice(guess.letter_select(choice), True)
                         else:
                             choice = choice + 1
                             trace.draw_choice(guess.letter_select(choice), True)
-                    
+
                     # If the player pressed the START key then the game will check to see if that letter is in the word
                     # If the letter is in the word then the num_correct will increment
                     # If the letter is not in the word then the num_errors will increment
                     # This will also call the check_guess_list and see if the letter has been guessed yet
-                    if(select):
+                    if select:
                         correct = False
                         guessed = guess.check_guess_list(guess.letter_select(choice))
                         for i in range(len(word)):
-                            if (word[i] == guess.letter_select(choice) and guessed == False):
+                            if (
+                                word[i] == guess.letter_select(choice)
+                                and guessed == False
+                            ):
                                 trace.draw_letter(i, guess.letter_select(choice), True)
                                 correct = True
                                 num_correct += 1
                                 guess.add_guess_list(guess.letter_select(choice))
-                        if(correct == False and guessed == False):
+                        if correct == False and guessed == False:
                             num_errors = num_errors + 1
                             trace.draw_person(num_errors, True)
                             guess.add_guess_list(guess.letter_select(choice))
-                            self.screen.draw_text(26 +(num_errors * 2), 46, guess.letter_select(choice), True, True)
+                            self.screen.draw_text(
+                                26 + (num_errors * 2),
+                                46,
+                                guess.letter_select(choice),
+                                True,
+                                True,
+                            )
                 yield
 
             # This will wait until the player has pressed the START button again before restarting a new game
@@ -143,7 +151,7 @@ class Hangman:
                 else:
                     input_ = ""
                 if "START_P" in input_:
-                    self.restart= True
+                    self.restart = True
                 yield
 
             # Erase the hangman, the guessed letters, and the word from the screen

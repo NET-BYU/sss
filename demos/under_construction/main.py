@@ -5,8 +5,10 @@ PIXEL_TOP = 0x4
 PIXEL_RIGHT = 0x8
 
 
-class Under_Construction:
+class UnderConstruction:
     """This demo just displays an underconstruction sign"""
+
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -14,7 +16,6 @@ class Under_Construction:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
-        self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
