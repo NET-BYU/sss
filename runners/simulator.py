@@ -8,7 +8,7 @@ import pygame
 from pygame_widgets.button import Button
 
 from display.virtual_screen import VirtualScreen
-import controllers, broadcasters
+import controllers
 from runners import utils
 
 
