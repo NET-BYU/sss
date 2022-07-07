@@ -6,7 +6,7 @@ import time
 
 from loguru import logger
 
-import controllers
+import controllers, broadcasters
 from runners import utils
 
 
@@ -81,12 +81,14 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     demos = load_demos()
     random_demos = get_random_demo(demos)
     handle_input = controllers.start_inputs(system_queue, demo_input_queue)
+    handle_output = broadcasters.start_outputs(system_queue, demo_output_queue)
 
     while True:
         while not system_queue.empty():
             logger.info("Got input from the user...")
 
             next(handle_input)
+            next(handle_output)
 
             demo_cls = get_demo_from_user(system_queue, demos)
             if demo_cls is None:
@@ -105,6 +107,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                     break
 
                 next(handle_input)
+                next(handle_output)
 
                 # See if there has been new input from the user
                 if not demo_input_queue.empty() and demo.demo_time is None:
@@ -143,6 +146,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                     break
 
                 next(handle_input)
+                next(handle_output)
                 next(runner)
                 next(frame_tick)
             else:
