@@ -76,6 +76,7 @@ class Camera:
 
         self.cameras = []
         self.current_camera_index = 0
+        self.can_run = False
 
         try:
             with open("demos/camera/camera.yaml") as f:
@@ -83,19 +84,47 @@ class Camera:
 
             if type(camera_ips) == dict:
                 for cam in camera_ips:
-                    cam_src = Camera_Source(
-                        camera_ips[cam]["host"], camera_ips[cam]["stream"]
-                    )
-                    self.cameras.append(cam_src)
-                self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
-                self.can_run = True
+                    try:
+                        # Use a quick search, no retries and a timeout of 1 second so we aren't
+                        #  wasting time. We will come back to this if we need to.
+                        r = self.http.request(
+                            "GET",
+                            camera_ips[cam]["host"],
+                            timeout=urllib3.util.Timeout(1),
+                            retries=False,
+                        )
+                        if r.status == 200 or r.status == 302:
+                            cam_src = Camera_Source(
+                                camera_ips[cam]["host"], camera_ips[cam]["stream"]
+                            )
+                            self.cameras.append(cam_src)
+                            logger.info("Init: Camera website for " + cam + " located")
+                            self.can_run = True
+                        else:
+                            logger.warning(
+                                "Init: Camera website for "
+                                + cam
+                                + " return status: "
+                                + str(r.status)
+                            )
+                    except:
+                        logger.error(
+                            "Init: Camera website for "
+                            + cam
+                            + " return status: "
+                            + str(r.status)
+                        )
+
             else:
                 logger.error("No cameras available on the YAML file!")
                 self.can_run = False
         except FileNotFoundError:
             logger.error("No camera.yaml file found!")
             self.can_run = False
+
+        if self.can_run:
+            self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
     def check_url(self):
         # If we don't have any cameras in our yaml, just print so
