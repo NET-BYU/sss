@@ -34,12 +34,10 @@ def start_processing_output(system_queue, demo_output_queue):
                 while True:
                     client.loop(timeout=0.01)
 
-                    if demo_output_queue.empty():
-                        break
-                    else:
+                    if not demo_output_queue.empty():
                         client.publish(
                             "byu_sss/output",
-                            utils.get_all_from_queue(demo_output_queue),
+                            str(next(utils.get_all_from_queue(demo_output_queue))),
                         )
 
                     yield

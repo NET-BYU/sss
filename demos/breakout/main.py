@@ -137,8 +137,8 @@ class Breakout:
                                 yield
 
                 # Update lives and score values
-                self.output_queue.put("SCORE " + str(score))
-                self.output_queue.put("LIVES " + str(lives))
+                # self.output_queue.put("SCORE " + str(score))
+                # self.output_queue.put("LIVES " + str(lives))
 
                 # Checks to see if ball has hit bricks and increments the score
                 if self.ball[1] <= self.level + 2:
