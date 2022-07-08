@@ -79,7 +79,7 @@ class Doom:
             1: 0x0,
             2: 0x0,
             3: 0x0,
-            4: 0x2,
+            4: 0x0,
             5: 0x2,
             6: 0x2,
             7: 0xA,
@@ -87,7 +87,7 @@ class Doom:
             9: 0xE,
             10: 0xE,
             11: 0xF,
-            12: 0xF,
+            12: 0x0,
         }
 
         self.screen_max = 0
