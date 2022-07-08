@@ -87,7 +87,7 @@ class Doom:
             9: 0xE,
             10: 0xE,
             11: 0xF,
-            12: 0x0,
+            12: 0xF,
         }
 
         self.screen_max = 0
@@ -136,14 +136,7 @@ class Doom:
 
             self.shm_input.write(presses + "\0")
 
-            # Normalize color values on screen and write
-            # if buf.min() <= self.curmin - 10:
-            #     self.curmin = buf.min()
-            #     self.screen_min = buf.min()
             self.screen_min = 0
-            # if buf.max() >= self.curmax:
-            #     self.curmax = buf.max()
-            #     self.screen_max = buf.max()
             self.screen_max = 255
 
             for i in range(48):
