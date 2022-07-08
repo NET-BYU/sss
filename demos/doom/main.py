@@ -47,7 +47,7 @@ class Doom:
                 [
                     "./demos/doom/chocolate-doom",
                     "-iwad",
-                    "assets/miniwad.wad",
+                    "assets/full.wad",
                     "-file",
                     "assets/subvert.wad",
                 ]
@@ -72,19 +72,19 @@ class Doom:
 
         # Color map for the SSS
         self.num_to_pixel = {
-            0: 0x0,
-            1: 0x0,
-            2: 0x0,
-            3: 0x1,
-            4: 0x1,
-            5: 0x2,
-            6: 0x2,
+            12: 0x0,
+            11: 0x1,
+            10: 0x1,
+            9: 0x1,
+            8: 0x1,
             7: 0x2,
-            8: 0x2,
-            9: 0xA,
-            10: 0xE,
-            11: 0xF,
-            12: 0xF,
+            6: 0x2,
+            5: 0xA,
+            4: 0xA,
+            3: 0xE,
+            2: 0xE,
+            1: 0xF,
+            0: 0xF,
         }
 
         self.screen_max = 0
@@ -135,7 +135,9 @@ class Doom:
 
             # Normalize color values on screen and write
             self.screen_min = buf.min()
+            # self.screen_min = 0
             self.screen_max = buf.max()
+            # self.screen_max = 255
 
             for i in range(48):
                 for j in range(48):
@@ -148,7 +150,9 @@ class Doom:
                         pixel = 12
 
                     if self.arr[i][j] != self.num_to_pixel[pixel]:
-                        self.screen.draw_pixel(j, i, self.num_to_pixel[pixel])
+                        self.screen.draw_pixel(
+                            j, i, self.num_to_pixel[pixel], combine=False
+                        )
                         self.arr[i][j] = self.num_to_pixel[pixel]
 
             self.screen.push()
