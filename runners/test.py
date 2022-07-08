@@ -33,6 +33,10 @@ def test_demo(demo_name, demo_module_name):
             next(runner)
 
         demo.stop()
+    except KeyboardInterrupt:
+        logger.debug("Handling keyboard interrupt")
+        demo.stop()
+        return False
     except Exception:  # pylint: disable=broad-except
         logger.exception(f"{demo_name} failed!")
         return False
