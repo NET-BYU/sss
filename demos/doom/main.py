@@ -1,3 +1,4 @@
+from math import sqrt
 from sysv_ipc import SharedMemory, ExistentialError
 import numpy as np
 from loguru import logger
@@ -49,7 +50,7 @@ class Doom:
                 [
                     "./demos/doom/chocolate-doom",
                     "-iwad",
-                    "assets/full.wad",
+                    "assets/fuller.wad",
                     "-file",
                     "assets/subvert.wad",
                 ]
@@ -77,15 +78,15 @@ class Doom:
             0: 0x0,
             1: 0x0,
             2: 0x0,
-            3: 0x1,
-            4: 0x1,
+            3: 0x0,
+            4: 0x2,
             5: 0x2,
             6: 0x2,
-            7: 0x4,
+            7: 0xA,
             8: 0xA,
-            9: 0xA,
+            9: 0xE,
             10: 0xE,
-            11: 0xE,
+            11: 0xF,
             12: 0xF,
         }
 
@@ -136,24 +137,31 @@ class Doom:
             self.shm_input.write(presses + "\0")
 
             # Normalize color values on screen and write
-            if buf.min() < self.curmin:
-                self.curmin = buf.min()
-                self.screen_min = buf.min()
-            # self.screen_min = 0
-            if buf.max() > self.curmax:
-                self.curmax = buf.max()
-                self.screen_max = buf.max()
-            # self.screen_max = 255
+            # if buf.min() <= self.curmin - 10:
+            #     self.curmin = buf.min()
+            #     self.screen_min = buf.min()
+            self.screen_min = 0
+            # if buf.max() >= self.curmax:
+            #     self.curmax = buf.max()
+            #     self.screen_max = buf.max()
+            self.screen_max = 255
 
             for i in range(48):
                 for j in range(48):
-                    pixel = int((buf[i][j] - self.screen_min) / (self.screen_max / 12))
+                    pixel = int(
+                        (
+                            (buf[i][j] - self.screen_min)
+                            / (self.screen_max - self.screen_min)
+                        )
+                        * 12
+                    )
                     if pixel > 12:
                         logger.debug(f"\nself.screen_min = {self.screen_min}")
                         logger.debug(f"pixel = {pixel}")
                         logger.debug(f"graySmall[{i}][{j}] = {buf[i][j]}")
                         logger.debug(f"self.screen_max = {self.screen_max}")
                         pixel = 12
+                    pixel = int(-1 * sqrt(12 * pixel) + 12)
 
                     if self.arr[i][j] != self.num_to_pixel[pixel]:
                         self.screen.draw_pixel(
