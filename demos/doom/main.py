@@ -44,7 +44,13 @@ class Doom:
 
             environ["SDL_VIDEODRIVER"] = "dummy"
             self.choco_doom = Popen(
-                ["./demos/doom/chocolate-doom", "-iwad", "assets/miniwad.wad"]
+                [
+                    "./demos/doom/chocolate-doom",
+                    "-iwad",
+                    "assets/miniwad.wad",
+                    "-file",
+                    "assets/subvert.wad",
+                ]
             )
 
             # init a connection to shared memory locations here
