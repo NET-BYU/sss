@@ -38,6 +38,8 @@ class Doom:
 
         self.shared_mem_init = False
         self.choco_doom = 0
+        self.curmin = 0
+        self.curmax = 0
 
         # Initialize game and allocate shared memory
         if self.game_installed:
@@ -72,19 +74,19 @@ class Doom:
 
         # Color map for the SSS
         self.num_to_pixel = {
-            12: 0x0,
-            11: 0x1,
-            10: 0x1,
-            9: 0x1,
-            8: 0x1,
-            7: 0x2,
+            0: 0x0,
+            1: 0x0,
+            2: 0x0,
+            3: 0x1,
+            4: 0x1,
+            5: 0x2,
             6: 0x2,
-            5: 0xA,
-            4: 0xA,
-            3: 0xE,
-            2: 0xE,
-            1: 0xF,
-            0: 0xF,
+            7: 0x4,
+            8: 0xA,
+            9: 0xA,
+            10: 0xE,
+            11: 0xE,
+            12: 0xF,
         }
 
         self.screen_max = 0
@@ -134,9 +136,13 @@ class Doom:
             self.shm_input.write(presses + "\0")
 
             # Normalize color values on screen and write
-            self.screen_min = buf.min()
+            if buf.min() < self.curmin:
+                self.curmin = buf.min()
+                self.screen_min = buf.min()
             # self.screen_min = 0
-            self.screen_max = buf.max()
+            if buf.max() > self.curmax:
+                self.curmax = buf.max()
+                self.screen_max = buf.max()
             # self.screen_max = 255
 
             for i in range(48):
