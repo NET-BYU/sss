@@ -37,12 +37,15 @@ class Doom:
         self.game_installed = exists("demos/doom/chocolate-doom")
 
         self.shared_mem_init = False
+        self.choco_doom = 0
 
         # Initialize game and allocate shared memory
         if self.game_installed:
 
             environ["SDL_VIDEODRIVER"] = "dummy"
-            Popen(["./demos/doom/chocolate-doom", "-iwad", "assets/miniwad.wad"])
+            self.choco_doom = Popen(
+                ["./demos/doom/chocolate-doom", "-iwad", "assets/miniwad.wad"]
+            )
 
             # init a connection to shared memory locations here
             try:
@@ -149,7 +152,7 @@ class Doom:
         # Close game, release memory to OS, and close processes attached
         if self.shared_mem_init:
             self.shm_input.write("QUIT_P")
-            Popen(["pkill", "chocolate-doom"])
+            self.choco_doom.terminate()
             self.shm.detach()
             self.shm_input.detach()
             self.shm_output.detach()
