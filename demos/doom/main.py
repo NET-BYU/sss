@@ -92,8 +92,19 @@ class Doom:
                 self.arr[i].append(0)
 
     def run(self):
+        # In case memory cannot be initialized correctly or game is not found
+        if not self.game_installed or not self.shared_mem_init:
+            self.screen.draw_text(
+                self.screen.x_width // 2 - 10,
+                self.screen.y_height // 2 - 4,
+                "ERROR INITIALIZING DOOM",
+                push=True,
+            )
+            while True:
+                yield
+
         # Create generator here
-        while self.game_installed and self.shared_mem_init:
+        while True:
 
             # Reading screen details from screen shared memory buffer
             buf = self.shm.read(SCREENWIDTH * SCREENHEIGHT)
@@ -136,16 +147,6 @@ class Doom:
 
             self.screen.push()
 
-            yield
-
-        # In case memory cannot be initialized correctly or game is not found
-        self.screen.draw_text(
-            self.screen.x_width // 2 - 10,
-            self.screen.y_height // 2 - 4,
-            "ERROR INITIALIZING DOOM",
-            push=True,
-        )
-        while True:
             yield
 
     def stop(self):
