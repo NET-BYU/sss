@@ -11,4 +11,4 @@ pygame-widgets==1.0.0
 PyYAML==6.0
 spidev==3.5
 urllib3==1.26.9
-sysv-ipc
+sysv-ipc==1.1.0
