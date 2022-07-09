@@ -1,8 +1,8 @@
 import itertools
 import time
 
-from .seven_seg import SevenSegment
 from .display import Display
+from .seven_seg import SevenSegment
 
 
 class PhysicalScreen:

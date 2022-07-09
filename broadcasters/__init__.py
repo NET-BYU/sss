@@ -1,7 +1,9 @@
 # import this
-from loguru import logger
-from . import utils
 from queue import Queue
+
+from loguru import logger
+
+from . import utils
 
 
 def start_outputs(system_queue, demo_output_queue):

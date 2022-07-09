@@ -1,8 +1,8 @@
 # Performed offline on a different computer
 
-import librosa, scipy.signal
+import librosa
 import numpy as np
-
+import scipy.signal
 
 # Tunable parameters
 song_name = "bensound-evolution"

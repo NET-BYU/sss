@@ -1,8 +1,9 @@
+from copy import deepcopy
 from queue import PriorityQueue
 
-from . import snek_state
-from copy import deepcopy
 from loguru import logger
+
+from . import snek_state
 
 PATH_COST = 1
 

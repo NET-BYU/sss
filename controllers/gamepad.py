@@ -1,6 +1,6 @@
 import threading
 import time
-from queue import Queue, Empty
+from queue import Empty, Queue
 
 import inputs
 from loguru import logger

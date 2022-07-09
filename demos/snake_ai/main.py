@@ -1,8 +1,10 @@
 """Snake AI Demo"""
 import random
 from copy import deepcopy
+
 from loguru import logger
-from demos.snake_ai import snek_state, snek_ai
+
+from demos.snake_ai import snek_ai, snek_state
 
 
 class SnakeAi:

@@ -1,7 +1,8 @@
-import numpy as np
-import cv2
 import os
 from os.path import exists
+
+import cv2
+import numpy as np
 from loguru import logger
 
 # init demo/game specific variables here

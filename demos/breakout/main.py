@@ -1,5 +1,6 @@
 import queue
 from random import getrandbits
+
 from demos.utils import get_all_from_queue
 
 ARENA_START = 14

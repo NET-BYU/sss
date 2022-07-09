@@ -1,12 +1,13 @@
-from importlib import import_module
-from queue import Queue, Empty
 import random
 import sys
 import time
+from importlib import import_module
+from queue import Empty, Queue
 
 from loguru import logger
 
-import controllers, broadcasters
+import broadcasters
+import controllers
 from runners import utils
 
 
