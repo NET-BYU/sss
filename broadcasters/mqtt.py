@@ -34,10 +34,10 @@ def start_processing_output(system_queue, mqtt_q):
                 while True:
                     client.loop(timeout=0.01)
 
-                    if not mqtt_q.empty():
+                    for item in utils.get_all_from_queue(mqtt_q):
                         client.publish(
                             "byu_sss/output",
-                            payload=str(next(utils.get_all_from_queue(mqtt_q))),
+                            payload=str(item),
                         )
 
                     yield
