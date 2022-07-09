@@ -270,7 +270,6 @@ class Simulator:
 
     def start(self):
         handle_input = controllers.start_inputs(self.system_q, self.input_q)
-
         tick = self.screen.create_tick(self.game.frame_rate)
 
         # Main loop
