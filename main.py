@@ -1,11 +1,24 @@
-import click
+import sys
 
-from runners import kiosk, demo, test, utils
+import click
+from loguru import logger
+
+from runners import demo, kiosk, test, utils
+
+logger_level = ["ERROR", "WARNING", "SUCCESS", "INFO", "DEBUG", "TRACE"]
 
 
 @click.group()
-def cli():
+@click.option("-v", "--verbose", count=True)
+def cli(verbose):
     """CLI group."""
+
+    if verbose >= len(logger_level):
+        print(f"Only {len(logger_level) - 1} verbose flags allowed.")
+        exit()
+
+    logger.remove()  # Remove default logger
+    logger.add(sys.stderr, level=logger_level[verbose])  # Add new logger back
 
 
 @cli.command(name="simulator")
