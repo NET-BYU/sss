@@ -1,4 +1,3 @@
-import sys
 import time
 from importlib import import_module
 from queue import Queue
@@ -18,12 +17,14 @@ def run(demo_name, simulate, testing):
             VirtualScreen,  # pylint: disable=import-outside-toplevel
         )
 
+        logger.debug("Starting virtual screen...")
         screen = VirtualScreen()
     else:
         from display.physical_screen import (
             PhysicalScreen,  # pylint: disable=import-outside-toplevel
         )
 
+        logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
 
     system_q = Queue()
@@ -31,6 +32,7 @@ def run(demo_name, simulate, testing):
     output_q = Queue()
 
     # Set up the game
+    logger.info(f"Starting {demo_name}...")
     demo_module = import_module(f"demos.{demo_name}.main")
     demo = utils.get_demo_cls(demo_module)(input_q, output_q, screen.display)
 
@@ -43,28 +45,27 @@ def run(demo_name, simulate, testing):
     # Clear screen
     screen.clear()
 
-    while True:
-        # Process input
-        next(handle_input)
+    try:
+        while True:
+            # Process input
+            next(handle_input)
 
-        # Process output
-        next(handle_output)
+            # Make sure they are not trying to exit
+            while not system_q.empty():
+                system_event = system_q.get()
+                if system_event == "QUIT":
+                    logger.info("Quitting...")
+                    raise KeyboardInterrupt
 
-        # Make sure they are not trying to exit
-        while not system_q.empty():
-            system_event = system_q.get()
-            if system_event == "QUIT":
-                sys.exit()
-
-        # Tick the demo
-        try:
+            # Tick the demo
             _tick(runner, demo, testing)
-        except KeyboardInterrupt:
-            break
 
-        # Wait for next tick
-        next(tick)
+            # Wait for next tick
+            next(tick)
+    except KeyboardInterrupt:
+        logger.debug("Handling keyboard interrupt")
 
+    logger.info("Stopping current demo")
     demo.stop()
 
 
