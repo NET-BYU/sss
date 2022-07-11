@@ -5,7 +5,7 @@ import time
 
 from loguru import logger
 
-import controllers
+import controllers, broadcasters
 from runners import utils
 
 
@@ -36,6 +36,7 @@ def run(demo_name, simulate, testing):
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
     handle_input = controllers.start_inputs(system_q, input_q)
+    handle_output = broadcasters.start_outputs(system_q, output_q)
     runner = demo.run()
 
     # Clear screen
@@ -44,6 +45,9 @@ def run(demo_name, simulate, testing):
     while True:
         # Process input
         next(handle_input)
+
+        # Process output
+        next(handle_output)
 
         # Make sure they are not trying to exit
         while not system_q.empty():
