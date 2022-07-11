@@ -1,7 +1,7 @@
+from copy import deepcopy
 from queue import PriorityQueue
 
 from . import snek_state
-from copy import deepcopy
 
 PATH_COST = 1
 

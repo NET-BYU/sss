@@ -1,7 +1,8 @@
-from enum import Enum
 import random
-from demos.utils import get_all_from_queue
+from enum import Enum
 from os.path import exists
+
+from demos.utils import get_all_from_queue
 
 
 class Tetris:

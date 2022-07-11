@@ -1,14 +1,14 @@
+import sys
 from importlib import import_module, reload
 from pathlib import Path
 from queue import Queue
-import sys
 
-from loguru import logger
 import pygame
+from loguru import logger
 from pygame_widgets.button import Button
 
-from display.virtual_screen import VirtualScreen
 import controllers
+from display.virtual_screen import VirtualScreen
 from runners import utils
 
 

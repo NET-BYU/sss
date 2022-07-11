@@ -1,5 +1,6 @@
 """Snake Game"""
 import random
+
 from loguru import logger
 
 from demos.utils import get_all_from_queue

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
 import numpy as np
 from perlin_noise import PerlinNoise

@@ -1,6 +1,6 @@
+import sys
 from importlib import import_module
 from queue import Queue
-import sys
 from unittest.mock import MagicMock
 
 from loguru import logger

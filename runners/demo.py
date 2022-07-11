@@ -1,11 +1,12 @@
-from importlib import import_module
-from queue import Queue
 import sys
 import time
+from importlib import import_module
+from queue import Queue
 
 from loguru import logger
 
-import controllers, broadcasters
+import broadcasters
+import controllers
 from runners import utils
 
 
@@ -13,14 +14,14 @@ def run(demo_name, simulate, testing):
     """Main function that runs the demo."""
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
-            VirtualScreen,
+        from display.virtual_screen import (
+            VirtualScreen,  # pylint: disable=import-outside-toplevel
         )
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
-            PhysicalScreen,
+        from display.physical_screen import (
+            PhysicalScreen,  # pylint: disable=import-outside-toplevel
         )
 
         screen = PhysicalScreen()

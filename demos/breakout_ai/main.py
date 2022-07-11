@@ -1,4 +1,5 @@
 from random import getrandbits
+
 from loguru import logger
 
 SCREEN_X = 48

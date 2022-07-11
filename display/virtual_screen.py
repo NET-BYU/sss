@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import QUIT
 
-from .virtual_seven_seg import VirtualSevenSegment
 from .display import Display
+from .virtual_seven_seg import VirtualSevenSegment
 
 
 class VirtualScreen:
