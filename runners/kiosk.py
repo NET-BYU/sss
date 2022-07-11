@@ -168,38 +168,47 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     handle_output = broadcasters.start_outputs(
         queues.system_queue, queues.demo_input_queue
     )
+    current_demo = None
 
-    while True:
-        while not queues.system_queue.empty():
-            logger.info("Got input from the user...")
+    try:
+        while True:
+            while not queues.system_queue.empty():
+                logger.info("Got input from the user...")
 
-            next(handle_input)
-            next(handle_output)
+                next(handle_input)
+                next(handle_output)
 
-            demo_cls = get_demo_from_user(queues.system_queue, demos)
-            if demo_cls is None:
-                continue
-            demo = demo_cls(
-                queues.demo_input_queue, queues.demo_output_queue, screen.display
-            )
+                demo_cls = get_demo_from_user(queues.system_queue, demos)
+                if demo_cls is None:
+                    continue
+                current_demo = demo_cls(
+                    queues.demo_input_queue, queues.demo_output_queue, screen.display
+                )
 
-            play_demo_from_user(
-                demo,
-                handle_input,
-                queues,
-                screen,
-                user_input_timeout,
-            )
+                play_demo_from_user(
+                    current_demo,
+                    handle_input,
+                    queues,
+                    screen,
+                    user_input_timeout,
+                )
 
-        while queues.system_queue.empty():
-            logger.info("No input from user...")
+            while queues.system_queue.empty():
+                logger.info("No input from user...")
 
-            random_demo = next(random_demos)(
-                queues.demo_input_queue, queues.demo_output_queue, screen.display
-            )
-            play_demo_from_idle(
-                random_demo, handle_input, queues, screen, demo_time_override
-            )
+                current_demo = next(random_demos)(
+                    queues.demo_input_queue, queues.demo_output_queue, screen.display
+                )
+
+                play_demo_from_idle(
+                    current_demo, handle_input, queues, screen, demo_time_override
+                )
+    except KeyboardInterrupt:
+        logger.debug("Handling keyboard interrupt")
+        if current_demo:
+            logger.info("Stopping current demo")
+            current_demo.stop()
+            screen.clear()
 
 
 def run(simulate, testing=False):
