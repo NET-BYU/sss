@@ -1,6 +1,7 @@
 import random
 import sys
 import time
+from dataclasses import dataclass
 from importlib import import_module
 from queue import Empty, Queue
 
@@ -9,6 +10,15 @@ from loguru import logger
 import broadcasters
 import controllers
 from runners import utils
+
+
+@dataclass
+class Queues:
+    """Contains all of the queues that the system/demos care about."""
+
+    system_queue: Queue = Queue()
+    demo_input_queue: Queue = Queue()
+    demo_output_queue: Queue = Queue()
 
 
 def load_demo(module_name):
@@ -71,93 +81,125 @@ def get_demo_from_user(system_queue, demos):
         return None
 
 
+def play_demo_from_user(
+    demo,
+    handle_input,
+    queues,
+    screen,
+    user_input_timeout,
+):
+    """
+    Plays a demo, monitoring user input. If no input is detected then the demo
+    is stopped. If a demo is switched by the user, then this function exits.
+    """
+
+    frame_tick = screen.create_tick(demo.frame_rate)
+    runner = demo.run()
+    last_input_time = time.time()
+
+    # As long as there is input from the user keep playing the demo
+    while user_input_timeout > (time.time() - last_input_time):
+        # System queue gets priority over demos
+        # This means someone is switching the demo
+        if not queues.system_queue.empty():
+            break
+
+        # See if there has been new input from the user
+        if not queues.demo_input_queue.empty() and demo.demo_time is None:
+            last_input_time = time.time()
+
+        next(handle_input)
+        next(runner)
+        next(frame_tick)
+
+    logger.info("Stopping current demo and get ready for next one...")
+    demo.stop()
+    screen.clear()
+    screen.refresh()
+    while not queues.demo_input_queue.empty():
+        queues.demo_input_queue.get()
+
+
+def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
+    """
+    Plays a demo until time expires or data comes into the system queue.
+    """
+
+    frame_tick = screen.create_tick(demo.frame_rate)
+    runner = demo.run()
+
+    demo_time = demo_time_override or demo.demo_time
+
+    start_time = time.time()
+    logger.info(f"Playing demo ({demo}) for {demo_time} seconds.")
+
+    # Run the demo for a certain amount of time
+    while demo_time > (time.time() - start_time):
+        # We have received input from the user, so we need to stop the demo
+        if not queues.system_queue.empty():
+            logger.info("User input has been received. Exiting demo...")
+            demo.stop()
+            screen.clear()
+            break
+
+        next(handle_input)
+        next(runner)
+        next(frame_tick)
+    else:
+        # This gets run when the while condition becomes false, not because of the break
+        logger.info("Demo time has ended. Exiting demo...")
+        demo.stop()
+
+        # Refresh the screen when the demo time has run out
+        logger.info("Refreshing screen to remove any artifacts.")
+        screen.refresh()
+
+
 def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     """Runs the event loop that takes care of input and running the demos."""
 
-    # Create queues
-    system_queue = Queue()
-    demo_input_queue = Queue()
-    demo_output_queue = Queue()
+    queues = Queues()
 
     demos = load_demos()
     random_demos = get_random_demo(demos)
-    handle_input = controllers.start_inputs(system_queue, demo_input_queue)
-    handle_output = broadcasters.start_outputs(system_queue, demo_output_queue)
+    handle_input = controllers.start_inputs(
+        queues.system_queue, queues.demo_input_queue
+    )
+    handle_output = broadcasters.start_outputs(
+        queues.system_queue, queues.demo_input_queue
+    )
 
     while True:
-        while not system_queue.empty():
+        while not queues.system_queue.empty():
             logger.info("Got input from the user...")
 
             next(handle_input)
             next(handle_output)
 
-            demo_cls = get_demo_from_user(system_queue, demos)
+            demo_cls = get_demo_from_user(queues.system_queue, demos)
             if demo_cls is None:
                 continue
-
-            demo = demo_cls(demo_input_queue, demo_output_queue, screen.display)
-            frame_tick = screen.create_tick(demo.frame_rate)
-            runner = demo.run()
-            last_input_time = time.time()
-
-            # As long as there is input from the user keep playing the demo
-            while user_input_timeout > (time.time() - last_input_time):
-                # System queue gets priority over demos
-                # This means someone is switching the demo
-                if not system_queue.empty():
-                    break
-
-                next(handle_input)
-                next(handle_output)
-
-                # See if there has been new input from the user
-                if not demo_input_queue.empty() and demo.demo_time is None:
-                    last_input_time = time.time()
-
-                next(runner)
-                next(frame_tick)
-
-            logger.info("Stopping current demo and get ready for next one...")
-            demo.stop()
-            screen.clear()
-            screen.refresh()
-            while not demo_input_queue.empty():
-                demo_input_queue.get()
-
-        while system_queue.empty():
-            # Pick a random demo and set up the environment
-            random_demo = next(random_demos)(
-                demo_input_queue, demo_output_queue, screen.display
+            demo = demo_cls(
+                queues.demo_input_queue, queues.demo_output_queue, screen.display
             )
-            frame_tick = screen.create_tick(random_demo.frame_rate)
-            runner = random_demo.run()
 
-            demo_time = demo_time_override or random_demo.demo_time
+            play_demo_from_user(
+                demo,
+                handle_input,
+                queues,
+                screen,
+                user_input_timeout,
+            )
 
-            start_time = time.time()
-            logger.info(f"Playing random demo ({random_demo}) for {demo_time} seconds.")
+        while queues.system_queue.empty():
+            logger.info("No input from user...")
 
-            # Run the demo for a certain amount of time
-            while demo_time > (time.time() - start_time):
-                # We have received input from the user, so we need to stop the demo
-                if not system_queue.empty():
-                    logger.info("User input has been received. Exiting demo...")
-                    random_demo.stop()
-                    screen.clear()
-                    break
-
-                next(handle_input)
-                next(handle_output)
-                next(runner)
-                next(frame_tick)
-            else:
-                # This gets run when the while condition becomes false, not because of the break
-                logger.info("Demo time has ended. Exiting demo...")
-                random_demo.stop()
-
-                # Refresh the screen when the demo time has run out
-                logger.info("Refreshing screen to remove any artifacts.")
-                screen.refresh()
+            random_demo = next(random_demos)(
+                queues.demo_input_queue, queues.demo_output_queue, screen.display
+            )
+            play_demo_from_idle(
+                random_demo, handle_input, queues, screen, demo_time_override
+            )
 
 
 def run(simulate, testing=False):
