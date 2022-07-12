@@ -1,24 +1,14 @@
 import random
 import sys
 import time
-from dataclasses import dataclass
 from importlib import import_module
-from queue import Empty, Queue
+from queue import Empty
 
 from loguru import logger
 
 import broadcasters
 import controllers
 from runners import utils
-
-
-@dataclass
-class Queues:
-    """Contains all of the queues that the system/demos care about."""
-
-    system_queue: Queue = Queue()
-    demo_input_queue: Queue = Queue()
-    demo_output_queue: Queue = Queue()
 
 
 def load_demo(module_name):
@@ -158,7 +148,7 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
 def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     """Runs the event loop that takes care of input and running the demos."""
 
-    queues = Queues()
+    queues = utils.Queues()
 
     demos = load_demos()
     random_demos = get_random_demo(demos)
