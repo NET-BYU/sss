@@ -1,0 +1,12 @@
+site_name: My Docs
+site_url: https://example.com
+
+# nav:
+#     - Home: index.md
+#     - About: about.md
+#     - API: /API/
+theme: readthedocs
+
+plugins:
+- mkdocstrings
+
