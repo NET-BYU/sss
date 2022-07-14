@@ -152,5 +152,3 @@ for keypress in self.get_input_buff():
 ## Conclusion
 
 By following the `template` format, you learn about and are accountable for most of the key components of a demo! If you are still feeling overwhelmed and don’t know where to start in your demo creation journey, take a look at some of the existing ones and try to modify them bit by bit, taking note of what changes you caused. If there are any clarifications that need to be made, please feel free to reach out to @Chris Kitras or @Ashton Palacios or just [open an issue on the GitHub repo](https://github.com/NET-BYU/seven_segment_sign/issues/new) so we can help you and also update our docs. We’re excited to see what you create!
-
-{% include links.html %}
