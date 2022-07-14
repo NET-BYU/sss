@@ -1,12 +1,47 @@
-site_name: My Docs
-site_url: https://example.com
+# Project information
+site_name: SSS Docs
+site_url: https://net-byu.github.io/sss/
+site_author: christopolise
+
+# Repository
+repo_name: NET-BYU/sss
+repo_url: https://github.com/NET-BYU/sss
+
+# Copyright
+copyright: Copyright &copy; 2022 BYU NET Lab
 
 # nav:
 #     - Home: index.md
 #     - About: about.md
 #     - API: /API/
-theme: readthedocs
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: red
+      accent: red
+      toggle:
+      icon: material/brightness-4
+      name: Switch to light mode
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: assets/favicon.png
+  icon:
+    logo: logo
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+edit_uri: edit/dev/docs/
 
 plugins:
 - mkdocstrings
-
+- search
+- git-revision-date-localized:
+    enable_creation_date: true
