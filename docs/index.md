@@ -1,18 +1,19 @@
-# Velcome to MkDocs
+# Welcome to the Seven Segment Sign
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+The Seven Segment Sign, or SSS for short, is a Raspberry Pi-powered system with a screen of 1152 seven segment digits (arranged in a 48 x 24 array) acting its display. But don't let these low specs fool you! This platform provides a beginner-friendly opportunity for anyone to learn how to address complex design problems with strict limitations. Some of these examples are noted in the following:
 
-## Commands
+### Video Player
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+![video](assets/sss_video.GIF)
 
-## Project layout
+### Arcade Games
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+![snek](assets/snek_video.GIF)
+
+### and even Doom!
+
+
+
+## What next?
+ currently resides in the [BYU NET Lab](https://netlab.byu.edu).
 

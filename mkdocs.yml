@@ -10,14 +10,16 @@ repo_url: https://github.com/NET-BYU/sss
 # Copyright
 copyright: Copyright &copy; 2022 BYU NET Lab
 
-# nav:
-#     - Home: index.md
-#     - About: about.md
-#     - API: /API/
-theme:
+theme: 
   name: material
   palette:
     - scheme: default
+      primary: red
+      accent: red
+      toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+    - scheme: slate
       primary: red
       accent: red
       toggle:
@@ -27,9 +29,9 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  favicon: assets/favicon.png
+  favicon: assets/sss.png
   icon:
-    logo: logo
+    logo: material/snake
 
 markdown_extensions:
   - pymdownx.highlight:
