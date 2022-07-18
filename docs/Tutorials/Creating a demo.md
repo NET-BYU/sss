@@ -105,6 +105,8 @@ By setting `self.input_queue = input_queue` you link the input_queue for your de
 
 If your demo needs to communicate information that will not be seen on the screen back to the user (i.e. a score or number of lives), this can be accomplished by using the output_queue. You can link your demo’s output_queue to the system output_queue by using `self.output_queue = output_queue`. At the current moment there are a limited amount of topics that you can send output through:
 
+| Value | Description |
+|-------|--------|
 | SCORE | Sets the score of a game. |
 | LIVES | Keeps track of the amount lives of a player |
 
@@ -151,4 +153,4 @@ for keypress in self.get_input_buff():
 
 ## Conclusion
 
-By following the `template` format, you learn about and are accountable for most of the key components of a demo! If you are still feeling overwhelmed and don’t know where to start in your demo creation journey, take a look at some of the existing ones and try to modify them bit by bit, taking note of what changes you caused. If there are any clarifications that need to be made, please feel free to reach out to @Chris Kitras or @Ashton Palacios or just [open an issue on the GitHub repo](https://github.com/NET-BYU/seven_segment_sign/issues/new) so we can help you and also update our docs. We’re excited to see what you create!
+By following the `template` format, you learn about and are accountable for most of the key components of a demo! If you are still feeling overwhelmed and don’t know where to start in your demo creation journey, take a look at some of the existing ones and try to modify them bit by bit, taking note of what changes you caused. If there are any clarifications that need to be made, please feel free to reach out by [opening an issue on the GitHub repo](https://github.com/NET-BYU/seven_segment_sign/issues/new) or taking a look at how to get [support](../Troubleshooting/Support.md) so we can help you and also update our docs. We’re excited to see what you create!
