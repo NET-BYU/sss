@@ -1,4 +1,15 @@
+from dataclasses import dataclass
 from pathlib import Path
+from queue import Queue
+
+
+@dataclass
+class Queues:
+    """Contains all of the queues that the system/demos care about."""
+
+    system_queue: Queue = Queue()
+    demo_input_queue: Queue = Queue()
+    demo_output_queue: Queue = Queue()
 
 
 def get_demos(demo_dir="demos"):

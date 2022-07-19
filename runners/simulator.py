@@ -272,48 +272,54 @@ class Simulator:
         handle_input = controllers.start_inputs(self.system_q, self.input_q)
         tick = self.screen.create_tick(self.game.frame_rate)
 
-        # Main loop
-        while True:
-            # Read input from different input devices
-            next(handle_input)
+        try:
+            # Main loop
+            while True:
+                # Read input from different input devices
+                next(handle_input)
 
-            while not self.system_q.empty():
-                system_event = self.system_q.get()
-                if system_event == "QUIT":
-                    pygame.quit()
-                    sys.exit(0)
+                while not self.system_q.empty():
+                    system_event = self.system_q.get()
+                    if system_event == "QUIT":
+                        pygame.quit()
+                        sys.exit(0)
 
-            # Tick the selected game function
-            next(self.game_runner)
-            self.input_q.queue.clear()  # keep the input queue cleared up
+                # Tick the selected game function
+                next(self.game_runner)
+                self.input_q.queue.clear()  # keep the input queue cleared up
 
-            # Process the output queue completely
-            while not self.output_q.empty():
-                # parse the message
-                msg = self.output_q.get()
-                msg_type, msg_content = msg.split(" ", maxsplit=1)
-                if msg_type == "LIVES":
-                    self.lives_text = self.text_font.render(
-                        "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
-                    )
-                    self.screen.window.blit(self.lives_text, (0, 720))
-                    self.lives_text = self.text_font.render(
-                        "LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0)
-                    )
-                    self.lives_prev = msg_content
-                    self.screen.window.blit(self.lives_text, (0, 720))
-                if msg_type == "SCORE":
-                    self.score_text = self.text_font.render(
-                        "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
-                    )
-                    self.screen.window.blit(self.score_text, (300, 720))
-                    self.score_text = self.text_font.render(
-                        "SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0)
-                    )
-                    self.score_prev = msg_content
-                    self.screen.window.blit(self.score_text, (300, 720))
+                # Process the output queue completely
+                while not self.output_q.empty():
+                    # parse the message
+                    msg = self.output_q.get()
+                    msg_type, msg_content = msg.split(" ", maxsplit=1)
+                    if msg_type == "LIVES":
+                        self.lives_text = self.text_font.render(
+                            "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
+                        )
+                        self.screen.window.blit(self.lives_text, (0, 720))
+                        self.lives_text = self.text_font.render(
+                            "LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0)
+                        )
+                        self.lives_prev = msg_content
+                        self.screen.window.blit(self.lives_text, (0, 720))
+                    if msg_type == "SCORE":
+                        self.score_text = self.text_font.render(
+                            "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
+                        )
+                        self.screen.window.blit(self.score_text, (300, 720))
+                        self.score_text = self.text_font.render(
+                            "SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0)
+                        )
+                        self.score_prev = msg_content
+                        self.screen.window.blit(self.score_text, (300, 720))
 
-            next(tick)
+                next(tick)
+        except KeyboardInterrupt:
+            logger.debug("Handling keyboard interrupt")
+            logger.info("Stopping current demo")
+            self.game.stop()
+            self.screen.clear()
 
 
 def run():
