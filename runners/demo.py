@@ -73,6 +73,7 @@ def run(demo_name, simulate, testing):
 
     logger.info("Stopping current demo")
     demo.stop()
+    screen.clear()
 
 
 def _tick(runner, demo, testing):
