@@ -1,7 +1,9 @@
+from copy import deepcopy
 from queue import PriorityQueue
 
+from loguru import logger
+
 from . import snek_state
-from copy import deepcopy
 
 PATH_COST = 1
 
@@ -31,7 +33,7 @@ def run_Search(x, y, dst, state, len):
 
         return path
     else:
-        print("NO PATH FOUND!")
+        logger.debug("NO PATH FOUND!")
         return []
 
 
@@ -137,7 +139,7 @@ def run_Search2(x, y, dst, state, len):
     if len < 500:
         goal = A_Star_Revised(state, fringe)
     else:
-        print("gone long enough")
+        logger.debug("gone long enough")
         return []
     if goal:
         cur = goal
@@ -160,7 +162,7 @@ def run_Search2(x, y, dst, state, len):
 
         return path
     else:
-        print("NO PATH FOUND!")
+        logger.debug("NO PATH FOUND!")
         return []
 
 
@@ -184,10 +186,10 @@ def A_Star_Revised(state, fringe):
         if curNode.loc == state.food_locs:
             del infringe
             return curNode
-        # if added > 400 or mem_added > 50000:
-        #     print("running to long")
-        #     del infringe
-        #     return curNode
+        if added > 400 or mem_added > 50000:
+            logger.debug("running to long")
+            del infringe
+            return curNode
 
         curNode.current_snake.pop(0)
         curNode.current_snake.append(curNode.loc)

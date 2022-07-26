@@ -1,7 +1,8 @@
-from demos.hangman.trace import Trace
-from demos.hangman.guess import Guess
-from demos.utils import get_all_from_queue
 from loguru import logger
+
+from demos.hangman.guess import Guess
+from demos.hangman.trace import Trace
+from demos.utils import get_all_from_queue
 
 
 class Hangman:

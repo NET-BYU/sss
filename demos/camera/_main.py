@@ -1,4 +1,5 @@
 import threading
+
 import cv2
 import urllib3
 from loguru import logger

@@ -1,4 +1,5 @@
 import time
+
 from demos.digit_clock.trace import Trace
 
 

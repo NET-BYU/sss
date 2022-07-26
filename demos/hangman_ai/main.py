@@ -1,9 +1,10 @@
 import random
 import time
 
-from demos.hangman_ai.trace import Trace
-from demos.hangman_ai.guess import Guess
 from loguru import logger
+
+from demos.hangman_ai.guess import Guess
+from demos.hangman_ai.trace import Trace
 
 
 # Maybe I will have it guess the vowels first

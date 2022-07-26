@@ -1,4 +1,5 @@
 from random import getrandbits
+
 from loguru import logger
 
 SCREEN_X = 48
@@ -13,17 +14,6 @@ PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
 BALL_SPEED = 0
 SCORE_INC = 5
-LIFE_TOPIC = "byu_sss/output/lives"
-SCORE_TOPIC = "byu_sss/output/score"
-
-# with open("creds.yaml") as f:
-#     config = safe_load(f)
-
-# MQTT_HOST = config["mqtt"]["host"]
-# MQTT_PORT = config["mqtt"]["port"]
-# MQTT_USERNAME = config["mqtt"]["username"]
-# MQTT_PASSWORD = config["mqtt"]["password"]
-# MQTT_CERT = config["mqtt"]["cert"]
 
 
 class BreakoutAi:
@@ -161,15 +151,13 @@ class BreakoutAi:
 
                 # paddle_counter += 1
 
-                self.output_queue.put("SCORE " + str(score))
-                self.output_queue.put("LIVES " + str(lives))
-
                 if self.ball[1] <= self.level + 2:
                     row = self.ball[1]
                     if row in self.bricks.keys():
                         if self.ball[0] in self.bricks[row]:
                             is_down = not is_down
                             score += SCORE_INC
+                            self.output_queue.put("SCORE " + str(score))
                             # if not ai:
                             #     if mqtt_client.connected:
                             #         mqtt_client.publish(topic=SCORE_TOPIC, payload=score)
@@ -189,6 +177,7 @@ class BreakoutAi:
                         self.level += 1
                         if lives <= 4:
                             lives += 1
+                            self.output_queue.put("LIVES " + str(lives))
                             # if not ai:
                             # if mqtt_client.connected:
                             #     mqtt_client.publish(topic=LIFE_TOPIC, payload=lives)

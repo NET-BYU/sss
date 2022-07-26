@@ -1,14 +1,15 @@
-from math import sqrt
-from sysv_ipc import SharedMemory, ExistentialError
-import numpy as np
-from loguru import logger
-import cv2
-from demos.utils import get_all_from_queue
 from json import loads
-from os.path import exists
+from math import sqrt
 from os import environ
+from os.path import exists
 from subprocess import Popen
 
+import cv2
+import numpy as np
+from loguru import logger
+from sysv_ipc import ExistentialError, SharedMemory
+
+from demos.utils import get_all_from_queue
 
 DOOM_VIDEO_ID = 666
 DOOM_INPUT_ID = 667

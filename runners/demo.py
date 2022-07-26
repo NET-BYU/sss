@@ -1,10 +1,11 @@
-from importlib import import_module
-from queue import Queue
 import sys
 import time
+from importlib import import_module
+from queue import Queue
 
 from loguru import logger
 
+import broadcasters
 import controllers
 from runners import utils
 
@@ -13,14 +14,14 @@ def run(demo_name, simulate, testing):
     """Main function that runs the demo."""
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
-            VirtualScreen,
+        from display.virtual_screen import (
+            VirtualScreen,  # pylint: disable=import-outside-toplevel
         )
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
-            PhysicalScreen,
+        from display.physical_screen import (
+            PhysicalScreen,  # pylint: disable=import-outside-toplevel
         )
 
         screen = PhysicalScreen()
@@ -36,6 +37,7 @@ def run(demo_name, simulate, testing):
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
     handle_input = controllers.start_inputs(system_q, input_q)
+    handle_output = broadcasters.start_outputs(system_q, output_q)
     runner = demo.run()
 
     # Clear screen
@@ -44,6 +46,9 @@ def run(demo_name, simulate, testing):
     while True:
         # Process input
         next(handle_input)
+
+        # Process output
+        next(handle_output)
 
         # Make sure they are not trying to exit
         while not system_q.empty():

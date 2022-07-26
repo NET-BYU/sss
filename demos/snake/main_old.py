@@ -1,15 +1,18 @@
 import sys
+
 from numpy.core.defchararray import zfill
 
 sys.path.append("../..")
 
-from display import seven_seg as ss  # import SevenSegment
-from display import display as gd  # import Display
 import random
 import time
 from copy import deepcopy
 from itertools import count
+
 from loguru import logger
+
+from display import display as gd  # import Display
+from display import seven_seg as ss  # import SevenSegment
 
 LIFE_TOPIC = "byu_sss/output/lives"
 SCORE_TOPIC = "byu_sss/output/score"

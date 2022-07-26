@@ -1,7 +1,9 @@
-import numpy as np
-from loguru import logger
 import os
 import random
+
+import numpy as np
+from loguru import logger
+
 from demos.utils import get_all_from_queue
 
 
