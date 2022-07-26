@@ -23,7 +23,7 @@ NUM_COLS = 48
 class Doom:
     """This is an interactive demo that adapts the Doom game for the SSS by capturing the game's video output"""
 
-    demo_time = 50  # None for a game
+    demo_time = None  # None for a game
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
