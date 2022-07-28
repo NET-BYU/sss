@@ -1,7 +1,5 @@
-import sys
 import time
 from importlib import import_module
-from queue import Queue
 
 from loguru import logger
 
@@ -14,58 +12,68 @@ def run(demo_name, simulate, testing):
     """Main function that runs the demo."""
 
     if simulate:
-        from display.virtual_screen import (
-            VirtualScreen,  # pylint: disable=import-outside-toplevel
+        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
+            VirtualScreen,
         )
 
+        logger.debug("Starting virtual screen...")
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (
-            PhysicalScreen,  # pylint: disable=import-outside-toplevel
+        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
         )
 
+        logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
 
-    system_q = Queue()
-    input_q = Queue()
-    output_q = Queue()
+    queues = utils.Queues()
 
     # Set up the game
+    logger.info(f"Starting {demo_name}...")
     demo_module = import_module(f"demos.{demo_name}.main")
-    demo = utils.get_demo_cls(demo_module)(input_q, output_q, screen.display)
+    demo = utils.get_demo_cls(demo_module)(
+        queues.demo_input_queue, queues.demo_output_queue, screen.display
+    )
 
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
-    handle_input = controllers.start_inputs(system_q, input_q)
-    handle_output = broadcasters.start_outputs(system_q, output_q)
+    handle_input = controllers.start_inputs(
+        queues.system_queue, queues.demo_input_queue
+    )
+    handle_output = broadcasters.start_outputs(
+        queues.system_queue, queues.demo_output_queue
+    )
     runner = demo.run()
 
     # Clear screen
     screen.clear()
 
-    while True:
-        # Process input
-        next(handle_input)
+    try:
+        while True:
+            # Process input
+            next(handle_input)
 
-        # Process output
-        next(handle_output)
+            # Process output
+            next(handle_output)
 
-        # Make sure they are not trying to exit
-        while not system_q.empty():
-            system_event = system_q.get()
-            if system_event == "QUIT":
-                sys.exit()
+            # Make sure they are not trying to exit
+            while not queues.system_queue.empty():
+                system_event = queues.system_queue.get()
+                if system_event == "QUIT":
+                    logger.info("Quitting...")
+                    raise KeyboardInterrupt
 
-        # Tick the demo
-        try:
+            # Tick the demo
             _tick(runner, demo, testing)
-        except KeyboardInterrupt:
-            break
 
-        # Wait for next tick
-        next(tick)
+            # Wait for next tick
+            next(tick)
+    except KeyboardInterrupt:
+        logger.debug("Handling keyboard interrupt")
 
+    logger.info("Stopping current demo")
     demo.stop()
+    screen.clear()
 
 
 def _tick(runner, demo, testing):
