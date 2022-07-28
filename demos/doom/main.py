@@ -2,7 +2,7 @@ from json import loads
 from math import sqrt
 from os import environ
 from os.path import exists
-from subprocess import Popen
+from subprocess import DEVNULL, Popen
 
 import cv2
 import numpy as np
@@ -54,7 +54,9 @@ class Doom:
                     "assets/fuller.wad",
                     "-file",
                     "assets/subvert.wad",
-                ]
+                ],
+                stdout=DEVNULL,
+                stderr=DEVNULL,
             )
 
             # init a connection to shared memory locations here
@@ -169,6 +171,7 @@ class Doom:
 
     def stop(self):
         # Close game, release memory to OS, and close processes attached
+        logger.info("Releasing system resources...")
         if self.shared_mem_init:
             self.shm_input.write("QUIT_P")
             self.choco_doom.terminate()
