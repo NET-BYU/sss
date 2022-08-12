@@ -1,68 +1,147 @@
-<script src="../../three.min.js"></script>
-<script src="../../STLLoader.js"></script>
-<script src="../..//OrbitControls.js"></script>
+<div id="info">
+    <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a>
+    <a href="http://3mf.io" target="_blank" rel="noopener">3MF File format</a>
+    <div>3MF loader test by <a href="https://github.com/technohippy" target="_blank" rel="noopener">technohippy</a></div>
+    <div>Files from <a href="https://github.com/3MFConsortium/3mf-samples" target="_blank" rel="noopener">3mf-samples</a></div>
+</div>
 
-<div id="model" style="width: 500px; height: 500px"> </div>
+<!-- Import maps polyfill -->
+<!-- Remove this when import maps will be widely supported -->
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
 
-<script>
-    function STLViewer(model, elementID) {
-    var elem = document.getElementById(elementID)
-
-    var camera = new THREE.PerspectiveCamera(70, 
-    elem.clientWidth/elem.clientHeight, 1, 1000);
-
-    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(elem.clientWidth, elem.clientHeight);
-    elem.appendChild(renderer.domElement);
-
-    window.addEventListener('resize', function () {
-    renderer.setSize(elem.clientWidth, elem.clientHeight);
-    camera.aspect = elem.clientWidth/elem.clientHeight;
-    camera.updateProjectionMatrix();
-    }, false);
-
-    var controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.rotateSpeed = 0.05;
-    controls.dampingFactor = 0.1;
-    controls.enableZoom = true;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = .75;
-
-    var scene = new THREE.Scene();
-    scene.add(new THREE.HemisphereLight(0xffffff, 1.5));
-
-    (new THREE.STLLoader()).load(model, function (geometry) {
-    var material = new THREE.MeshPhongMaterial({ 
-        color: 0xff5533, 
-        specular: 100, 
-        shininess: 100 });
-    var mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
-
-    var middle = new THREE.Vector3();
-    geometry.computeBoundingBox();
-    geometry.boundingBox.getCenter(middle);
-    mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation( -middle.x, -middle.y, -middle.z ) );
-
-    var largestDimension = Math.max(geometry.boundingBox.max.x,
-                            geometry.boundingBox.max.y, 
-                            geometry.boundingBox.max.z)
-    camera.position.z = largestDimension * 1.5;
-
-    var animate = function () {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-    }; 
-
-    animate();
-    });
-}
+<script type="importmap">
+    {
+        "imports": {
+            "three": "../../three.module.js"
+        }
+    }
 </script>
 
-<script type="text/javascript">
-window.onload = function() {
-    STLViewer("hook.stl", "model")
-}
+<script type="module">
+
+    import * as THREE from 'three';
+
+    import { OrbitControls } from '../../OrbitControls.js';
+    import { ThreeMFLoader } from '../../3MFLoader.js';
+    import { GUI } from '../../lil-gui.module.min.js';
+
+    let camera, scene, renderer, object, loader, controls;
+
+    const params = {
+        asset: 'cam-lid-sss'
+    };
+
+    const assets = [
+        'cam-lid-sss',
+    ];
+
+    init();
+
+    function init() {
+
+        renderer = new THREE.WebGLRenderer( { antialias: true } );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0x333333 );
+
+        scene.add( new THREE.AmbientLight( 0xffffff, 0.2 ) );
+
+        camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 1, 500 );
+
+        // Z is up for objects intended to be 3D printed.
+
+        camera.up.set( 0, 0, 1 );
+        camera.position.set( - 100, - 250, 100 );
+        scene.add( camera );
+
+        controls = new OrbitControls( camera, renderer.domElement );
+        controls.addEventListener( 'change', render );
+        controls.minDistance = 50;
+        controls.maxDistance = 400;
+        controls.enablePan = false;
+        controls.update();
+
+        const pointLight = new THREE.PointLight( 0xffffff, 0.8 );
+        camera.add( pointLight );
+
+        const manager = new THREE.LoadingManager();
+
+        manager.onLoad = function () {
+
+            const aabb = new THREE.Box3().setFromObject( object );
+            const center = aabb.getCenter( new THREE.Vector3() );
+
+            object.position.x += ( object.position.x - center.x );
+            object.position.y += ( object.position.y - center.y );
+            object.position.z += ( object.position.z - center.z );
+
+            controls.reset();
+
+            scene.add( object );
+            render();
+
+        };
+
+        loader = new ThreeMFLoader( manager );
+        loadAsset( params.asset );
+
+        window.addEventListener( 'resize', onWindowResize );
+
+        //
+
+        const gui = new GUI();
+        gui.add( params, 'asset', assets ).onChange( function ( value ) {
+
+            loadAsset( value );
+
+        } );
+
+    }
+
+    function loadAsset( asset ) {
+
+        loader.load( '../../board_schematics/' + asset + '.3mf', function ( group ) {
+
+            if ( object ) {
+
+                object.traverse( function ( child ) {
+
+                    if ( child.material ) child.material.dispose();
+                    if ( child.material && child.material.map ) child.material.map.dispose();
+                    if ( child.geometry ) child.geometry.dispose();
+
+                } );
+
+                scene.remove( object );
+
+            }
+
+            //
+
+            object = group;
+
+        } );
+
+    }
+
+    function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        render();
+
+    }
+
+    function render() {
+
+        renderer.render( scene, camera );
+
+    }
+
 </script>
