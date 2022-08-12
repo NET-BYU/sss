@@ -1,4 +1,18 @@
-## First Section
+[Explanation of why we have the camera]
+
+## Camera PCB Blueprints
+
+### Backpack Schematic
+
+![backpack-sch](camera-schematic.png)
+
+### Backpack PCB
+
+![backpack-pcb](camera-pcb.png)
+
+## Camera Enclosure
+
+### Lid
 
 <!-- Import maps polyfill -->
 <!-- Remove this when import maps will be widely supported -->
@@ -37,15 +51,17 @@
 
         renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( window.innerWidth / 5, window.innerHeight / 5 );
+        renderer.setSize( 500, 500 );
         renderer.setClearColor( 0x000000, 0 ); // the default
         container.appendChild( renderer.domElement );
+        renderer.domElement.style.cursor = "grab";
+
 
         scene = new THREE.Scene();
 
         scene.add( new THREE.AmbientLight( 0xffffff, 0.2 ) );
 
-        camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 500 );
+        camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 1, 500 );
 
         // Z is up for objects intended to be 3D printed.
 
@@ -84,7 +100,7 @@
         loader = new ThreeMFLoader( manager );
         loadAsset( params.asset );
 
-        window.addEventListener( 'resize', onWindowResize );
+        // window.addEventListener( 'resize', onWindowResize );
 
     }
 
@@ -156,15 +172,16 @@
 
         renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( window.innerWidth / 5, window.innerHeight / 5 );
+        renderer.setSize( 500, 500 );
         renderer.setClearColor( 0x000000, 0 ); // the default
         container.appendChild( renderer.domElement );
+        renderer.domElement.style.cursor = "grab";
 
         scene = new THREE.Scene();
 
         scene.add( new THREE.AmbientLight( 0xffffff, 0.2 ) );
 
-        camera = new THREE.PerspectiveCamera( 10, window.innerWidth / window.innerHeight, 1, 500 );
+        camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 1, 500 );
 
         // Z is up for objects intended to be 3D printed.
 
@@ -203,7 +220,7 @@
         loader = new ThreeMFLoader( manager );
         loadAsset( params.asset );
 
-        window.addEventListener( 'resize', onWindowResize );
+        // window.addEventListener( 'resize', onWindowResize );
 
     }
 
@@ -251,9 +268,9 @@
 </script>
 
 <span>
-<div id="camera-lid" style="position: sticky;"></div>
+<div id="camera-lid"></div>
 
-## Second Section
+### Case
 
-<div id="camera-body" style="position: sticky;"></div>
+<div id="camera-body"></div>
 </span>
