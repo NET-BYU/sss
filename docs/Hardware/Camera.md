@@ -5,12 +5,12 @@ The purpose of a camera module exists thanks mainly thanks to the creative camer
 ### Backpack Schematic
 The ESP-CAM normally comes with its own backpack which provides power. An optional set of pins was included in the design to allow for a peripheral to connect to the camera if necessary. The backpack that we have provides power and also a breakout to connect devices to some of the GPIO pins.
 
-![backpack-sch](camera-schematic.png)
+![backpack-sch](../assets/camera-schematic.png)
 
 ### Backpack PCB
 This PCB is single-sided and has no vias which means that it can be etched on the most simple of mills. It also features some groovy, curved traces for a nice aesthetic. [Check this video out](https://youtu.be/euJgtLcWWyo) to see why melty boards are superior.
 
-![backpack-pcb](camera-pcb.png)
+![backpack-pcb](../assets/camera-pcb.png)
 
 ## Camera Enclosure
 
@@ -25,7 +25,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 <script type="importmap">
     {
         "imports": {
-            "three": "../../three.module.js"
+            "three": "../../assets/three.module.js"
         }
     }
 </script>
@@ -34,20 +34,12 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
     import * as THREE from 'three';
 
-    import { OrbitControls } from '../../OrbitControls.js';
-    import { ThreeMFLoader } from '../../3MFLoader.js';
+    import { OrbitControls } from '../../assets/OrbitControls.js';
+    import { ThreeMFLoader } from '../../assets/3MFLoader.js';
 
     let camera, scene, renderer, object, loader, controls;
 
     var container = document.getElementById('camera-lid');
-
-    const params = {
-        asset: 'cam-lid-sss'
-    };
-
-    const assets = [
-        'cam-lid-sss',
-    ];
 
     init();
 
@@ -102,7 +94,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
         };
 
         loader = new ThreeMFLoader( manager );
-        loadAsset( params.asset );
+        loadAsset( '../../assets/cam-lid-sss.3mf' );
 
         // window.addEventListener( 'resize', onWindowResize );
 
@@ -110,7 +102,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
     function loadAsset( asset ) {
 
-        loader.load( '../cam-lid-sss.3mf', function ( group ) {
+        loader.load( asset, function ( group ) {
 
             if ( object ) {
 
@@ -155,20 +147,12 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
     import * as THREE from 'three';
 
-    import { OrbitControls } from '../../OrbitControls.js';
-    import { ThreeMFLoader } from '../../3MFLoader.js';
+    import { OrbitControls } from '../../assets/OrbitControls.js';
+    import { ThreeMFLoader } from '../../assets/3MFLoader.js';
 
     let camera, scene, renderer, object, loader, controls;
 
     var container = document.getElementById('camera-body');
-
-    const params = {
-        asset: 'cam-case-sss'
-    };
-
-    const assets = [
-        'cam-case-sss',
-    ];
 
     init();
 
@@ -222,7 +206,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
         };
 
         loader = new ThreeMFLoader( manager );
-        loadAsset( params.asset );
+        loadAsset( '../../assets/cam-case-sss.3mf' );
 
         // window.addEventListener( 'resize', onWindowResize );
 
@@ -230,7 +214,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
     function loadAsset( asset ) {
 
-        loader.load( '../cam-case-sss.3mf', function ( group ) {
+        loader.load( asset, function ( group ) {
 
             if ( object ) {
 
