@@ -5,12 +5,12 @@ The enclosure for the physical SSS is made out of two an acryllic (**NOT POLYCAR
 ### Front Piece
 The shape and the mounting holes are seen in this figure below:
 
-![enclosure-front-sss](../assets/enclosure-front-sss.png)
+![enclosure-front-sss](../assets/enclosure-front-sss.svg)
 
 ### Back Piece
 The shape and the mounting holes are also seen on this piece. The upper group of 4 holes in the center allows for the mounting of a Raspberry Pi. The lower five are mounting holes for the [power and breakout board](Power%20Board.md). The slender slots allow for [resistors soldered to the `clk` and `din` pins](Panel.md) to poke out while the larger openings allow for the commnication and power cable to plug into the SSS's panels.
 
-![enclosure-back-sss](../assets/enclosure-back-sss.png)
+![enclosure-back-sss](../assets/enclosure-back-sss.svg)
 
 ## Feet
 

@@ -86,4 +86,4 @@ Now reboot your device and the changes should take effect!
 
 In our build of the SSS we connected the GPIO of the Raspberry Pi to a breakout board which distributes the CS signal to its respective panel and the MOSI, SCLK, GND, and VCC signals to the rest.
 
-![rpi-io](../assets/rpi-io.png)
+<img src="../../assets/rpi-io.svg" alt="drawing" width="100%"/>
