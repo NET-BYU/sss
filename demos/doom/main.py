@@ -1,7 +1,8 @@
 from json import loads
+from math import sqrt
 from os import environ
 from os.path import exists
-from subprocess import Popen
+from subprocess import DEVNULL, Popen
 
 import cv2
 import numpy as np
@@ -22,7 +23,7 @@ NUM_COLS = 48
 class Doom:
     """This is an interactive demo that adapts the Doom game for the SSS by capturing the game's video output"""
 
-    demo_time = 50  # None for a game
+    demo_time = None  # None for a game
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -39,13 +40,23 @@ class Doom:
 
         self.shared_mem_init = False
         self.choco_doom = 0
+        self.curmin = 0
+        self.curmax = 0
 
         # Initialize game and allocate shared memory
         if self.game_installed:
 
             environ["SDL_VIDEODRIVER"] = "dummy"
             self.choco_doom = Popen(
-                ["./demos/doom/chocolate-doom", "-iwad", "assets/miniwad.wad"]
+                [
+                    "./demos/doom/chocolate-doom",
+                    "-iwad",
+                    "assets/fuller.wad",
+                    "-file",
+                    "assets/subvert.wad",
+                ],
+                stdout=DEVNULL,
+                stderr=DEVNULL,
             )
 
             # init a connection to shared memory locations here
@@ -70,13 +81,13 @@ class Doom:
             0: 0x0,
             1: 0x0,
             2: 0x0,
-            3: 0x1,
-            4: 0x1,
+            3: 0x0,
+            4: 0x0,
             5: 0x2,
             6: 0x2,
-            7: 0x2,
-            8: 0x2,
-            9: 0xA,
+            7: 0xA,
+            8: 0xA,
+            9: 0xE,
             10: 0xE,
             11: 0xF,
             12: 0xF,
@@ -128,22 +139,30 @@ class Doom:
 
             self.shm_input.write(presses + "\0")
 
-            # Normalize color values on screen and write
-            self.screen_min = buf.min()
-            self.screen_max = buf.max()
+            self.screen_min = 0
+            self.screen_max = 255
 
             for i in range(48):
                 for j in range(48):
-                    pixel = int((buf[i][j] - self.screen_min) / (self.screen_max / 12))
+                    pixel = int(
+                        (
+                            (buf[i][j] - self.screen_min)
+                            / (self.screen_max - self.screen_min)
+                        )
+                        * 12
+                    )
                     if pixel > 12:
                         logger.debug(f"\nself.screen_min = {self.screen_min}")
                         logger.debug(f"pixel = {pixel}")
                         logger.debug(f"graySmall[{i}][{j}] = {buf[i][j]}")
                         logger.debug(f"self.screen_max = {self.screen_max}")
                         pixel = 12
+                    pixel = int(-1 * sqrt(12 * pixel) + 12)
 
                     if self.arr[i][j] != self.num_to_pixel[pixel]:
-                        self.screen.draw_pixel(j, i, self.num_to_pixel[pixel])
+                        self.screen.draw_pixel(
+                            j, i, self.num_to_pixel[pixel], combine=False
+                        )
                         self.arr[i][j] = self.num_to_pixel[pixel]
 
             self.screen.push()
@@ -152,6 +171,7 @@ class Doom:
 
     def stop(self):
         # Close game, release memory to OS, and close processes attached
+        logger.info("Releasing system resources...")
         if self.shared_mem_init:
             self.shm_input.write("QUIT_P")
             self.choco_doom.terminate()
