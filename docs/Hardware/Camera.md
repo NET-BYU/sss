@@ -47,7 +47,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
         renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( 500, 500 );
+        renderer.setSize( 500, 300 );
         renderer.setClearColor( 0x000000, 0 ); // the default
         container.appendChild( renderer.domElement );
         renderer.domElement.style.cursor = "grab";
@@ -160,7 +160,7 @@ For those who aren't a big fan of have a jumbled mess of wires and PCBs, a sleek
 
         renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( 500, 500 );
+        renderer.setSize( 500, 300 );
         renderer.setClearColor( 0x000000, 0 ); // the default
         container.appendChild( renderer.domElement );
         renderer.domElement.style.cursor = "grab";

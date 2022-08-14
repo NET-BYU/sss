@@ -43,7 +43,7 @@ The feet for the SSS are 3D printed pieces that allow for each panel (both front
 
         renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
         renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( 500, 500 );
+        renderer.setSize( 500, 300 );
         renderer.setClearColor( 0x000000, 0 ); // the default
         container.appendChild( renderer.domElement );
         renderer.domElement.style.cursor = "grab";
