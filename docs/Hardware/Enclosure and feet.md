@@ -90,7 +90,7 @@ The feet for the SSS are 3D printed pieces that allow for each panel (both front
         };
 
         loader = new ThreeMFLoader( manager );
-        loadAsset( '../../assets/cam-lid-sss.3mf' );
+        loadAsset( '../../assets/feet-sss.3mf' );
 
         // window.addEventListener( 'resize', onWindowResize );
 
