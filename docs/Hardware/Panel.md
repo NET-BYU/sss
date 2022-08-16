@@ -32,8 +32,10 @@ This is the back view of manufactured panel. Note that the SV1 input from the [p
 
 ## Known Problems
 
-The current version of the SSS panel is deeply flawed. Among the known problems are:
+The current version of the SSS panel is flawed. Among the known problems are:
 
  - The output pins are not needed
  - The data and clock traces are very long, thin, and susceptible to noise. Changing the trace widths and paths would be necessary.
  - Using some sort of differential grounding might also reduce overall board noise.
+
+ Any efforts to redesign the panels are more than welcome!
