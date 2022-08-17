@@ -49,3 +49,6 @@ pip install -r requirements.txt
 ```
 
 And that's it! Once this has successfully completed, you are ready to run the simulator and start developing for the SSS! For more information, go to [Get Started](../Overview/Get%20started.md).
+
+## Running on Windows
+It its current state, the SSS cannot autoload all of the demos in kiosk, testing, and simulator mode. This may be fixed in a future release.

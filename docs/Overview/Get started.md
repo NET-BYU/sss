@@ -12,7 +12,7 @@ source venv/bin/activate
 
 ### Windows
 ```cmd
-.\venv\Script\activate
+.\venv\Scripts\activate
 ```
 
 ## Modes
@@ -20,12 +20,24 @@ We realize most people will never run the SSS on its original hardware and most 
 
 Whenever you want to run a command for the SSS that will be simulated, add a **`-s`** flag at the end, else the program will try to run on a physical screen and will most likely crash if you do not have one.
 
+### Simulator
+Simulator mode opens a window with controls to choose through all of the demos.
+
+```bash
+python main.py simulator
+```
+
+**_This mode is not functional in Windows_**
+
 ### Kiosk
 Kiosk mode can be though of as screen-saver mode. The SSS will cycle through demos that have a `demo_time` other than `None` (i.e. everything but games). To run in this mode:
 
 ```bash
 python main.py kiosk                    # Don't forget to add "-s" if simulating
 ```
+
+**_This mode is not functional in Windows_**
+
 
 This mode comes with an optional `--testing` flag to speed up `demo_time`s so that you can cycle through demos faster and catch errors more quickly.
 
@@ -42,6 +54,8 @@ Finally, if you simply want to make sure that all the demos in the SSS are runni
 ```bash
 python main.py testing
 ```
+
+**_This mode is not functional in Windows_**
 
 To execute each demo for a few cycles to make sure everything has initialized and run correctly.
 
