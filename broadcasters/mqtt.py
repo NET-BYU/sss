@@ -6,10 +6,14 @@ from . import utils
 
 
 def start_processing_output(system_queue, mqtt_q):
+    """Called by the broadcaster module to initialize a connection to the desired MQTT broker."""
+
     def on_connect(client, userdata, flags, rc):
+        """Callback function executed upon the successful connection to the desired broker"""
         logger.info("MQTT Client connected ({})", rc)
 
     def on_disconnect(client, userdata, rc):
+        """Callback function executed upon disconnecting from the broker"""
         logger.info("MQTT Client disconnected ({})", rc)
 
     with open("mqtt_config.yaml") as f:
@@ -28,6 +32,7 @@ def start_processing_output(system_queue, mqtt_q):
     client.on_disconnect = on_disconnect
 
     def process():
+        """Contains generator which fetches all messages from the `byu_sss/output` topic on broker"""
         while True:
             try:
                 client.connect(config["host"], config["port"])

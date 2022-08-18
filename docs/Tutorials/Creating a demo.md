@@ -52,10 +52,6 @@ class Template:
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         pass
-
-    def get_input_buff(self):
-        # Get all input off the queue
-        return list(self.input_queue.queue)
 ```
 
 When creating your class object, name sure that the first letter of its name is capitalized. If you have a demo with two words (i.e. `breakout_ai`) make sure you capitalize the first letter of every word (i.e. `Breakout_Ai`). Failure to do this will cause your demo to not load or execute properly into the SSS system. You’ll also notice that apart from the normal Python `__init__()` method for a class, there is also a `run()` , `stop()` , and `get_input_buff()`. Implementing these functions is crucial to making sure that your demo will execute correctly at runtime. An explanation of what each one does is included below. 
@@ -134,21 +130,29 @@ This function is what causes your actual program to run. Everything inside of th
 
 Code in this function will be exited right as soon as your demo is ended by the SSS or user. If you need to reset state or do any sort of cleanup, that code belongs here. If there is nothing fancy like that in your demo, no worries! Just leave a `pass` and be on your merry way.
 
-## `get_input_buff()`
+## Handling Input in Your Demo
 
 Most games on the SSS are pretty simple and are only meant to handle one keypress at a time. However, if you are feeling ambitious and want to keep track of multiple keypresses at a time (i.e. holding up and left to jump diagonally), this function will help you catch that by returning all keypresses waiting in the queue as a list. Below is a snippet from `breakout` which illustrates this functionality:
 
 ```python
-for keypress in self.get_input_buff():
-    # If there are directional buttons pressed
+# Include this at the top of your demo
+from demos.utils import get_all_from_queue
+
+# Put this part in your while True loop 
+for keypress in get_all_from_queue(self.input_queue):
+
     if keypress == "LEFT_P":
-        repeat_left = True
+        # Some action
+        pass
     if keypress == "LEFT_R":
-        repeat_left = False
+        # Some action
+        pass
     if keypress == "RIGHT_P":
-        repeat_right = True
+        # Some action
+        pass
     if keypress == "RIGHT_R":
-        repeat_right = False 
+        # Some action
+        pass 
 ```
 
 ## Conclusion

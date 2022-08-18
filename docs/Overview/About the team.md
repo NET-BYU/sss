@@ -1,0 +1,5 @@
+Since its inception at the end of summer in 2021 the list of contributors for the SSS has grown significantly. The first version of the system and winner of the BYU IT&CSA Raspberry Pi 2021 competition was designed and developed by [Dinah Bronson](https://www.linkedin.com/in/dinah-squire-3a84831b5/), [Ashton Palacios](https://www.linkedin.com/in/ashton-palacios/), [Chris Kitras](https://www.linkedin.com/in/christopher-kitras/), and [Phil Lundrigan](https://www.linkedin.com/in/philipbl/). 
+
+Since that first edition, the number of [contributors](https://github.com/NET-BYU/sss/graphs/contributors) has doubled mainly with new researchers from the [BYU NET Lab](https://netlab.byu.edu/people/), each contributing one or more unique demos!
+
+If you are interested in helping the maintain or develop for the SSS, feel free to open a PR and [get started](../Overview/Get%20started.md) by [creating a demo](../Tutorials/Creating%20a%20demo.md).
