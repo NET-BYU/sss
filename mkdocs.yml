@@ -12,6 +12,7 @@ copyright: Copyright &copy; 2022 BYU NET Lab
 
 theme: 
   name: material
+  custom_dir: overrides
   palette:
     - scheme: default
       primary: red
