@@ -23,5 +23,3 @@ The Seven Segment Sign, or SSS for short, is a purely Python, Raspberry Pi-power
  - [Support](Overview/Support.md)
 
 Happy hacking!
-
-<div id="readthedocs-embed-flyout"></div>
