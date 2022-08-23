@@ -1,4 +1,5 @@
 import json
+import socket
 
 import paho.mqtt.client as mqtt
 from loguru import logger
@@ -61,7 +62,7 @@ def start_processing_input(system_queue, demo_input_queue):
                     client.loop(timeout=0.01)
                     yield
 
-            except ConnectionRefusedError:
+            except (ConnectionRefusedError, socket.gaierror) as e:
                 logger.warning("Unable to connect to broker... trying again later.")
 
                 for _ in range(100):
