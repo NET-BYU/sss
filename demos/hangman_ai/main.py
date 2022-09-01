@@ -13,7 +13,7 @@ from demos.hangman_ai.trace import Trace
 # Is there an algorithim for something like that?
 class HangmanAi:
 
-    demo_time = 120
+    demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
