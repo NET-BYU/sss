@@ -6,7 +6,6 @@ from demos.utils import get_all_from_queue
 
 
 class Tetris:
-
     demo_time = None
 
     # User input is passed through input_queue
@@ -52,7 +51,6 @@ class Tetris:
         # Create generator here
 
         while True:
-
             self.init_screen()
             self.init_scoreboard()
             self.draw_logo()
@@ -64,7 +62,6 @@ class Tetris:
             next_shape = random.choice(list(self.Shape))
 
             while not self.is_game_over():
-
                 if self.level == 2:
                     self.drop_rate = 10
                 if self.level == 3:
@@ -114,7 +111,6 @@ class Tetris:
                 last_chance = True
 
                 while is_falling or last_chance:
-
                     if not is_falling:
                         last_chance = False
 
@@ -194,7 +190,6 @@ class Tetris:
                 yield
 
                 if num_lines > 0:
-
                     self.update_score(num_lines)
 
                     #### FILL IN EMPTY ROWS
@@ -414,7 +409,6 @@ class Tetris:
         return True
 
     def rotate_shape(self, shape_location):
-
         old_location = shape_location.copy()
         origin = shape_location[2]
         for i in range(len(shape_location)):
