@@ -9,7 +9,6 @@ from display.segment_display import SegmentDisplay
 
 @dataclass
 class Point:
-
     x: float
     y: float
 
@@ -34,12 +33,10 @@ class Cell:
         self.num_cell_points = 10
 
     def run(self):
-
         count = 0
         noise = PerlinNoise()
 
         while True:
-
             pos = count * 0.025
 
             # Create cell

@@ -9,7 +9,6 @@ from display.segment_display import SegmentDisplay
 
 @dataclass
 class RainDrop:
-
     x: float
     y: float
     speed: float

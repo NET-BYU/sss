@@ -45,7 +45,6 @@ class Doom:
 
         # Initialize game and allocate shared memory
         if self.game_installed:
-
             environ["SDL_VIDEODRIVER"] = "dummy"
             self.choco_doom = Popen(
                 [
@@ -117,7 +116,6 @@ class Doom:
 
         # Create generator here
         while True:
-
             # Reading screen details from screen shared memory buffer
             buf = self.shm.read(SCREENWIDTH * SCREENHEIGHT)
             buf = np.frombuffer(bytearray(buf), dtype=np.uint8)

@@ -9,7 +9,8 @@ from demos.utils import get_all_from_queue
 
 class Video:
     """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
-    assets and allows the user to play, pause, go through the video frame by frame, and switch between videos"""
+    assets and allows the user to play, pause, go through the video frame by frame, and switch between videos
+    """
 
     demo_time = 120
 

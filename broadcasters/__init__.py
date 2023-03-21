@@ -32,7 +32,6 @@ def start_outputs(system_queue, demo_output_queue):
         logger.warning("Program will continue to run without this output.")
 
     while True:
-
         for payload in utils.get_all_from_queue(demo_output_queue):
             if mqtt_runner:
                 mqtt_q.put(payload)
