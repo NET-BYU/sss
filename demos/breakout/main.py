@@ -45,7 +45,6 @@ class Breakout:
         self.gameover = False
 
     def run(self):
-
         # Set game session states
         screen = self.screen
         is_left = True
@@ -95,10 +94,8 @@ class Breakout:
         while True:
             while not self.gameover:
                 if not self.input_queue.empty():
-
                     # Check to see if there are any keypresses to read
                     for keypress in get_all_from_queue(self.input_queue):
-
                         # If there are directional buttons pressed
                         if keypress == "LEFT_P":
                             repeat_left = True
@@ -280,7 +277,6 @@ class Breakout:
         self.gameover = True
 
     def init_screen(self, screen):
-
         self.paddle = [24]
 
         if self.level == 1:
@@ -347,7 +343,6 @@ class Breakout:
         return spin, is_left
 
     def ball_travel(self, is_left, is_down, spin, screen):
-
         horizbound = 0
         vertbound = 0
 

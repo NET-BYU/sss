@@ -28,7 +28,6 @@ def check_if_sim():
 
 def start_processing_input(system_queue, demo_input_queue):
     while True:
-
         events = pygame.event.get()
 
         for event in events:

@@ -6,7 +6,6 @@ from demos.utils import get_all_from_queue
 
 
 class Hangman:
-
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
@@ -54,7 +53,6 @@ class Hangman:
 
         # Create generator here
         while True:
-
             trace.draw_init()
             trace.draw_choice(guess.letter_select(choice), True)
             word = guess.pick_word(seed_num)
@@ -69,7 +67,6 @@ class Hangman:
 
                     # Check to see if there is any keypresses
                     for press in input_:
-
                         if press == "LEFT_P":
                             repeat_left = True
                         if press == "LEFT_R":

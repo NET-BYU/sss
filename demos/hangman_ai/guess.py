@@ -339,7 +339,6 @@ guess_list = []
 
 
 class Guess:
-
     # This will add to our list of letters that have been guessed
     def add_guess_list(self, letter):
         guess_list.append(letter)

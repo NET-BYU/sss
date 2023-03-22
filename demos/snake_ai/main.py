@@ -112,7 +112,6 @@ class SnakeAi:
         # Generator Loop with raw yield
         while True:
             while not game_over:
-
                 if len(snek_path) == 0:
                     logger.debug("ran out, try search again")
                     game_state.snek_parts = deepcopy(snek_list[:-1])

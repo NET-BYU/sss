@@ -234,7 +234,6 @@ class Camera:
 
             # Okay, we found the camera, now let's use it
             try:
-
                 self.cap = cv2.VideoCapture(self.stream_url)
                 ret, frame = self.cap.read()
 
