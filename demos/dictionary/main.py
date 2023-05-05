@@ -39,10 +39,13 @@ class Dictionary:
     def run(self):
         # Create generator here
         while True:
+            self.screen.draw_text(2, 2, str.upper("NET Lab Vocabulary Terms :"), True)
+            self.screen.draw_text(2, 4, str.upper("--------------------------"), True)
+
             if self.loadbar.update() == False:
                 self.screen.draw_text(
                     2,
-                    2,
+                    8,
                     self.displayString,
                     push=True,
                 )
