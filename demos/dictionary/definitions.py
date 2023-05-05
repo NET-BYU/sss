@@ -4,9 +4,7 @@ class Definition:
         self.text = text
 
     def __str__(self) -> str:
-        returnString = self.term
-        returnString += " "
-        returnString += self.text
+        returnString = self.term + " :: " + self.text
         returnString = str.upper(returnString)
         return returnString
 
