@@ -11,9 +11,17 @@ class Definition:
         return returnString
 
 
-myDictionary = [
-    Definition("Hello", "world"),
-    Definition("TIM", "Traveler Information Message"),
-    Definition("RSU", "Road-Side Unit"),
-    Definition("OBU", "On-Board Unit"),
-]
+class WordDictionary:
+    def __init__(self):
+        self.terms = [
+            Definition("Hello", "world"),
+            Definition("TIM", "Traveler Information Message"),
+            Definition("RSU", "Road-Side Unit"),
+            Definition("OBU", "On-Board Unit"),
+        ]
+        self.iterator = 0
+
+    def getNext(self):
+        i = self.iterator % len(self.terms)
+        self.iterator += 1
+        return self.terms[i].__str__()

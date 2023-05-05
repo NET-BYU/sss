@@ -1,4 +1,6 @@
-from demos.dictionary.definitions import myDictionary
+import time
+from demos.dictionary.definitions import WordDictionary
+from demos.dictionary.loadbar import LoadBar
 
 
 class Dictionary:
@@ -30,18 +32,24 @@ class Dictionary:
         self.output_queue = output_queue
         self.screen = screen
         # init demo/game specific variables here
-        self.iterator = 0
+        self.dictionary = WordDictionary()
+        self.loadbar = LoadBar(self.screen, 5)
+        self.displayString = self.dictionary.getNext()
 
     def run(self):
         # Create generator here
         while True:
-            myString = myDictionary[0].__str__()
-            self.screen.draw_text(
-                self.screen.x_width // 2 - 5,
-                self.screen.y_height // 2 - 4,
-                myString,
-                push=True,
-            )
+            if self.loadbar.update() == False:
+                self.screen.draw_text(
+                    2,
+                    2,
+                    self.displayString,
+                    push=True,
+                )
+            else:
+                self.displayString = self.dictionary.getNext()
+                self.loadbar = LoadBar(self.screen, 5)
+                self.screen.clear()
             yield
 
     def stop(self):
