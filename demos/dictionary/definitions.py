@@ -12,10 +12,12 @@ class Definition:
 class WordDictionary:
     def __init__(self):
         self.terms = [
-            Definition("Hello", "world"),
             Definition("TIM", "Traveler Information Message"),
             Definition("RSU", "Road-Side Unit"),
             Definition("OBU", "On-Board Unit"),
+            Definition("SPAT", "Signal Phase and Timing"),
+            # Definition("SRM-SSM", "Signal Request Message and Signal Status Message"), # too long
+            Definition("PROSE", "Proximity Services"),
         ]
         self.iterator = 0
 
