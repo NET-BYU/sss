@@ -61,7 +61,6 @@ for target in targets:
     # Create generator here
 
     while processing:
-
         (ret, frame) = cap.read()
         if not ret:
             break

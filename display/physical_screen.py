@@ -9,18 +9,18 @@ class PhysicalScreen:
     def __init__(self, brightness=3):
         self.brightness = brightness
         self.cs_num_lst = [
-            5,
-            10,
-            9,
-            4,
-            11,
             14,
+            13,
             2,
-            3,
             7,
             12,
-            13,
+            3,
             6,
+            11,
+            4,
+            5,
+            9,
+            10,
         ]  # channel select gpio pin numbers, array is in flattened row order from the top of the screen
         self.num_segs_across = 3
         self.num_segs_down = 4

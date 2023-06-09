@@ -5,7 +5,8 @@ class Autotype:
     """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
     The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
     The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
-    The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game"""
+    The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game
+    """
 
     demo_time = 30
 

@@ -26,7 +26,8 @@ class Snake:
     The init function does nothing spdef runecial.
     The run function calculates the snake trajectory and checks to see if the
     snake as eaten an apple. It always checks for game over.
-    The stop function will check to see if a high score needs to be written before exiting"""
+    The stop function will check to see if a high score needs to be written before exiting
+    """
 
     demo_time = None
 
@@ -174,7 +175,6 @@ class Snake:
                     or current_location[1] < 4
                     or current_location in snek_list[:-1]
                 ):
-
                     logger.debug(
                         "Snake killed itself in the weeds:" + str(current_location)
                     )

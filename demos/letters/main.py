@@ -19,7 +19,6 @@ class Letters:
         # init demo/game specific variables here
 
     def run(self):
-
         while True:
             for _ in range(4):
                 self.screen.draw_text(

@@ -132,9 +132,15 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
             screen.clear()
             break
 
-        next(handle_input)
-        next(runner)
-        next(frame_tick)
+        try:
+            next(handle_input)
+            next(runner)
+            next(frame_tick)
+        except Exception as e:
+            logger.exception("Something bad happened while ticking...")
+            demo.stop()
+            screen.clear()
+            break
     else:
         # This gets run when the while condition becomes false, not because of the break
         logger.info("Demo time has ended. Exiting demo...")

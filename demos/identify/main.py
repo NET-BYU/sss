@@ -1,4 +1,4 @@
-class Template:
+class Identify:
     """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
     The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
     The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
@@ -22,12 +22,14 @@ class Template:
     def run(self):
         # Create generator here
         while True:
-            self.screen.draw_text(
-                self.screen.x_width // 2 - 5,
-                self.screen.y_height // 2 - 4,
-                "HELLO THERE",
-                push=True,
-            )
+            for num_height in range(4):
+                for num_width in range(3):
+                    self.screen.draw_text(
+                        num_width * 16,
+                        num_height * 12,
+                        str(num_height * 3 + num_width),
+                        push=True,
+                    )
             yield
 
     def stop(self):
