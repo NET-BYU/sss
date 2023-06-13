@@ -28,6 +28,7 @@ class Minesweeper:
         self.discovered = [
             [False for __ in range(self.scale)] for _ in range(self.scale)
         ]
+        self.flags = [[False for __ in range(self.scale)] for _ in range(self.scale)]
 
     def run(self):
         # Waits for user ready
@@ -120,7 +121,7 @@ class Minesweeper:
                     if keypress == "SEC_P":
                         repeat_left = True
                     if keypress == "SEC_R":
-                        repeat_left = True
+                        self.toggle_flag(self.cursor[0], self.cursor[1])
 
                     # Pause and unpause routine
                     # if keypress == "START_P":
@@ -213,18 +214,22 @@ class Minesweeper:
         if self.discovered[x][y]:
             return
         self.discovered[x][y] = True
+
+        # Game Over
+        if str(val) == "x":
+            pass
+
+        # Found and indicator
         if str(val) != "0":
             # print(str(val))
             self.screen.draw_text(x * 6 + 2, y * 6 + 2, str(val), push=True)
+
+        # No indicators found
         else:
             self.erase_cell(x, y, 8)
             # Check all surrounding cells for 0s
             for i in range(-1, 2):
                 for j in range(-1, 2):
-                    # Don't recheck the already selected square
-                    # if i == 0 and j == 0:
-                    #     continue
-
                     # Don't wrap around the board horizontally
                     if (x + i) < 0 or (x + i) > 7:
                         continue
@@ -232,9 +237,6 @@ class Minesweeper:
                     # Don't wrap around the board vertically
                     if (y + j) < 0 or (y + j) > 7:
                         continue
-
-                    # if self.discovered[x + i][y + j]:
-                    #     continue
 
                     if str(self.minefield[x + i][y + j]) == "0":
                         self.draw_num(x + i, y + j)
@@ -478,5 +480,18 @@ class Minesweeper:
 
         self.screen.push()
 
-    def draw_flag(self, x, y):
+    def toggle_flag(self, x, y):
+        self.flags[x][y] = not self.flags[x][y]
+
+        if self.flags[x][y]:
+            self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x7)
+            self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0xD)
+            self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x2)
+        else:
+            self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x0)
+            self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0x0)
+            self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x0)
+        self.screen.push()
+
+    def game_over(self):
         pass
