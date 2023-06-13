@@ -25,6 +25,9 @@ class Minesweeper:
         self.cursor = [0, 0]
         self.minefield = []
         self.scale = 8
+        self.discovered = [
+            [False for __ in range(self.scale)] for _ in range(self.scale)
+        ]
 
     def run(self):
         # Waits for user ready
@@ -180,22 +183,69 @@ class Minesweeper:
 
         self.screen.push()
 
+    def erase_cell(self, x, y, scale):
+        x *= 6
+        y *= 6
+        # TL Corner
+        self.screen.draw_pixel(x, y, 0x0)
+
+        # TR Corner
+        self.screen.draw_pixel(int(48 / scale) - 1 + x, y, 0x0)
+
+        # BL Corner
+        self.screen.draw_pixel(x, int(48 / scale) - 1 + y, 0x0)
+
+        # BR Corner
+        self.screen.draw_pixel(int(48 / scale) - 1 + x, int(48 / scale) - 1 + y, 0x0)
+
+        for i in range(x + 1, int(48 / scale) - 1 + x):
+            self.screen.draw_pixel(i, y, 0x0)
+            self.screen.draw_pixel(i, int(48 / scale) - 1 + y, 0x0)
+
+        for i in range(y + 1, int(48 / scale) - 1 + y):
+            self.screen.draw_pixel(x, i, 0x0)
+            self.screen.draw_pixel(int(48 / scale) - 1 + x, i, 0x0)
+
+        self.screen.push()
+
     def draw_num(self, x, y):
         val = self.minefield[x][y]
-        print(val)
+        if self.discovered[x][y]:
+            return
+        self.discovered[x][y] = True
         if str(val) != "0":
+            # print(str(val))
             self.screen.draw_text(x * 6 + 2, y * 6 + 2, str(val), push=True)
         else:
-            print("Found a zero!")
+            self.erase_cell(x, y, 8)
             # Check all surrounding cells for 0s
-            for i in range(-1, 1):
-                for j in range(-1, 1):
-                    if i == 0 and j == 0:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    # Don't recheck the already selected square
+                    # if i == 0 and j == 0:
+                    #     continue
+
+                    # Don't wrap around the board horizontally
+                    if (x + i) < 0 or (x + i) > 7:
                         continue
+
+                    # Don't wrap around the board vertically
+                    if (y + j) < 0 or (y + j) > 7:
+                        continue
+
+                    # if self.discovered[x + i][y + j]:
+                    #     continue
+
                     if str(self.minefield[x + i][y + j]) == "0":
                         self.draw_num(x + i, y + j)
                     else:
-                        self.screen.draw_text(x * 6 + 2, y * 6 + 2, str(val), push=True)
+                        self.screen.draw_text(
+                            (x + i) * 6 + 2,
+                            (y + j) * 6 + 2,
+                            str(self.minefield[x + i][y + j]),
+                            push=True,
+                        )
+            self.draw_cursor(self.cursor[0], self.cursor[1])
 
     def init_screen(self):
         for row in range(0, 48, int(48 / 8)):
@@ -333,6 +383,12 @@ class Minesweeper:
                         if field[i + 1][j + 1] == "x":
                             field[i][j] += 1
 
+        print("\n")
+        for j in range(scale):
+            for i in range(scale):
+                print(str(field[i][j]) + " ", end="")
+            print("\n")
+
         return field
 
         print("\n")
@@ -388,31 +444,37 @@ class Minesweeper:
                 self.screen.draw_pixel(x, i, 0x8)
                 self.screen.draw_pixel(int(48 / self.scale) - 1 + x, i, 0x2)
         else:
-            for i in range(x + 1, int(48 / self.scale) - 1 + x):
-                self.screen.draw_pixel(i, y, 0x4, combine=False)
+            if not self.discovered[int(x / 6)][int(y / 6)] or (
+                self.discovered[int(x / 6)][int(y / 6)]
+                and self.minefield[int(x / 6)][int(y / 6)] != 0
+            ):
+                for i in range(x + 1, int(48 / self.scale) - 1 + x):
+                    self.screen.draw_pixel(i, y, 0x4, combine=False)
+                    self.screen.draw_pixel(
+                        i, int(48 / self.scale) - 1 + y, 0x1, combine=False
+                    )
+
+                for i in range(y + 1, int(48 / self.scale) - 1 + y):
+                    self.screen.draw_pixel(x, i, 0x0)
+                    self.screen.draw_pixel(int(48 / self.scale) - 1 + x, i, 0x0)
+                    self.screen.draw_pixel(x, i, 0x2)
+                    self.screen.draw_pixel(int(48 / self.scale) - 1 + x, i, 0x8)
+
+                # TL Corner
+                self.screen.draw_pixel(x, y, 0x6)
+
+                # TR Corner
+                self.screen.draw_pixel(int(48 / self.scale) - 1 + x, y, 0xC)
+
+                # BL Corner
+                self.screen.draw_pixel(x, int(48 / self.scale) - 1 + y, 0x3)
+
+                # BR Corner
                 self.screen.draw_pixel(
-                    i, int(48 / self.scale) - 1 + y, 0x1, combine=False
+                    int(48 / self.scale) - 1 + x, int(48 / self.scale) - 1 + y, 0x9
                 )
-
-            for i in range(y + 1, int(48 / self.scale) - 1 + y):
-                self.screen.draw_pixel(x, i, 0x0)
-                self.screen.draw_pixel(int(48 / self.scale) - 1 + x, i, 0x0)
-                self.screen.draw_pixel(x, i, 0x2)
-                self.screen.draw_pixel(int(48 / self.scale) - 1 + x, i, 0x8)
-
-            # TL Corner
-            self.screen.draw_pixel(x, y, 0x6)
-
-            # TR Corner
-            self.screen.draw_pixel(int(48 / self.scale) - 1 + x, y, 0xC)
-
-            # BL Corner
-            self.screen.draw_pixel(x, int(48 / self.scale) - 1 + y, 0x3)
-
-            # BR Corner
-            self.screen.draw_pixel(
-                int(48 / self.scale) - 1 + x, int(48 / self.scale) - 1 + y, 0x9
-            )
+            else:
+                self.erase_cell(int(x / 6), int(y / 6), self.scale)
 
         self.screen.push()
 
