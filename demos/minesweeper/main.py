@@ -1,4 +1,5 @@
 import queue
+import datetime
 
 from demos.utils import get_all_from_queue
 
@@ -20,8 +21,8 @@ class Minesweeper:
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.screen = screen
-        # init demo/game specific variables here
 
+        # init demo/game specific variables here
         self.cursor = [0, 0]
         self.minefield = []
         self.scale = 8
@@ -29,6 +30,8 @@ class Minesweeper:
             [False for __ in range(self.scale)] for _ in range(self.scale)
         ]
         self.flags = [[False for __ in range(self.scale)] for _ in range(self.scale)]
+        self.start_time = None
+        self.stop_time = None
 
     def run(self):
         # Waits for user ready
@@ -73,6 +76,8 @@ class Minesweeper:
         self.screen.push()
         self.init_screen()
         self.minefield = self.gen_minefield(self.scale)
+
+        self.start_time = datetime.datetime.now()
 
         # Create generator here
         while True:
@@ -216,8 +221,10 @@ class Minesweeper:
         self.discovered[x][y] = True
 
         # Game Over
+        print(val)
         if str(val) == "x":
-            pass
+            self.game_over()
+            return
 
         # Found and indicator
         if str(val) != "0":
@@ -493,5 +500,70 @@ class Minesweeper:
             self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x0)
         self.screen.push()
 
-    def game_over(self):
-        pass
+    def game_over(self, win=False):
+        if win:
+            self.stop_time = datetime.datetime.now()
+
+            diff = self.stop_time - self.start_time
+
+            with open("demos/minesweeper/high_score.txt", "r") as scores:
+                hscore = scores.read()
+                # Split the time string into components
+                hours, minutes, seconds = hscore.split(":")
+
+                # Convert the components to integers
+                hours = int(hours)
+                minutes = int(minutes)
+                seconds = int(seconds)
+
+                # Create the timedelta object
+                hscore = datetime.timedelta(
+                    hours=hours, minutes=minutes, seconds=seconds
+                )
+            if diff < hscore:
+                with open("demos/minesweeper/high_score.txt", "w") as scores:
+                    scores.write(str(diff).split(".")[0])
+                hscore = diff
+
+            self.screen.clear()
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 8,
+                "GAME OVER",
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 6,
+                "---------",
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 4,
+                "SCORE " + str(diff).split(".")[0],
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 2,
+                "HISCORE " + str(hscore).split(".")[0],
+            )
+            self.screen.push()
+        else:
+            # Boom
+            for _ in range(0, 10):
+                self.erase_cell(self.cursor[0], self.cursor[1], self.scale)
+                for __ in range(0, int(1e7)):
+                    pass
+                self.draw_cell(self.cursor[0] * 6, self.cursor[1] * 6, self.scale)
+                for __ in range(0, int(1e7)):
+                    pass
+                self.screen.draw_text(
+                    self.cursor[0] * 6 + 2, self.cursor[1] * 6 + 2, "x", push=True
+                )
+
+            self.screen.clear()
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 8,
+                "GAME OVER",
+                push=True,
+            )
