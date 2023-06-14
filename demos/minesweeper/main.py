@@ -36,6 +36,7 @@ class Minesweeper:
         self.mines = []
         self.placed_flags = []
         self.discovered_tiles = 0
+        self.is_game_over = False
 
     def run(self):
         # Waits for user ready
@@ -86,51 +87,52 @@ class Minesweeper:
         # Create generator here
         while True:
             if not self.input_queue.empty():
-                # Check to see if there are any keypresses to read
-                for keypress in get_all_from_queue(self.input_queue):
-                    # If there are directional buttons pressed
-                    if keypress == "LEFT_P":
-                        repeat_left = True
-                    if keypress == "LEFT_R":
-                        self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
-                        self.cursor[0] -= 1
-                        if self.cursor[0] < 0:
-                            self.cursor[0] = 0
-                        self.draw_cursor(self.cursor[0], self.cursor[1])
-                        repeat_left = False
-                    if keypress == "RIGHT_P":
-                        repeat_right = True
-                    if keypress == "RIGHT_R":
-                        self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
-                        self.cursor[0] += 1
-                        if self.cursor[0] > self.scale - 1:
-                            self.cursor[0] = self.scale - 1
-                        self.draw_cursor(self.cursor[0], self.cursor[1])
-                    if keypress == "UP_P":
-                        repeat_left = True
-                    if keypress == "UP_R":
-                        self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
-                        self.cursor[1] -= 1
-                        if self.cursor[1] < 0:
-                            self.cursor[1] = 0
-                        self.draw_cursor(self.cursor[0], self.cursor[1])
-                    if keypress == "DOWN_P":
-                        repeat_right = True
-                    if keypress == "DOWN_R":
-                        self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
-                        self.cursor[1] += 1
-                        if self.cursor[1] > self.scale - 1:
-                            self.cursor[1] = self.scale - 1
-                        self.draw_cursor(self.cursor[0], self.cursor[1])
-                    if keypress == "PRI_P":
-                        pass
-                    if keypress == "PRI_R":
-                        self.draw_num(self.cursor[0], self.cursor[1])
-                        self.check_win()
-                    if keypress == "SEC_P":
-                        repeat_left = True
-                    if keypress == "SEC_R":
-                        self.toggle_flag(self.cursor[0], self.cursor[1])
+                if not self.is_game_over:
+                    # Check to see if there are any keypresses to read
+                    for keypress in get_all_from_queue(self.input_queue):
+                        # If there are directional buttons pressed
+                        if keypress == "LEFT_P":
+                            repeat_left = True
+                        if keypress == "LEFT_R":
+                            self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
+                            self.cursor[0] -= 1
+                            if self.cursor[0] < 0:
+                                self.cursor[0] = 0
+                            self.draw_cursor(self.cursor[0], self.cursor[1])
+                            repeat_left = False
+                        if keypress == "RIGHT_P":
+                            repeat_right = True
+                        if keypress == "RIGHT_R":
+                            self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
+                            self.cursor[0] += 1
+                            if self.cursor[0] > self.scale - 1:
+                                self.cursor[0] = self.scale - 1
+                            self.draw_cursor(self.cursor[0], self.cursor[1])
+                        if keypress == "UP_P":
+                            repeat_left = True
+                        if keypress == "UP_R":
+                            self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
+                            self.cursor[1] -= 1
+                            if self.cursor[1] < 0:
+                                self.cursor[1] = 0
+                            self.draw_cursor(self.cursor[0], self.cursor[1])
+                        if keypress == "DOWN_P":
+                            repeat_right = True
+                        if keypress == "DOWN_R":
+                            self.draw_cursor(self.cursor[0], self.cursor[1], erase=True)
+                            self.cursor[1] += 1
+                            if self.cursor[1] > self.scale - 1:
+                                self.cursor[1] = self.scale - 1
+                            self.draw_cursor(self.cursor[0], self.cursor[1])
+                        if keypress == "PRI_P":
+                            pass
+                        if keypress == "PRI_R":
+                            self.draw_num(self.cursor[0], self.cursor[1])
+                            self.check_win()
+                        if keypress == "SEC_P":
+                            repeat_left = True
+                        if keypress == "SEC_R":
+                            self.toggle_flag(self.cursor[0], self.cursor[1])
 
             yield
 
@@ -500,6 +502,7 @@ class Minesweeper:
             self.game_over(win=True)
 
     def game_over(self, win=False):
+        self.is_game_over = True
         if win:
             self.stop_time = datetime.datetime.now()
 
