@@ -1,5 +1,6 @@
 import queue
 import datetime
+from collections import Counter
 
 from demos.utils import get_all_from_queue
 
@@ -32,6 +33,9 @@ class Minesweeper:
         self.flags = [[False for __ in range(self.scale)] for _ in range(self.scale)]
         self.start_time = None
         self.stop_time = None
+        self.mines = []
+        self.placed_flags = []
+        self.discovered_tiles = 0
 
     def run(self):
         # Waits for user ready
@@ -122,44 +126,12 @@ class Minesweeper:
                         pass
                     if keypress == "PRI_R":
                         self.draw_num(self.cursor[0], self.cursor[1])
-                        pass
+                        self.check_win()
                     if keypress == "SEC_P":
                         repeat_left = True
                     if keypress == "SEC_R":
                         self.toggle_flag(self.cursor[0], self.cursor[1])
 
-                    # Pause and unpause routine
-                    # if keypress == "START_P":
-                    #     self.screen.draw_text(
-                    #         (self.screen.x_width // 2) - 3,
-                    #         (self.screen.y_height // 2) - 8,
-                    #         "PAUSED",
-                    #         push=True,
-                    #     )
-                    #     self.input_queue.queue.clear()
-                    #     unpause = False
-
-                    #     # Do nothing until start is pressed again
-                    #     while not unpause:
-                    #         if not self.input_queue.empty():
-                    #             for keypress in get_all_from_queue(self.input_queue):
-                    #                 if keypress == "START_P":
-                    #                     self.screen.draw_text(
-                    #                         (self.screen.x_width // 2) - 3,
-                    #                         (self.screen.y_height // 2) - 8,
-                    #                         "      ",
-                    #                         push=True,
-                    #                     )
-                    #                     unpause = True
-                    #                     break
-                    #         yield
-
-            # self.screen.draw_text(
-            #     self.screen.x_width // 2 - 5,
-            #     self.screen.y_height // 2 - 4,
-            #     "HELLO THERE",
-            #     push=True,
-            # )
             yield
 
     def stop(self):
@@ -218,17 +190,19 @@ class Minesweeper:
         val = self.minefield[x][y]
         if self.discovered[x][y]:
             return
-        self.discovered[x][y] = True
+        if self.flags[x][y]:
+            return
+        if not self.discovered[x][y]:
+            self.discovered[x][y] = True
+            self.discovered_tiles += 1
 
         # Game Over
-        print(val)
         if str(val) == "x":
             self.game_over()
             return
 
-        # Found and indicator
+        # Found an indicator
         if str(val) != "0":
-            # print(str(val))
             self.screen.draw_text(x * 6 + 2, y * 6 + 2, str(val), push=True)
 
         # No indicators found
@@ -248,12 +222,15 @@ class Minesweeper:
                     if str(self.minefield[x + i][y + j]) == "0":
                         self.draw_num(x + i, y + j)
                     else:
-                        self.screen.draw_text(
-                            (x + i) * 6 + 2,
-                            (y + j) * 6 + 2,
-                            str(self.minefield[x + i][y + j]),
-                            push=True,
-                        )
+                        if not self.discovered[x + i][y + j]:
+                            self.discovered[x + i][y + j] = True
+                            self.discovered_tiles += 1
+                            self.screen.draw_text(
+                                (x + i) * 6 + 2,
+                                (y + j) * 6 + 2,
+                                str(self.minefield[x + i][y + j]),
+                                push=True,
+                            )
             self.draw_cursor(self.cursor[0], self.cursor[1])
 
     def init_screen(self):
@@ -271,6 +248,7 @@ class Minesweeper:
                 coordinates = (randint(0, scale - 1), randint(0, scale - 1))
 
             field[coordinates[0]][coordinates[1]] = "x"
+            self.mines.append(coordinates)
 
         for j in range(scale):
             for i in range(scale):
@@ -303,7 +281,7 @@ class Minesweeper:
                         if field[i + 1][j - 1] == "x":
                             field[i][j] += 1
 
-                        if field[i - 1][j] == "x":
+                        if field[i][j - 1] == "x":
                             field[i][j] += 1
 
                     elif (i == (scale - 1)) and (j == (scale - 1)):
@@ -392,11 +370,11 @@ class Minesweeper:
                         if field[i + 1][j + 1] == "x":
                             field[i][j] += 1
 
-        print("\n")
-        for j in range(scale):
-            for i in range(scale):
-                print(str(field[i][j]) + " ", end="")
-            print("\n")
+        # print("\n")
+        # for j in range(scale):
+        #     for i in range(scale):
+        #         print(str(field[i][j]) + " ", end="")
+        #     print("\n")
 
         return field
 
@@ -490,15 +468,36 @@ class Minesweeper:
     def toggle_flag(self, x, y):
         self.flags[x][y] = not self.flags[x][y]
 
-        if self.flags[x][y]:
-            self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x7)
-            self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0xD)
-            self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x2)
-        else:
-            self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x0)
-            self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0x0)
-            self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x0)
-        self.screen.push()
+        if not self.discovered[x][y]:
+            if self.flags[x][y]:
+                # print("PLACED")
+                self.placed_flags.append((x, y))
+                self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x7)
+                self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0xD)
+                self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x2)
+                self.check_win()
+            else:
+                # print("REMOVED")
+                self.placed_flags.remove((x, y))
+                self.screen.draw_pixel(x * 6 + 2, y * 6 + 2, 0x0)
+                self.screen.draw_pixel(x * 6 + 3, y * 6 + 2, 0x0)
+                self.screen.draw_pixel(x * 6 + 2, y * 6 + 3, 0x0)
+            self.screen.push()
+
+    def check_win(self):
+        # Make sure there are 10 flags placed on the correct spots and that all the tiles have been discovered
+        # print(f"Num of placed:\t{len(self.placed_flags)}")
+        # print(
+        #     f"Placed:\t\t{self.placed_flags}\tMatched:\t{Counter(self.placed_flags) == Counter(self.mines)}"
+        # )
+        # print(f"Existing:\t{self.mines}")
+        # print(f"Discovered:\t{self.discovered_tiles}")
+        if (
+            len(self.placed_flags) == 10
+            and Counter(self.placed_flags) == Counter(self.mines)
+            and self.discovered_tiles == ((self.scale**2) - 10)
+        ):
+            self.game_over(win=True)
 
     def game_over(self, win=False):
         if win:
