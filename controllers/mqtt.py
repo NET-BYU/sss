@@ -8,6 +8,7 @@ from yaml import safe_load
 
 def start_processing_input(system_queue, demo_input_queue):
     def on_message(client, userdata, message):
+        logger.debug("on_message triggered")
         try:
             data = json.loads(message.payload)
             msg_type = data["type"]
@@ -54,15 +55,18 @@ def start_processing_input(system_queue, demo_input_queue):
     client.on_disconnect = on_disconnect
 
     def process():
+        logger.debug("In process func")
         while True:
             try:
+                logger.debug("Connecting to broker")
                 client.connect(config["host"], config["port"])
+                logger.debug("...done")
 
                 while True:
                     client.loop(timeout=0.01)
                     yield
 
-            except (ConnectionRefusedError, socket.gaierror) as e:
+            except (ConnectionRefusedError, socket.gaierror, Exception) as e:
                 logger.warning("Unable to connect to broker... trying again later.")
 
                 for _ in range(100):
