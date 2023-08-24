@@ -116,7 +116,7 @@ self.output_queue.put("SCORE " + str(self.score))
 
 ### screen
 
-This object controls what will be drawn on the screen. Any functions as described in this [API doc](https://www.notion.so/Game-Display-Graphics-functions-e2c7ef55e90645719b6f5440b07d9b79) will work on this screen object. The demo screen is connected to the SSS system screen as follows:
+This object controls what will be drawn on the screen. Any functions as described in this [API doc](Game%20Display%20(Graphics%20functions).md) will work on this screen object. The demo screen is connected to the SSS system screen as follows:
 
 ```python
 self.screen = screen
