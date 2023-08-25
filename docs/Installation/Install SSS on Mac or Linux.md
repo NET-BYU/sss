@@ -30,7 +30,7 @@ Once you have all the dependencies for your system installed, you can now move o
 First we'll get the code from GitHub by cloning the repository:
 
 ```bash
-git clone git@github.com:NET-BYU/sss.git
+git clone https://github.com/NET-BYU/sss.git
 ```
 
 Now we'll move into the folder and make sure our virtual environment is set up:
