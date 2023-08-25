@@ -13,7 +13,7 @@ class Run:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 20
+        self.frame_rate = 10
         self.demo_time = None  # None for a game
 
         self.input_queue = input_queue
@@ -27,10 +27,11 @@ class Run:
         x = 25
         head_y = 24
         body_y = 25
-        is_left = False
-        is_right = False
-        is_up = False
-        is_jump = False
+        self.is_left = False
+        self.is_right = False
+        self.is_up = False
+        self.is_jump = False
+        self.is_down = False
 
         # bools for button logic
         # cannonball[0] is the height of the cannonball cannonball[1] x coordinate
@@ -40,7 +41,7 @@ class Run:
         # This block of code is design set up
         # Draw the character
         self.screen.draw_pixel(self.dude[2], self.dude[1], 0xF, push=True)
-        self.screen.draw_pixel(self.dude[2], self.dude[0], 0xE, push=True)
+        self.screen.draw_pixel(self.dude[2], self.dude[0], 0xF, push=True)
 
         # Draw the ground
         for x_line in range(26, 30):
@@ -56,22 +57,24 @@ class Run:
             # This block moves the character
             for keypress in get_all_from_queue(self.input_queue):
                 if keypress == "LEFT_P":
-                    is_left = True
+                    self.is_left = True
+                elif keypress == "LEFT_R":
+                    self.is_left = False
                 elif keypress == "RIGHT_P":
-                    is_right = True
+                    self.is_right = True
+                elif keypress == "RIGHT_R":
+                    self.is_right = False
                 elif keypress == "UP_P":
-                    is_jump = True
-                    is_up = True
-                    # if dude[0] >= head_y - 2:
-                    #
-                    #     else:
-                    #         self.screen.draw_pixel(x, dude[0], 0x0, push=True)
-                    #         self.screen.draw_pixel(x, dude[1], 0x0, push=True)
-                    #         dude[0] = 24
-                    #         dude[1] = 25
-                    #         self.screen.draw_pixel(x, dude[0], 0xF, push=True)
-                    #         self.screen.draw_pixel(x, dude[1], 0xE, push=True)
+                    self.is_jump = True
+                    self.is_up = True
+                    self.is_down = False
+                elif keypress == "UP_R":
+                    self.is_jump = False
+                    self.is_up = False
 
+            self.move(
+                self.is_left, self.is_right, self.is_jump, self.is_up, self.is_down
+            )
             # # Set up for cannonballs
             # def gen_random_speed(self):
             #     speed = random.randrange(0, 75, 10)
@@ -80,6 +83,8 @@ class Run:
             # def gen_rand_time(self):
             #     time = random.randint(2, 10)
             #     return time
+
+            # set up movement in the loop
 
             # set up the cannonballs
             if self.cannonball[1] == 0:
@@ -96,19 +101,31 @@ class Run:
 
             yield
 
-    def move(self, is_left, is_right, is_jump, is_up):
+    def move(self, is_left, is_right, is_jump, is_up, is_down):
         if is_left:
-            self.screen.draw_pixel(self.dude[2], self.dude[1], 0x0, push=True)
-            self.screen.draw_pixel(self.dude[2], self.dude[0], 0x0, push=True)
-            self.screen.draw_pixel(self.dude[2] - 1, self.dude[1], 0xF, push=True)
-            self.screen.draw_pixel(self.dude[2] - 1, self.dude[0], 0xE, push=True)
-            self.dude[2] -= 1
+            if self.dude[2] <= 40 and self.dude[2] >= 2:
+                self.screen.draw_pixel(self.dude[2], self.dude[1], 0x0, push=True)
+                self.screen.draw_pixel(self.dude[2], self.dude[0], 0x0, push=True)
+                self.screen.draw_pixel(self.dude[2] - 1, self.dude[1], 0xF, push=True)
+                self.screen.draw_pixel(self.dude[2] - 1, self.dude[0], 0xF, push=True)
+                self.dude[2] -= 1
+                is_left = False
+            else:
+                self.screen.draw_pixel(self.dude[2], self.dude[1], 0xF, push=True)
+                self.screen.draw_pixel(self.dude[2], self.dude[0], 0xF, push=True)
+                is_left = False
         if is_right:
-            self.screen.draw_pixel(self.dude[2], self.dude[1], 0x0, push=True)
-            self.screen.draw_pixel(self.dude[2], self.dude[0], 0x0, push=True)
-            self.screen.draw_pixel(self.dude[2] + 1, self.dude[1], 0xF, push=True)
-            self.screen.draw_pixel(self.dude[2] + 1, self.dude[0], 0xE, push=True)
-            self.dude[2] += 1
+            if self.dude[2] <= 40 and self.dude[2] >= 2:
+                self.screen.draw_pixel(self.dude[2], self.dude[1], 0x0, push=True)
+                self.screen.draw_pixel(self.dude[2], self.dude[0], 0x0, push=True)
+                self.screen.draw_pixel(self.dude[2] + 1, self.dude[1], 0xF, push=True)
+                self.screen.draw_pixel(self.dude[2] + 1, self.dude[0], 0xF, push=True)
+                self.dude[2] += 1
+                is_right = False
+            else:
+                self.screen.draw_pixel(self.dude[2], self.dude[1], 0xF, push=True)
+                self.screen.draw_pixel(self.dude[2], self.dude[0], 0xF, push=True)
+                is_right = False
         if is_jump:
             if self.dude[1] <= 21:
                 is_up = False
@@ -119,7 +136,8 @@ class Run:
                 self.screen.draw_pixel(self.dude[2], self.dude[0] + 1, 0x0, push=True)
                 self.screen.draw_pixel(self.dude[2], self.dude[1] + 1, 0x0, push=True)
                 self.screen.draw_pixel(self.dude[2], self.dude[0], 0xF, push=True)
-                self.screen.draw_pixel(self.dude[2], self.dude[1], 0xE, push=True)
+                self.screen.draw_pixel(self.dude[2], self.dude[1], 0xF, push=True)
+                print(self.dude[1])
             elif is_up == False and is_down == False:
                 if self.dude[0] >= 25:
                     is_down = True
@@ -133,7 +151,7 @@ class Run:
                         self.dude[2], self.dude[1] - 1, 0x0, push=True
                     )
                     self.screen.draw_pixel(self.dude[2], self.dude[0], 0xF, push=True)
-                    self.screen.draw_pixel(self.dude[2], self.dude[1], 0xE, push=True)
+                    self.screen.draw_pixel(self.dude[2], self.dude[1], 0xF, push=True)
                 if is_down == True:
                     is_jump = False
 
