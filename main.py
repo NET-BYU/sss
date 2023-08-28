@@ -3,7 +3,7 @@ import sys
 import click
 from loguru import logger
 
-from runners import demo, kiosk, test, utils
+from runners import demo, kiosk, test, utils, debug_panel
 
 logger_level = ["ERROR", "WARNING", "SUCCESS", "INFO", "DEBUG", "TRACE"]
 
@@ -76,6 +76,31 @@ def run_kiosk(simulate, testing):
 def run_demo(name, simulate, testing):
     """CLI command to run demo."""
     demo.run(name, simulate, testing=testing)
+
+@cli.command("debug")
+@click.argument(
+    "name",
+    type=click.Choice([name for name, _ in utils.get_demos()], case_sensitive=False),
+)
+@click.option(
+    "-s",
+    "--simulate",
+    is_flag=True,
+    default=False,
+    help="Run in simulated environment.",
+)
+@click.option(
+    "testing",
+    "-t",
+    "--test",
+    is_flag=True,
+    default=False,
+    help="Run in test mode. This provides feedback for if your demo is "
+    "running fast enough relative to the set frame rate.",
+)
+def run_debug(name, simulate, testing):
+    """CLI command to run demo."""
+    debug_panel.run(name, simulate, testing=testing)
 
 
 @cli.command("test")
