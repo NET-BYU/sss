@@ -14,6 +14,7 @@ def start_processing_input(system_queue, demo_input_queue):
         system_queue (Queue): The queue to put system input events in.
         demo_input_queue (Queue): The queue to put demo input events in.
     """
+
     def on_message(client, userdata, message):
         try:
             data = json.loads(message.payload)

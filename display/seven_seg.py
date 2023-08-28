@@ -50,8 +50,8 @@ class SevenSegment:
             cs_num (int): which control select line is being used
             brightness (int): starting brightness of the leds
             clear (bool): clear the screen on initialization
-            segment_orientation_array (int[][]): a 2d array of where the MAX7219 segments are located, one indexed 
-            
+            segment_orientation_array (int[][]): a 2d array of where the MAX7219 segments are located, one indexed
+
                 Example:
                 ```
                 [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
@@ -90,7 +90,7 @@ class SevenSegment:
     def command(self, register_num, value):
         """
         Sets control registers for each segment in the display
-        
+
         Args:
             register_num (int): which register to set
             value (int): value to set the register to
@@ -112,7 +112,7 @@ class SevenSegment:
     def close(self, clear=True, shutdown=True):
         """
         Close the spi connection
-        
+
         Args:
             clear (bool): clear the display before closing
             shutdown (bool): shutdown the display before closing
@@ -126,7 +126,7 @@ class SevenSegment:
     def clear(self, flush=True):
         """
         Clears the buffer, and if specified, flushes the display
-        
+
         Args:
             flush (bool): flush the display after clearing
         """
@@ -137,7 +137,7 @@ class SevenSegment:
     def brightness(self, value):
         """
         Sets the brightness for all of the segments ranging from 0 - 15
-        
+
         Args:
             value (int): brightness value to set
         """
@@ -174,7 +174,7 @@ class SevenSegment:
     def raw(self, position, value, flush=False):
         """
         Given raw 0-255 value draw symbol at given postion
-        
+
         Args:
             position (int): position to draw the symbol
             value (int): value to draw at the position
@@ -199,7 +199,7 @@ class SevenSegment:
     def raw2(self, x, y, value, flush=False):
         """
         Given raw 0-255 value draw symbol at given coordinate
-        
+
         Args:
             x (int): x coordinate to draw the symbol
         """
@@ -209,7 +209,7 @@ class SevenSegment:
     def letter(self, position, char, dot=False, flush=False):
         """
         Outputs ascii letter as close as it can, working letters/symbols found in symbols.py
-        
+
         Args:
             position (int): position to draw the symbol
             char (str): character to draw at the position
@@ -232,7 +232,7 @@ class SevenSegment:
     def letter2(self, x, y, char, dot=False, flush=False):
         """
         Output letter on the display at the coordinates provided if possible
-        
+
         Args:
             x (int): x coordinate to draw the symbol
             y (int): y coordinate to draw the symbol
@@ -249,7 +249,7 @@ class SevenSegment:
     def text(self, txt, start_position=0, flush=False):
         """
         Output text on the display at the start position if possible
-        
+
         Args:
             txt (str): text to draw on the display
             start_position (int): position to start drawing the text
@@ -272,7 +272,7 @@ class SevenSegment:
     def text2(self, x, y, txt, horizontal=True, flush=False):
         """
         Output text on the display at the given x, y - option to display horizontal or vertical text
-        
+
         Args:
             x (int): x coordinate to draw the symbol
             y (int): y coordinate to draw the symbol
