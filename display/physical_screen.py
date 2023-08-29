@@ -101,7 +101,12 @@ class PhysicalScreen_Debug:
                     cs_num=self.cs_num_lst[i * self.num_segs_across + j],
                     brightness=self.brightness,
                     segment_orientation_array=[
-                        [1,],
+                        [1, 2],
+                        [3, 4],
+                        [5, 6],
+                        [7, 8],
+                        [9, 10],
+                        [11, 12], 
                     ],
                 )
                 for j in range(self.num_segs_across)

@@ -19,12 +19,16 @@ class Sweep:
         # Create generator here
         while True:
             for column in range(0, self.screen.x_width):
+                print(column)
                 self.draw_vline_loc(column, 0xF)
                 yield
 
             for column in range(self.screen.x_width - 1, -1, -1):
+                print(column)
                 self.draw_vline_loc(column, 0x0)
                 yield
+
+            print("\n")
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
