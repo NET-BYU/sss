@@ -82,13 +82,15 @@ for target in targets:
         if not ret:
             break
 
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert to grayscale
+        # fmt: off
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)    # convert to grayscale
         graySmall = np.array(cv2.resize(grayFrame, [48, 48]))  # resize to 48x48
-        screen_max = max(graySmall.max(), 12)  # get the max value in the frame
-        screen_min = graySmall.min()  # get the min value in the frame
-        vector_func = np.vectorize(normalize)  # vectorize the normalize function
-        graySmall = vector_func(graySmall)  # normalize the frame
-        video = np.append(video, graySmall)  # append the frame to the video
+        screen_max = max(graySmall.max(), 12)                  # get the max value in the frame
+        screen_min = graySmall.min()                           # get the min value in the frame
+        vector_func = np.vectorize(normalize)                  # vectorize the normalize function
+        graySmall = vector_func(graySmall)                     # normalize the frame
+        video = np.append(video, graySmall)                    # append the frame to the video
+        # fmt: on
 
     # Reshape the video and save it
     video = video.reshape((total_frames, 48, 48))
