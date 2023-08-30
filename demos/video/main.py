@@ -26,7 +26,7 @@ class Video:
         self.screen = screen
 
         # init demo/game specific variables here
-        self.path = "./demos/video/resorces/pre-processed/"
+        self.path = "./demos/video/resources/pre-processed/"
         self.targets = os.listdir(self.path)
         self.address = random.randint(0, len(self.targets) - 1)
         self.target = self.targets[self.address]
@@ -35,6 +35,7 @@ class Video:
         self.next_frame = False
         self.previous_frame = np.full((2353), 0)
 
+    # Get the next video in the list
     def get_next_video(self):
         if self.address < (len(self.targets) - 1):
             self.address += 1
@@ -43,6 +44,7 @@ class Video:
             self.address = 0
             self.target = self.targets[self.address]
 
+    # Parse the user input
     def input_parsing(self, input_queue):
         for input in input_queue:  # allows the user to pause the video
             if input == "LEFT_P":
@@ -64,39 +66,48 @@ class Video:
             self.screen.push()
             yield
 
-            with open(self.path + self.target, "r") as input_file:
-                y = 0
-                for index, input_line in enumerate(input_file):
-                    self.next_frame = False
-                    if not self.input_queue.empty():
-                        while True:
-                            action = self.input_parsing(
-                                get_all_from_queue(self.input_queue)
-                            )
+            # Load the video
+            loaded_video = np.load(self.path + self.target)
+            loaded_video = loaded_video["arr_0"]
 
-                            # FIXME: Remove this for input refactor
-                            self.input_queue.queue.clear()
+            # Iterate through the frames
+            for frame in loaded_video:
+                self.next_frame = False
 
-                            if (not self.pause) or self.next_frame or self.new_video:
-                                break
-                            yield
-                    if self.new_video:
-                        break
+                # Parse through the user input
+                if not self.input_queue.empty():
+                    while True:
+                        action = self.input_parsing(
+                            get_all_from_queue(self.input_queue)
+                        )
 
-                    input_data = input_line.strip("\n").split(",")
-                    y = 0
-                    for x_index, pixel in enumerate(input_data):
-                        if pixel == "":
-                            y += 1
-                            continue
-                        x = x_index % (self.screen.x_width + 1)
+                        self.input_queue.queue.clear()
 
-                        if not self.previous_frame[int(x_index)] == int(pixel):
-                            self.screen.draw_pixel(x, y, int(pixel))
-                            self.previous_frame[x_index] = pixel
-                    self.screen.push()
-                    yield
-                self.get_next_video()
+                        # If the user wants to go to the next video, break out of the loop
+                        if (not self.pause) or self.next_frame or self.new_video:
+                            break
+                        yield
+
+                # Skip to the next video
+                if self.new_video:
+                    break
+
+                # Iterate through rows and columns of the frame
+                r = 0
+                for row in frame:
+                    c = 0
+                    for pixel in row:
+                        # Draw the pixel
+                        self.screen.draw_pixel(c, r, pixel)
+                        c += 1
+                    r += 1
+
+                # Push the frame to the screen
+                self.screen.push()
+                yield
+
+            # Go to next video
+            self.get_next_video()
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
