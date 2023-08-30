@@ -1,12 +1,6 @@
 import threading
-
 import cv2
 import urllib3
-from loguru import logger
-from yaml import safe_load
-import time
-
-from demos.utils import get_all_from_queue
 
 PIXEL_ON = 0xF
 PIXEL_OFF = 0x0
@@ -29,10 +23,11 @@ class Camera_Source:
         return self.stream_url
 
 
-class Camera:
-    """This is a class to take the live feed from a web camera and display it on the sss."""
-
-    demo_time = 120
+class CameraFast:
+    """This is a boilerplate class for creating new demos/games for the SSS platform. It needs to include definitions for the following functions: init, run, stop.
+    The init function needs to at least have the things shown below. Frame rate is in frames per second and demo time is in seconds. Demo time should be None if it is a game.
+    The run function yields a generator. This generator will be called a specified frame rate, this controls what is being pushed to the screen.
+    The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game"""
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
@@ -40,6 +35,7 @@ class Camera:
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
+        self.demo_time = 300  # None for a game
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -64,70 +60,44 @@ class Camera:
             11: 0xF,
             12: 0xF,
         }
-
-        # Used to determine the brightness range for each pixel
         self.screen_min = 0
         self.screen_max = 0
 
-        # Placeholder for the screen, filled with zeros
         self.arr = []
         for i in range(NUM_COLS):
             self.arr.append([])
             for j in range(NUM_COLS):
                 self.arr[i].append(0)
 
-        # Variables for the url connection for web stream
         self.connection = False
         self.http = urllib3.PoolManager()
-
-        # Return structs for the url and video connections
         self.url_rets = {"url_ret": 0, "ret": False}
         self.cap_rets = {"cap_ret": 0, "ret": False, "frame": 0}
 
-        # Array for camera source class of different camera options
-        self.cameras = []
-        self.current_camera_index = 0
+        octopi = Camera_Source(
+            "http://octopi.local", "http://octopi.local/webcam/?action=stream"
+        )
+        esp32_1 = Camera_Source(
+            "http://192.168.0.153", "http://192.168.0.153:81/stream"
+        )
 
-        # Fill the array using the camera source info in the .yaml
-        try:
-            with open("demos/camera/camera.yaml") as f:
-                camera_ips = safe_load(f)
+        self.cameras = [octopi, esp32_1]
 
-            if type(camera_ips) == dict:
-                for cam in camera_ips:
-                    cam_src = Camera_Source(
-                        camera_ips[cam]["host"], camera_ips[cam]["stream"]
-                    )
-                    self.cameras.append(cam_src)
-                self.stream_url = self.cameras[self.current_camera_index].get_stream()
+        self.current_camera_index = 1
+        self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
-                self.can_run = True
-            else:
-                logger.error("No cameras available on the YAML file!")
-                self.can_run = False
-        except FileNotFoundError:
-            logger.error("No camera.yaml file found!")
-            self.can_run = False
+        self.cap = cv2.VideoCapture(self.stream_url)
+        self.update_camera = False
+        self.t = threading.Thread(target=self.larger_capture_thread, daemon=True)
+        self.t.start()
 
-        self.thread = threading.Thread(target=self.update, args=())
-        self.thread.daemon = True
-        # self.thread.start()
+        # self.cap = cv2.VideoCapture("http://192.168.0.180:81/stream")
 
     def check_url(self):
-        # If we don't have any cameras in our yaml, just print so
-        if len(self.cameras) == 0:
-            self.url_rets["url_ret"] = 1
-            self.url_rets["ret"] = False
-            return
-
-        # Otherwise, find the corresponding camera
         host_url = self.cameras[self.current_camera_index].get_host()
-        if not self.input_queue.empty():
-            self.check_keys()
+        self.check_keys()
 
         try:
-            # Use a quick search, no retries and a timeout of 1 second so we aren't
-            #  wasting time. We will come back to this if we need to.
             r = self.http.request(
                 "GET",
                 host_url,
@@ -141,78 +111,78 @@ class Camera:
             else:
                 self.url_rets["url_ret"] = 1
                 self.url_rets["ret"] = False
-                logger.error(
-                    "No connection to be made. Http return status: " + str(r.status)
-                )
+                print(r.status)
                 return
         except:
             self.url_rets["url_ret"] = 1
             self.url_rets["ret"] = False
             return
 
-    def update(self):
-        # Read the next frame from the stream in a different thread
-        while True:
-            if self.cap.isOpened():
-                (self.status, self.frame) = self.capture.read()
-            time.sleep(0.01)
-
     def capture(self):
-        self.cap_rets["ret"], self.cap_rets["frame"] = self.cap.read()
+        self.cap_rets["ret"], self.cap_rets["frame"] = self.cap.retrieve()
         self.cap_rets["cap_ret"] = 1
         return
 
+    def larger_capture_thread(self):
+        while True:
+
+            try:
+                # ret = self.cap.grab()
+                self.cap_rets["ret"], self.cap_rets["frame"] = self.cap.read()
+                # self.cap.grab()
+                # cv2.imshow("frame", frame)
+                # print("Grab worked " + str(self.cap_rets["ret"]))
+                # if not ret:
+                # break
+            except:
+                pass
+
+            if self.update_camera:
+                # print("Shouldn't get here!")
+                self.cap.release()
+                self.stream_url = self.cameras[self.current_camera_index].get_stream()
+                self.cap = cv2.VideoCapture(self.stream_url)
+                self.update_camera = False
+
     def check_keys(self):
-        for keypress in get_all_from_queue(self.input_queue):
+        for keypress in self.get_input_buff():
             self.input_queue.get(False)
             num_stream_options = len(self.cameras)
             if keypress == "LEFT_P":
-                logger.debug("Left press!")
+                print("Left press!")
                 self.current_camera_index = (
                     self.current_camera_index - 1 + num_stream_options
                 ) % num_stream_options
             elif keypress == "RIGHT_P":
-                logger.debug("Right press!")
+                print("Right press!")
                 self.current_camera_index = (
                     self.current_camera_index + 1
                 ) % num_stream_options
-            else:
-                continue
             self.connection = False
-            self.stream_url = self.cameras[self.current_camera_index].get_stream()
+            self.update_camera = True
 
     def run(self):
         # Create generator here
+        # cap = cv2.VideoCapture("http://192.168.0.180:81/stream")
+        # cap = cv2.VideoCapture("http://octopi.local/webcam/?action=stream")
 
         self.first = True
 
-        while True:
-            if not self.can_run:
-                if self.first:
-                    logger.debug("Printing on screen")
-                    self.screen.clear()
-                    self.screen.draw_text(
-                        (self.screen.x_width // 2) - 4,
-                        (self.screen.y_height // 2) - 6,
-                        "NO CAMERA",
-                    )
-                    self.screen.push()
+        # self.stream_url = self.cameras[self.current_camera_index].get_stream()
+        # self.cap = cv2.VideoCapture(self.stream_url)
 
-                    self.first = False
-                yield
-                continue
-            if not self.input_queue.empty():
-                self.check_keys()
+        while True:
+            self.check_keys()
 
             # We may need to check the camera
             if not self.connection:
                 #############################################################
                 # Start with creating the thread and running it
                 #   In this thread, we essentailly have a pinger that
-                #    looks for the url. This lasts a second, so we have
+                #    looks for the url. This last a second, so we have
                 #    it in a thread so that we can exit the demo during
                 #    the search.
-                url_thread = threading.Thread(target=self.check_url, daemon=True)
+                url_thread = threading.Thread(target=self.check_url)
                 url_thread.start()
                 while not self.url_rets["url_ret"]:
                     yield
@@ -222,24 +192,18 @@ class Camera:
                 #  not the webpage exists. Proceed accordingly
                 #############################################################
 
-                if self.url_rets["ret"]:  # Found the url, erase any "no camera" message
-                    self.screen.draw_text(
-                        (self.screen.x_width // 2) - 4,
-                        (self.screen.y_height // 2) - 6,
-                        "         ",
-                    )
-                    self.screen.push()
-                    logger.info("Found the camera!")
+                if self.url_rets["ret"]:  # Found the url
+                    print("Found the camera!")
                     self.connection = True
                     self.first = True
                 else:  # Did not find the url
-                    logger.error("Web site does not exist")
+                    print("Web site does not exist")
 
                     # This block tells us if we need to print to the sss;
                     #  we only want to do this once, so based on variable
                     #  'first'
                     if self.first:
-                        logger.debug("Printing on screen")
+                        print("Printing on screen")
                         self.screen.clear()
                         self.screen.draw_text(
                             (self.screen.x_width // 2) - 4,
@@ -258,15 +222,30 @@ class Camera:
 
             # Okay, we found the camera, now let's use it
             try:
-                self.cap = cv2.VideoCapture(self.stream_url)
-                ret, frame = self.cap.retrieve()
+                #################################################################
+                # Start with creating the thread and running it
+                #   In this thread, we want to try and capture data from the
+                #    camera and store it into the frame object. It is in a
+                #    thread because, if we lose the camera, we want to avoid
+                #    freezing the whole display.
+                cap_thread = threading.Thread(target=self.capture)
+                cap_thread.start()
+                while not self.cap_rets["cap_ret"]:
+                    yield
+                cap_thread.join()
+                # self.capture()
+                # Thread is exiting, we have most likely received a frame;
+                #  proceed accordingly.
+                #################################################################
+                # self.cap_rets["ret"], self.cap_rets["frame"] = self.cap.retrieve()
 
-                if not ret:
-                    logger.error("Got to ret failure")
+                # self.cap_rets["cap_ret"] = 0
+                if not self.cap_rets["ret"]:
+                    print("Got to ret failure")
                     self.connection = False
                     yield
                     continue
-                grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                grayFrame = cv2.cvtColor(self.cap_rets["frame"], cv2.COLOR_BGR2GRAY)
             except:
                 yield
                 continue
@@ -285,10 +264,10 @@ class Camera:
                         (graySmall[i][j] - self.screen_min) / (self.screen_max / 12)
                     )
                     if pixel > 12:
-                        logger.debug(f"\nself.screen_min = {self.screen_min}")
-                        logger.debug(f"pixel = {pixel}")
-                        logger.debug(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
-                        logger.debug(f"self.screen_max = {self.screen_max}")
+                        print(f"\nself.screen_min = {self.screen_min}")
+                        print(f"pixel = {pixel}")
+                        print(f"graySmall[{i}][{j}] = {graySmall[i][j]}")
+                        print(f"self.screen_max = {self.screen_max}")
                         pixel = 12
 
                     if self.arr[i][j] != self.num_to_pixel[pixel]:
@@ -296,16 +275,20 @@ class Camera:
                         self.arr[i][j] = self.num_to_pixel[pixel]
 
             self.screen.push()
-            self.cap.release()
+            # self.cap.release()
 
             yield
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         try:
+            self.t.join()
+            print("Joined successfully")
             self.cap.release()
-        except:
-            logger.error("Ran into an issue on exit")
+            # cv2.destroyAllWindows()
+        except Exception as e:
+            print("WE HAVE A PROBLEM!!!")
+            print(e)
             pass
         pass
 
