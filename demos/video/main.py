@@ -99,7 +99,7 @@ class Video:
                     for pixel in row:
                         print("Row: ", r, "Column: ", c, "Pixel: ", pixel)
                         # Draw the pixel
-                        self.screen.draw_pixel(c, r, pixel)
+                        self.screen.draw_pixel(c, r, int(pixel))
                         c += 1
                     r += 1
 
