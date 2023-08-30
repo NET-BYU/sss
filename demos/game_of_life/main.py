@@ -4,7 +4,6 @@ import random
 
 
 class GameOfLife:
-
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):

@@ -30,7 +30,6 @@ class SegmentDisplay:
         """
         for x in range(self.screen_width):
             for y in range(self.screen_height):
-
                 state = 0
 
                 if self.x_buffer[x * 2][y * 3]:
@@ -135,7 +134,6 @@ class SegmentDisplay:
             ny = start_y + r
 
             if i > 0:  # vertical lines connecting horizontal lines
-
                 for j in range(abs(ny - pny)):
                     if pny > ny:
                         nny = pny - j - 1

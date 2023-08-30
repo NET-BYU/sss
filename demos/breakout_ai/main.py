@@ -43,7 +43,6 @@ class BreakoutAi:
         self.rows = self.level + 2
 
     def run(self):
-
         screen = self.screen
 
         logger.info("BREAKOUT")
@@ -104,7 +103,6 @@ class BreakoutAi:
 
         while True:
             while not gameover:
-
                 if not self.input_queue.empty():
                     input_ = self.input_queue.get(block=False)
                 else:
@@ -307,7 +305,6 @@ class BreakoutAi:
         pass
 
     def init_screen(self, screen):
-
         self.paddle = [24]
 
         if self.level == 1:
@@ -374,7 +371,6 @@ class BreakoutAi:
         return spin, is_left
 
     def ball_travel(self, is_left, is_down, spin, screen):
-
         horizbound = 0
         vertbound = 0
 

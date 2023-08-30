@@ -30,7 +30,6 @@ class UnderConstruction:
         dot = self.screen.draw_pixel
 
         while True:
-
             line(5, ymax // 2 - 10, 6, ymax // 2 - 10, PIXEL_TOP)
             line(5, ymax // 2 - 12, 6, ymax // 2 - 12, PIXEL_TOP)
             line(5, ymax // 2 - 8, 6, ymax // 2 - 8, PIXEL_BOTTOM)

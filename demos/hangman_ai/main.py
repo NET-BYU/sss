@@ -12,7 +12,6 @@ from demos.hangman_ai.trace import Trace
 # Then it will try and fill in the rest
 # Is there an algorithim for something like that?
 class HangmanAi:
-
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):

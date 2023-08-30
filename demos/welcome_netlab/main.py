@@ -4,6 +4,7 @@ PIXEL_LEFT = 0x2
 PIXEL_TOP = 0x4
 PIXEL_RIGHT = 0x8
 
+
 # This is actually the UNDER_CONSTRUCTION module used as a place holder until the demo in main_progress.py is completed
 class WelcomeNetlab:
     """This demo just displays an underconstruction sign"""
@@ -30,7 +31,6 @@ class WelcomeNetlab:
         dot = self.screen.draw_pixel
 
         while True:
-
             line(5, ymax // 2 - 10, 6, ymax // 2 - 10, PIXEL_TOP)
             line(5, ymax // 2 - 12, 6, ymax // 2 - 12, PIXEL_TOP)
             line(5, ymax // 2 - 8, 6, ymax // 2 - 8, PIXEL_BOTTOM)
