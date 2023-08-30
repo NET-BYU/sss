@@ -55,6 +55,7 @@ else:
 targets = os.listdir(path)
 logger.info(f"Found {len(targets)} videos")
 
+
 # Normalize the values in the video
 def normalize(x):
     return num_to_pixel[int((x - screen_min) / (screen_max / 12))]
