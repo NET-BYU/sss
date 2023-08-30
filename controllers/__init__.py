@@ -56,7 +56,7 @@ def start_inputs(system_queue, demo_input_queue):
         logger.debug("Fetch MQTT")
         if mqtt_runner:
             next(mqtt_runner)
- 
+
         logger.debug("Fetch GamePad")
         if gamepad_runner:
             next(gamepad_runner)
