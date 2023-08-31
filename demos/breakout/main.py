@@ -166,7 +166,7 @@ class Breakout:
                             self.output_queue.put("LIVES " + str(lives))
                         self.init_screen(screen)
 
-                        self.output_queue.put("SOUND " + sss_sounds.PORTAL)
+                        self.output_queue.put("SOUND " + sss_sounds.LEVEL_UP)
 
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_OFF)
 
@@ -201,7 +201,7 @@ class Breakout:
                     if lives == 0:
                         self.gameover = True
 
-                        self.output_queue.put("SOUND " + sss_sounds.END_FAIL_3)
+                        self.output_queue.put("SOUND " + sss_sounds.END_FAIL_7)
                         break
                     self.ball = [screen.x_width // 2, screen.y_height // 2]
 

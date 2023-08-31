@@ -25,10 +25,21 @@ def start_processing_output(system_queue, pygame_mixer_q):
                     logger.debug("pygame_mixer: {}", item)
                     if str(item).startswith("SOUND "):
                         new_sound = str(item)[6:]
-                        if new_sound != current_sound:
-                            current_sound = new_sound
-                            mixer.music.load(new_sound)
-                        mixer.music.play()
+
+                        short_Sound = mixer.Sound(new_sound)
+                        short_Sound.play()
+
+                        # if new_sound != current_sound:
+                        #     current_sound = new_sound
+                        #     mixer.Sound.load(new_sound)
+                        # mixer.Sound.play()
+                    elif str(item).startswith("BACKGROUND SOUND "):
+                        new_sound = str(item)[17:]
+                        mixer.music.load(new_sound)
+                        mixer.music.play(-1)
+                    elif str(item).startswith("STOP SOUND"):
+                        mixer.music.stop()
+                        current_sound = None
             except:
                 logger.warning("Unable to play sound file: {}".format(new_sound))
 

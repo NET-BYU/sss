@@ -1,9 +1,9 @@
 import random
 from enum import Enum
 from os.path import exists
+from sss_sounds import sss_sounds
 
 from demos.utils import get_all_from_queue
-from pygame import mixer
 
 
 class Tetris:
@@ -48,8 +48,6 @@ class Tetris:
                 file.write("AA 0\n")
             file.close()
 
-        mixer.init()
-
     def run(self):
         # Create generator here
 
@@ -63,6 +61,8 @@ class Tetris:
             self.lines = 0
 
             next_shape = random.choice(list(self.Shape))
+
+            self.output_queue.put("BACKGROUND SOUND " + sss_sounds.TETRIS)
 
             while not self.is_game_over():
                 if self.level == 2:
@@ -167,8 +167,8 @@ class Tetris:
                         self.draw_shape(prev_shape_location, erase=True)
                         self.draw_shape(shape_location)
                         prev_shape_location = shape_location.copy()
-                        mixer.music.load("./sss_sounds/beep-17.mp3")
-                        mixer.music.play()
+
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_15)
 
                     is_falling = self.is_falling(shape_location)
 
@@ -205,6 +205,8 @@ class Tetris:
                 self.draw_shape(next_shape_location, erase=True)
                 self.screen.push()
                 yield
+
+            self.output_queue.put("STOP SOUND")
 
             self.draw_game_over_screen()
             self.screen.push()
@@ -751,5 +753,4 @@ class Tetris:
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
-        mixer.quit()
         pass
