@@ -59,13 +59,11 @@ class Video:
 
     # Draws frame to screen
     def draw_frame(self, frame):
-
         # Get frame of which pixels need to get updated
         diff_frame = np.not_equal(frame, self.previous_frame)
 
         for r in range(self.screen.x_width):
             for c in range(self.screen.y_height):
-
                 # If pixel is different from last frame, update
                 if diff_frame[r, c]:
                     self.screen.draw_pixel(c, r, int(frame[r, c]))
