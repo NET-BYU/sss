@@ -13,7 +13,7 @@ Here are some helpful links to get you up and running!
 - [Create your first demo](https://sss.readthedocs.io/en/latest/Tutorials/Creating%20a%20demo/)
 
 ## Common Commands
-Although thorough information on how to [get started]() is in the docs, here are some quick commands you can run in order to get rolling once you have everything installed:
+Although thorough information on how to [get started](https://sss.readthedocs.io/en/latest/Overview/Get%20started/) is in the docs, here are some quick commands you can run in order to get rolling once you have everything installed:
 
 - Run the PyGame Simulator for the SSS
   ```bash
