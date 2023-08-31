@@ -19,7 +19,7 @@ class Video:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 25
+        self.frame_rate = 50
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -33,7 +33,7 @@ class Video:
         self.pause = False
         self.new_video = False
         self.next_frame = False
-        self.previous_frame = np.full((2353), 0)
+        self.previous_frame = None
 
     # Get the next video in the list
     def get_next_video(self):
@@ -98,9 +98,11 @@ class Video:
                     c = 0
                     for pixel in row:
                         # Draw the pixel
-                        self.screen.draw_pixel(c, r, int(pixel))
+                        if self.previous_frame is None or not np.not_equal(self.previous_frame[c, r], pixel):
+                            self.screen.draw_pixel(c, r, int(pixel))
                         c += 1
                     r += 1
+                self.previous_frame = frame
 
                 # Push the frame to the screen
                 self.screen.push()
