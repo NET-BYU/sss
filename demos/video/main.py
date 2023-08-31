@@ -6,8 +6,6 @@ from loguru import logger
 
 from demos.utils import get_all_from_queue
 
-import time
-
 
 class Video:
     """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
@@ -71,7 +69,7 @@ class Video:
                 # If pixel is different from last frame, update
                 if diff_frame[r, c]:
                     self.screen.draw_pixel(c, r, int(frame[r, c]))
-                
+
         # Update previous frame
         self.previous_frame = frame.copy()
 
