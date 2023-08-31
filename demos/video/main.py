@@ -6,6 +6,8 @@ from loguru import logger
 
 from demos.utils import get_all_from_queue
 
+import time
+
 
 class Video:
     """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
@@ -57,6 +59,27 @@ class Video:
             if input == "DOWN_P":
                 self.new_video = True
 
+    def draw_frame(self, frame):
+        for r in range(frame.shape[0]):
+            for c in range(frame.shape[1]):
+                # start_time = time.perf_counter()
+                pixel = frame[r, c]
+                # end_time = time.perf_counter()
+                # print(f"\tAccessing pixel took:\t{end_time - start_time:.4f}sec")
+                start_time = time.perf_counter()
+                if self.previous_frame is None or not np.not_equal(self.previous_frame[r, c], pixel):
+                    self.screen.draw_pixel(c, r, int(pixel))
+                end_time = time.perf_counter()
+                print(f"\tDrawing pixels took:\t{end_time - start_time:.4f}sec")
+                
+        # self.previous_frame = frame.copy()
+
+        # Push the frame to the screen
+        start_time = time.perf_counter()
+        self.screen.push()
+        end_time = time.perf_counter()
+        print(f"\tPushing pixels took:\t{end_time - start_time:.4f}sec")
+
     def run(self):
         # Create generator here
         while True:
@@ -66,15 +89,20 @@ class Video:
             self.screen.push()
             yield
 
+            start_time = time.perf_counter()
             # Load the video
             loaded_video = np.load(self.path + self.target)
             loaded_video = loaded_video["arr_0"]
+            end_time = time.perf_counter()
+            print(f"Loading video took:\t{end_time - start_time:.4f}sec")
 
             # Iterate through the frames
             for frame in loaded_video:
                 self.next_frame = False
 
+
                 # Parse through the user input
+                start_time = time.perf_counter()
                 if not self.input_queue.empty():
                     while True:
                         action = self.input_parsing(
@@ -91,21 +119,31 @@ class Video:
                 # Skip to the next video
                 if self.new_video:
                     break
+                end_time = time.perf_counter()
+                print(f"Parsing input took:\t{end_time - start_time:.4f}sec")
 
                 # Iterate through rows and columns of the frame
-                r = 0
-                for row in frame:
-                    c = 0
-                    for pixel in row:
-                        # Draw the pixel
-                        if self.previous_frame is None or not np.not_equal(self.previous_frame[c, r], pixel):
-                            self.screen.draw_pixel(c, r, int(pixel))
-                        c += 1
-                    r += 1
-                self.previous_frame = frame
+                # r = 0
+                # for row in frame:
+                #     c = 0
+                #     for pixel in row:
+                #         # Draw the pixel
+                #         if self.previous_frame is None or not np.not_equal(self.previous_frame[c, r], pixel):
+                #             self.screen.draw_pixel(c, r, int(pixel))
+                #         c += 1
+                #     r += 1
+                # self.previous_frame = frame
 
-                # Push the frame to the screen
-                self.screen.push()
+                # with np.nditer(frame, flags=['multi_index']) as it:
+                #     for x in it:
+                #         r, c = it.multi_index
+                #         # print(f"Val: {x}, Row: {r}, Col: {c}")
+                #         if self.previous_frame is None or not np.not_equal(self.previous_frame[r, c], x):
+                #             self.screen.draw_pixel(c, r, int(x), push=False)
+                #     self.previous_frame = frame
+
+                self.draw_frame(frame)
+                print(f"Drawing video took:\t{end_time - start_time:.4f}sec")
                 yield
 
             # Go to next video
