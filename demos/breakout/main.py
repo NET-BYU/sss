@@ -1,5 +1,6 @@
 import queue
 from random import getrandbits
+from sss_sounds import sss_sounds
 
 from demos.utils import get_all_from_queue
 
@@ -73,6 +74,8 @@ class Breakout:
         while True:
             try:
                 if self.input_queue.get(block=False) == "START_P":
+
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_06_GOOD)
                     break
             except queue.Empty:
                 pass
@@ -143,6 +146,8 @@ class Breakout:
                             score += SCORE_INC
                             self.output_queue.put("SCORE " + str(score))
 
+                            self.output_queue.put("SOUND " + sss_sounds.TICK)
+
                             self.bricks[row].remove(self.ball[0])
                             screen.draw_pixel(self.ball[0], row, PIXEL_OFF)
                             if not self.ball[0] % 2:
@@ -161,6 +166,8 @@ class Breakout:
                             self.output_queue.put("LIVES " + str(lives))
                         self.init_screen(screen)
 
+                        self.output_queue.put("SOUND " + sss_sounds.PORTAL)
+
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_OFF)
 
                 # Bounds check for ball
@@ -178,6 +185,8 @@ class Breakout:
                         self.frame_rate = 20 + (spin // (1 + spin // 2))
                         is_down = False
 
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_15)
+
                 # Checks to see if ball falls out of screen
                 if self.ball[1] >= screen.y_height - 1:
                     is_down = True
@@ -191,8 +200,12 @@ class Breakout:
                     )
                     if lives == 0:
                         self.gameover = True
+
+                        self.output_queue.put("SOUND " + sss_sounds.END_FAIL_3)
                         break
                     self.ball = [screen.x_width // 2, screen.y_height // 2]
+
+                    self.output_queue.put("SOUND " + sss_sounds.END_FAIL_6)
 
                 # Calculates ball path
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
