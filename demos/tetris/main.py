@@ -167,7 +167,7 @@ class Tetris:
                         self.draw_shape(prev_shape_location, erase=True)
                         self.draw_shape(shape_location)
                         prev_shape_location = shape_location.copy()
-                        mixer.music.load("./demos/tetris/trickle.mp3")
+                        mixer.music.load("./sss_sounds/beep-17.mp3")
                         mixer.music.play()
 
                     is_falling = self.is_falling(shape_location)
