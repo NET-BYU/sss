@@ -74,7 +74,6 @@ class Breakout:
         while True:
             try:
                 if self.input_queue.get(block=False) == "START_P":
-
                     self.output_queue.put("SOUND " + sss_sounds.BEEP_06_GOOD)
                     break
             except queue.Empty:

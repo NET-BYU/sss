@@ -16,9 +16,7 @@ def start_processing_output(system_queue, pygame_mixer_q):
     """Called by the broadcaster module to initialize a connection to a loudspeaker local to the system."""
 
     def process():
-
-        current_sound = None
-
+        # Go through and see what sounds we need to add
         while True:
             try:
                 for item in utils.get_all_from_queue(pygame_mixer_q):
@@ -39,7 +37,6 @@ def start_processing_output(system_queue, pygame_mixer_q):
                         mixer.music.play(-1)
                     elif str(item).startswith("STOP SOUND"):
                         mixer.music.stop()
-                        current_sound = None
             except:
                 logger.warning("Unable to play sound file: {}".format(new_sound))
 
