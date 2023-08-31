@@ -21,7 +21,7 @@ class Video:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 50
+        self.frame_rate = 25
 
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -35,7 +35,7 @@ class Video:
         self.pause = False
         self.new_video = False
         self.next_frame = False
-        self.previous_frame = None
+        self.previous_frame = np.zeros((self.screen.x_width, self.screen.y_height))
 
     # Get the next video in the list
     def get_next_video(self):
@@ -59,26 +59,24 @@ class Video:
             if input == "DOWN_P":
                 self.new_video = True
 
+    # Draws frame to screen
     def draw_frame(self, frame):
-        for r in range(frame.shape[0]):
-            for c in range(frame.shape[1]):
-                # start_time = time.perf_counter()
-                pixel = frame[r, c]
-                # end_time = time.perf_counter()
-                # print(f"\tAccessing pixel took:\t{end_time - start_time:.4f}sec")
-                start_time = time.perf_counter()
-                if self.previous_frame is None or not np.not_equal(self.previous_frame[r, c], pixel):
-                    self.screen.draw_pixel(c, r, int(pixel))
-                end_time = time.perf_counter()
-                print(f"\tDrawing pixels took:\t{end_time - start_time:.4f}sec")
+
+        # Get frame of which pixels need to get updated
+        diff_frame = np.not_equal(frame, self.previous_frame)
+
+        for r in range(self.screen.x_width):
+            for c in range(self.screen.y_height):
+
+                # If pixel is different from last frame, update
+                if diff_frame[r, c]:
+                    self.screen.draw_pixel(c, r, int(frame[r, c]))
                 
-        # self.previous_frame = frame.copy()
+        # Update previous frame
+        self.previous_frame = frame.copy()
 
         # Push the frame to the screen
-        start_time = time.perf_counter()
         self.screen.push()
-        end_time = time.perf_counter()
-        print(f"\tPushing pixels took:\t{end_time - start_time:.4f}sec")
 
     def run(self):
         # Create generator here
@@ -89,20 +87,15 @@ class Video:
             self.screen.push()
             yield
 
-            start_time = time.perf_counter()
             # Load the video
             loaded_video = np.load(self.path + self.target)
             loaded_video = loaded_video["arr_0"]
-            end_time = time.perf_counter()
-            print(f"Loading video took:\t{end_time - start_time:.4f}sec")
 
             # Iterate through the frames
             for frame in loaded_video:
                 self.next_frame = False
 
-
                 # Parse through the user input
-                start_time = time.perf_counter()
                 if not self.input_queue.empty():
                     while True:
                         action = self.input_parsing(
@@ -119,31 +112,9 @@ class Video:
                 # Skip to the next video
                 if self.new_video:
                     break
-                end_time = time.perf_counter()
-                print(f"Parsing input took:\t{end_time - start_time:.4f}sec")
 
-                # Iterate through rows and columns of the frame
-                # r = 0
-                # for row in frame:
-                #     c = 0
-                #     for pixel in row:
-                #         # Draw the pixel
-                #         if self.previous_frame is None or not np.not_equal(self.previous_frame[c, r], pixel):
-                #             self.screen.draw_pixel(c, r, int(pixel))
-                #         c += 1
-                #     r += 1
-                # self.previous_frame = frame
-
-                # with np.nditer(frame, flags=['multi_index']) as it:
-                #     for x in it:
-                #         r, c = it.multi_index
-                #         # print(f"Val: {x}, Row: {r}, Col: {c}")
-                #         if self.previous_frame is None or not np.not_equal(self.previous_frame[r, c], x):
-                #             self.screen.draw_pixel(c, r, int(x), push=False)
-                #     self.previous_frame = frame
-
+                # Draw frame to screen
                 self.draw_frame(frame)
-                print(f"Drawing video took:\t{end_time - start_time:.4f}sec")
                 yield
 
             # Go to next video
