@@ -3,6 +3,7 @@ from enum import Enum
 from os.path import exists
 
 from demos.utils import get_all_from_queue
+from pygame import mixer
 
 
 class Tetris:
@@ -46,6 +47,8 @@ class Tetris:
             for i in range(5):
                 file.write("AA 0\n")
             file.close()
+
+        mixer.init()
 
     def run(self):
         # Create generator here
@@ -164,6 +167,8 @@ class Tetris:
                         self.draw_shape(prev_shape_location, erase=True)
                         self.draw_shape(shape_location)
                         prev_shape_location = shape_location.copy()
+                        mixer.music.load('./demos/tetris/trickle.mp3')
+                        mixer.music.play()
 
                     is_falling = self.is_falling(shape_location)
 
@@ -746,4 +751,5 @@ class Tetris:
 
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
+        mixer.quit()
         pass
