@@ -24,7 +24,7 @@ Once you have all the dependencies for your system installed, you can now move o
 First we'll get the code from GitHub by cloning the repository. Open up your Git Bash program and make sure that you are in your desired folder for downloading. Then clone the repo:
 
 ```bash
-git clone git@github.com:NET-BYU/sss.git
+git clone https://github.com/NET-BYU/sss.git
 ```
 
 Now with cmd, go to the folder where you cloned the repo.

@@ -6,7 +6,13 @@ from . import utils
 
 
 def start_processing_output(system_queue, mqtt_q):
-    """Called by the broadcaster module to initialize a connection to the desired MQTT broker."""
+    """
+    Called by the broadcaster module to initialize a connection to the desired MQTT broker.
+
+    Args:
+        system_queue (Queue): The queue to put system output events in.
+        mqtt_q (Queue): The queue to put MQTT messages in.
+    """
 
     def on_connect(client, userdata, flags, rc):
         """Callback function executed upon the successful connection to the desired broker"""

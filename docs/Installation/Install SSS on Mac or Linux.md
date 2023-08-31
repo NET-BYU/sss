@@ -30,7 +30,7 @@ Once you have all the dependencies for your system installed, you can now move o
 First we'll get the code from GitHub by cloning the repository:
 
 ```bash
-git clone git@github.com:NET-BYU/sss.git
+git clone https://github.com/NET-BYU/sss.git
 ```
 
 Now we'll move into the folder and make sure our virtual environment is set up:
@@ -40,8 +40,14 @@ cd sss                      # Change to SSS project directory
 virtualenv venv             # Create a python virtual environment called venv
 source venv/bin/activate    # Activate the venv environment
 ```
+You can now verify that you are inside a virtual environment by `echo`ing out the `VIRTUAL_ENV` variable
 
->You should notice the prompt of your terminal change to indicate that you are now in your newly created python virtual environment. All of the following steps assume you are within this environment. If you are not, you will install all SSS dependencies system-wide which may conflict with some previous configurations.
+```bash
+echo $VIRTUAL_ENV
+```
+If the `VIRTUAL_ENV` is set (i.e. you get output from the previous command like `/home/christopolise/dev/sss/venv`), this indicates that you are inside your new Python virtual environment.
+
+>Most shells will visually indicate that you are inside of a virtual environment by changing the prompt. For example, you are using `bash`, your prompt change from `user@computer1$` to `(venv) user@computer1$`. You should notice the prompt of your terminal change to indicate that you are now in your newly created python virtual environment. All of the following steps assume you are within this environment. If you are not, you will install all SSS dependencies system-wide which may conflict with some previous configurations.
 
 Then you will need to install all the python requirements for the SSS:
 

@@ -27,6 +27,13 @@ def check_if_sim():
 
 
 def start_processing_input(system_queue, demo_input_queue):
+    """
+    Listens to input on the device and puts it into the appropriate queue.
+
+    Args:
+        system_queue (Queue): The queue to put system input events in.
+        demo_input_queue (Queue): The queue to put demo input events in.
+    """
     while True:
         events = pygame.event.get()
 
