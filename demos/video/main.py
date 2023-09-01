@@ -89,8 +89,7 @@ class Video:
 
             # Let Sully Groan if it is the right video
             if self.target == "sully.npz":
-                print("Sully_Time")
-                # TODO: BRYSON PUT YOUR CODE HERE
+                self.output_queue.put("SOUND " + "sss_sounds/Sully_Groan.mp3")
                 pass
 
             # Iterate through the frames
