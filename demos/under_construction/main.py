@@ -1,3 +1,5 @@
+from sss_sounds import sss_sounds
+
 PIXEL_FULL = 0xF
 PIXEL_BOTTOM = 0x1
 PIXEL_LEFT = 0x2
@@ -28,6 +30,8 @@ class UnderConstruction:
         ymax = self.screen.y_height
         line = self.screen.draw_shape_line
         dot = self.screen.draw_pixel
+
+        self.output_queue.put("SOUND " + sss_sounds.EXPLOSION_04)
 
         while True:
             line(5, ymax // 2 - 10, 6, ymax // 2 - 10, PIXEL_TOP)

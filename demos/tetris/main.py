@@ -3,6 +3,7 @@ from enum import Enum
 from os.path import exists
 
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 
 class Tetris:
@@ -60,6 +61,8 @@ class Tetris:
             self.lines = 0
 
             next_shape = random.choice(list(self.Shape))
+
+            self.output_queue.put("BACKGROUND SOUND " + sss_sounds.TETRIS)
 
             while not self.is_game_over():
                 if self.level == 2:
@@ -165,6 +168,8 @@ class Tetris:
                         self.draw_shape(shape_location)
                         prev_shape_location = shape_location.copy()
 
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_15)
+
                     is_falling = self.is_falling(shape_location)
 
                     if (
@@ -195,11 +200,14 @@ class Tetris:
                     #### FILL IN EMPTY ROWS
                     self.fill_empty_rows()
                     self.screen.push()
+                    self.output_queue.put("SOUND " + sss_sounds.COLLECT_POINT_01)
                     yield
 
                 self.draw_shape(next_shape_location, erase=True)
                 self.screen.push()
                 yield
+
+            self.output_queue.put("STOP SOUND")
 
             self.draw_game_over_screen()
             self.screen.push()

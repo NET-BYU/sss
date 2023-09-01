@@ -4,6 +4,7 @@ import random
 from loguru import logger
 
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 # import os, sys
 
@@ -118,6 +119,12 @@ class Snake:
                         direction = 1
                     elif command == "DOWN_P":
                         direction = 3
+
+                if (direction + prev_direction) % 4 == 1 or (
+                    direction + prev_direction
+                ) % 4 == 3:
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_04)
+
                 # Check if the command needs to be restored
                 if (direction == 2 and prev_direction == 0) or (
                     direction == 0 and prev_direction == 2
@@ -160,6 +167,8 @@ class Snake:
                     # update score on screen
                     self.screen.draw_text(6, 0, str(self.snek_length - 3).zfill(3))
 
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_12)
+
                 snek_list.append(current_location)
 
                 # if snake is bigger than it is supposed to pop the end of the snake off
@@ -200,6 +209,8 @@ class Snake:
             self.screen.draw_text(
                 self.screen.x_width // 2 - 4, self.screen.y_height // 2 - 2, "GAME OVER"
             )
+
+            self.output_queue.put("SOUND " + sss_sounds.END_FAIL_8)
 
             # update the highscore if highscore was acheived
             if self.snek_length > self.h_score:

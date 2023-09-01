@@ -3,6 +3,7 @@ from loguru import logger
 from demos.hangman.guess import Guess
 from demos.hangman.trace import Trace
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 
 class Hangman:
@@ -53,6 +54,8 @@ class Hangman:
 
         # Create generator here
         while True:
+            self.output_queue.put("SOUND " + sss_sounds.BEEP_01)
+
             trace.draw_init()
             trace.draw_choice(guess.letter_select(choice), True)
             word = guess.pick_word(seed_num)
@@ -87,11 +90,15 @@ class Hangman:
                         for i in range(len(word)):
                             trace.draw_letter(i, word[i], True)
 
+                        self.output_queue.put("SOUND " + sss_sounds.END_FAIL_7)
+
                     # Check to see if the player has guessed all the letters in the word and the game is over
                     if num_correct == 5:
                         self.gameover = True
                         self.win = True
                         trace.draw_endgame(True)
+
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_06_GOOD)
 
                     # If the player presses the LEFT key then the game will scroll through the alphabet backwards
                     if repeat_left:
@@ -103,6 +110,8 @@ class Hangman:
                             choice = choice - 1
                             trace.draw_choice(guess.letter_select(choice), True)
 
+                        self.output_queue.put("SOUND " + sss_sounds.TICK)
+
                     # If the player pressed the RIGHT key then the game will scroll through the alphabet forwards
                     if repeat_right:
                         trace.draw_choice(guess.letter_select(choice), False)
@@ -112,6 +121,8 @@ class Hangman:
                         else:
                             choice = choice + 1
                             trace.draw_choice(guess.letter_select(choice), True)
+
+                        self.output_queue.put("SOUND " + sss_sounds.TICK)
 
                     # If the player pressed the START key then the game will check to see if that letter is in the word
                     # If the letter is in the word then the num_correct will increment
@@ -129,6 +140,10 @@ class Hangman:
                                 correct = True
                                 num_correct += 1
                                 guess.add_guess_list(guess.letter_select(choice))
+
+                                if num_correct < 5:
+                                    self.output_queue.put("SOUND " + sss_sounds.BEEP_10)
+
                         if correct == False and guessed == False:
                             num_errors = num_errors + 1
                             trace.draw_person(num_errors, True)
@@ -140,6 +155,9 @@ class Hangman:
                                 True,
                                 True,
                             )
+
+                            if num_errors < 7:
+                                self.output_queue.put("SOUND " + sss_sounds.BEEP_08)
                 yield
 
             # This will wait until the player has pressed the START button again before restarting a new game
