@@ -44,6 +44,7 @@ pause = False
 
 # Create directory for pre-processed videos
 path = "./demos/video/resources/videos/"
+path_processed = "./demos/video/resources/pre-processed/"
 try:
     os.mkdir(path)
 except:
@@ -68,7 +69,7 @@ for target in targets:
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Check if the video has already been processed
-    if not os.path.exists(f"{path}{target[:-4]}.csv"):
+    if not os.path.exists(f"{path_processed}{target[:-4]}.npz"):
         processing = True
         logger.info(f"processing {target}")
     else:
@@ -80,6 +81,11 @@ for target in targets:
     while processing:
         (ret, frame) = cap.read()
         if not ret:
+            # Reshape the video and save it
+            video = video.reshape((total_frames, 48, 48))
+            video = video.astype(np.uint8)
+            np.savez_compressed(f"{path_processed}{target[:-4]}.npz", video)
+            logger.info(f"processed {target}")
             break
 
         # fmt: off
@@ -91,13 +97,6 @@ for target in targets:
         graySmall = vector_func(graySmall)                     # normalize the frame
         video = np.append(video, graySmall)                    # append the frame to the video
         # fmt: on
-
-    # Reshape the video and save it
-    video = video.reshape((total_frames, 48, 48))
-    video = video.astype(np.uint8)
-    np.savez_compressed(
-        f"./demos/video/resources/pre-processed/{target[:-4]}.npz", video
-    )
 
     # Release the video
     cap.release()
