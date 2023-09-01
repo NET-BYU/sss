@@ -89,7 +89,9 @@ class Video:
 
             # Let Sully Groan if it is the right video
             if self.target == "sully.npz":
-                self.output_queue.put("BACKGROUND SOUND " + "sss_sounds/Sully_Groan.mp3")
+                self.output_queue.put(
+                    "BACKGROUND SOUND " + "sss_sounds/Sully_Groan.mp3"
+                )
                 pass
 
             if self.target == "nyan.npz":
