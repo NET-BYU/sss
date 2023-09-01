@@ -2,6 +2,7 @@ import random
 import time
 
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 
 class Run:
@@ -61,13 +62,16 @@ class Run:
                 for keypress in get_all_from_queue(self.input_queue):
                     if keypress == "LEFT_P":
                         self.is_left = True
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_04)
                     elif keypress == "LEFT_R":
                         self.is_left = False
                     elif keypress == "RIGHT_P":
                         self.is_right = True
+                        self.output_queue.put("SOUND " + sss_sounds.BEEP_04)
                     elif keypress == "RIGHT_R":
                         self.is_right = False
                     elif keypress == "UP_P":
+                        self.output_queue.put("SOUND " + sss_sounds.JUMP_03)
                         # print("Got UP signal")
                         self.is_jump = True
                         self.is_up = True
@@ -179,6 +183,7 @@ class Run:
 
     def collision(self):
         if self.cannonball[0] == self.dude[0] and self.cannonball[1] == self.dude[2]:
+            self.output_queue.put("SOUND " + sss_sounds.EXPLOSION_02)
             self.is_collision = True
             self.is_cannonball_move = False
         else:
