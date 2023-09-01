@@ -87,6 +87,12 @@ class Video:
             loaded_video = np.load(self.path + self.target)
             loaded_video = loaded_video["arr_0"]
 
+            # Let Sully Groan if it is the right video
+            if self.target == "sully.npz":
+                print("Sully_Time")
+                # TODO: BRYSON PUT YOUR CODE HERE
+                pass
+
             # Iterate through the frames
             for frame in loaded_video:
                 self.next_frame = False
