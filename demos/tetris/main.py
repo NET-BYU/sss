@@ -200,6 +200,7 @@ class Tetris:
                     #### FILL IN EMPTY ROWS
                     self.fill_empty_rows()
                     self.screen.push()
+                    self.output_queue.put("SOUND " + sss_sounds.COLLECT_POINT_01)
                     yield
 
                 self.draw_shape(next_shape_location, erase=True)
