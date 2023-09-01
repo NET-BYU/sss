@@ -69,12 +69,12 @@ for target in targets:
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Check if the video has already been processed
-    if not os.path.exists(f"{path_processed}{target[:-4]}.npz"):
-        processing = True
-        logger.info(f"processing {target}")
-    else:
+    if os.path.exists(f"{path_processed}{target[:-4]}.npz"):
         processing = False
         logger.info(f"{target} has already been processed")
+    else:
+        processing = True
+        logger.info(f"processing {target}")
 
     # Iterate through all frames in the video
     video = np.array([])
