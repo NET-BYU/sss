@@ -1,8 +1,7 @@
-from demos.utils import get_all_from_queue
-
 import random
-
 import time
+
+from demos.utils import get_all_from_queue
 
 
 class Run:
