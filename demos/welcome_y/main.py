@@ -68,26 +68,26 @@ class WelcomeY:
 
             if on_corner:
                 self.output_queue.put("SOUND " + sss_sounds.JINGLE_ACHIEVEMENT_01)
-            
+
             if location[0] == 0:
                 isLeft = False
 
-                if not on_corner: 
+                if not on_corner:
                     self.output_queue.put("SOUND " + sss_sounds.CLICK_EFFECT)
             if location[0] == self.screen.x_width - RIGHT_X_OFFSET - 1:
                 isLeft = True
 
-                if not on_corner: 
+                if not on_corner:
                     self.output_queue.put("SOUND " + sss_sounds.CLICK_EFFECT)
             if location[1] == 0:
                 isDown = True
 
-                if not on_corner: 
+                if not on_corner:
                     self.output_queue.put("SOUND " + sss_sounds.CLICK_EFFECT)
             if location[1] == self.screen.y_height - BOTTOM_Y_OFFSET - 1:
                 isDown = False
 
-                if not on_corner: 
+                if not on_corner:
                     self.output_queue.put("SOUND " + sss_sounds.CLICK_EFFECT)
 
             if not isLeft:
