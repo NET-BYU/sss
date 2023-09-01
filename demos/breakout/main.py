@@ -1,8 +1,8 @@
 import queue
 from random import getrandbits
-from sss_sounds import sss_sounds
 
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 ARENA_START = 14
 ARENA_END = ARENA_START - 15

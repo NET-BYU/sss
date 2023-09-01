@@ -1,5 +1,5 @@
-from pygame import mixer
 from loguru import logger
+from pygame import mixer
 
 from . import utils
 
