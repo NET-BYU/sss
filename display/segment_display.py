@@ -26,7 +26,8 @@ class SegmentDisplay:
         """
         Updates the screen with all of the lines drawn using draw_line.
 
-        push -- when true all the recent changes are pushed to the display
+        Args:
+            push (bool): when true all the recent changes are pushed to the display
         """
         for x in range(self.screen_width):
             for y in range(self.screen_height):
@@ -102,10 +103,11 @@ class SegmentDisplay:
         use the draw function. This function only updates the underlying data
         buffer.
 
-        start_x -- the starting x point
-        start_y -- the starting y point
-        end_x -- the ending x point
-        end_y -- the ending y point
+        Args:
+            start_x (int): the starting x point
+            start_y (int): the starting y point
+            end_x (int): the ending x point
+            end_y (int): the ending y point
         """
         start_x = self._constrain(start_x, 0, self.width - 1)
         start_y = self._constrain(start_y, 0, self.height - 1)

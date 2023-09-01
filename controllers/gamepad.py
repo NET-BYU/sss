@@ -7,6 +7,12 @@ from loguru import logger
 
 
 def get_input_from_gamepad(queue):
+    """
+    Reads input from the gamepad and puts it in the queue.
+
+    Args:
+        queue (Queue): The queue to put the input events in.
+    """
     while True:
         # See if the gamepad is plugged in
         try:
@@ -25,6 +31,13 @@ def get_input_from_gamepad(queue):
 
 
 def start_processing_input(system_queue, demo_input_queue):
+    """
+    Listens to input on the device and puts it into the appropriate queue.
+
+    Args:
+        system_queue (Queue): The queue to put system input events in.
+        demo_input_queue (Queue): The queue to put demo input events in.
+    """
     queue = Queue()
 
     thread = threading.Thread(target=get_input_from_gamepad, args=(queue,), daemon=True)
