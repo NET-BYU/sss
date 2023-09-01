@@ -1,6 +1,7 @@
 import random
-from sss_sounds import sss_sounds
+
 from demos.utils import get_all_from_queue
+from sss_sounds import sss_sounds
 
 SIZE_MULTIPLIER = 1  # try 2 for better proportionality??
 
