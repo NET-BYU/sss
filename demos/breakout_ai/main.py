@@ -17,7 +17,6 @@ SCORE_INC = 5
 
 
 class BreakoutAi:
-
     """This is the breakout_ai demo. It plays the classic Atari game breakout"""
 
     demo_time = 120

@@ -53,12 +53,15 @@ def start_inputs(system_queue, demo_input_queue):
         logger.warning("Program will continue to run without this input.")
 
     while True:
+        logger.debug("Fetch MQTT")
         if mqtt_runner:
             next(mqtt_runner)
 
+        logger.debug("Fetch GamePad")
         if gamepad_runner:
             next(gamepad_runner)
 
+        logger.debug("Fetch Keyboard")
         if keyboard_runner:
             next(keyboard_runner)
 

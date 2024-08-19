@@ -8,3 +8,4 @@
 
 - [PyCon US 2023 report #3 | PyConJP ](https://youtu.be/BMf6OrbfOOQ?t=258)
 
+- [A Look into the Seven-Segment Sign that Can Run Doom](https://ece.byu.edu/department-news/a-look-into-the-seven-segment-sign-that-can-run-doom)

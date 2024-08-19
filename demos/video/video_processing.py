@@ -36,55 +36,67 @@ num_to_pixel_inverted = {
     1: 0xF,
     0: 0xF,
 }
+
+# Set screen max and min values to 0
 screen_min = 0
 screen_max = 0
 pause = False
-processing = True
-path = "./demos/video/resorces/videos/"
+
+# Create directory for pre-processed videos
+path = "./demos/video/resources/videos/"
+path_processed = "./demos/video/resources/pre-processed/"
 try:
     os.mkdir(path)
 except:
     pass
 else:
     logger.info(f"Created directory {path}")
+
+# Get all videos in the directory
 targets = os.listdir(path)
+logger.info(f"Found {len(targets)} videos")
 
+
+# Normalize the values in the video
+def normalize(x):
+    return num_to_pixel[int((x - screen_min) / (screen_max / 12))]
+
+
+# Iterate through all videos
 for target in targets:
-    cap = cv2.VideoCapture(f"./demos/video/resorces/videos/{target}")
+    # Open the video and get the total number of frames
+    cap = cv2.VideoCapture(f"{path}{target}")
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    if os.path.exists(path + target + ".csv"):
-        processing = True
-        logger.info(f"processing {target}")
-    else:
+    # Check if the video has already been processed
+    if os.path.exists(f"{path_processed}{target[:-4]}.npz"):
         processing = False
         logger.info(f"{target} has already been processed")
-    # Create generator here
+    else:
+        processing = True
+        logger.info(f"processing {target}")
 
+    # Iterate through all frames in the video
+    video = np.array([])
     while processing:
         (ret, frame) = cap.read()
         if not ret:
+            # Reshape the video and save it
+            video = video.reshape((total_frames, 48, 48))
+            video = video.astype(np.uint8)
+            np.savez_compressed(f"{path_processed}{target[:-4]}.npz", video)
+            logger.info(f"processed {target}")
             break
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        graySmall = np.array(cv2.resize(grayFrame, [48, 48]))
-        screen_max = graySmall.max()
-        screen_min = graySmall.min()
 
-        if screen_max < 12:
-            screen_max = 12
+        # fmt: off
+        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)    # convert to grayscale
+        graySmall = np.array(cv2.resize(grayFrame, [48, 48]))  # resize to 48x48
+        screen_max = max(graySmall.max(), 12)                  # get the max value in the frame
+        screen_min = graySmall.min()                           # get the min value in the frame
+        vector_func = np.vectorize(normalize)                  # vectorize the normalize function
+        graySmall = vector_func(graySmall)                     # normalize the frame
+        video = np.append(video, graySmall)                    # append the frame to the video
+        # fmt: on
 
-        output = ""
-        for i in range(48):
-            for j in range(48):
-                pixel = int((graySmall[i][j] - screen_min) / (screen_max / 12))
-                if pixel > 12:
-                    logger.info("pixel > 12, set to 12")
-                    pixel = 12
-                output = output + f"{num_to_pixel[pixel]},"
-            output = output + ","
-
-        with open(
-            "./demos/video/resorces/pre-processed/" + target + ".csv", "a"
-        ) as output_file:
-            output_file.write(f"{output}\n")
-
+    # Release the video
     cap.release()

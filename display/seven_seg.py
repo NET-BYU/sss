@@ -27,7 +27,7 @@ MAX7219_REG_SCANLIMIT = 0xB
 MAX7219_REG_SHUTDOWN = 0xC
 MAX7219_REG_DISPLAYTEST = 0xF
 
-DEFAULT_BAUDRATE = 3000000
+DEFAULT_BAUDRATE = 2000000
 
 
 class SevenSegment:
@@ -43,15 +43,20 @@ class SevenSegment:
     ):
         """Constructor
 
-        num_digits -- total number of digits in your display (default 8)
-        num_per_segment -- total number of digits per MAX7219 segment (default 8)
-        baudrate -- rate at which data is transfered (default 9000kHz), excessive rate may result in instability
-        cs_num -- which control select line is being used (default 0)
-        brightness -- starting brightness of the leds (default 7)
-        clear -- clear the screen on initialization (default True)
-        segment_orientation_array -- a 2d array of where the MAX7219 segments are located, one indexed (default None)
-            : example [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]] (height is 6 and width is 16)
-            : this needs to be populated to use coordinate grid style functions i.e. letter2 (default None)
+        Args:
+            num_digits (int): total number of digits in your display
+            num_per_segment (int): total number of digits per MAX7219 segment (default 8)
+            baudrate (int): rate at which data is transfered (default 9000kHz), excessive rate may result in instability
+            cs_num (int): which control select line is being used
+            brightness (int): starting brightness of the leds
+            clear (bool): clear the screen on initialization
+            segment_orientation_array (int[][]): a 2d array of where the MAX7219 segments are located, one indexed
+
+                Example:
+                ```
+                [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
+                ```
+                (height is 6 and width is 16) this needs to be populated to use coordinate grid style functions i.e. letter2 (default None)
         """
         self.num_digits = num_digits
         self.num_segments = num_digits // num_per_segment
@@ -83,7 +88,13 @@ class SevenSegment:
             self.clear()
 
     def command(self, register_num, value):
-        """Sets control registers for each segment in the display"""
+        """
+        Sets control registers for each segment in the display
+
+        Args:
+            register_num (int): which register to set
+            value (int): value to set the register to
+        """
         # check register_num is good
         if register_num not in [
             MAX7219_REG_DECODEMODE,
@@ -99,7 +110,13 @@ class SevenSegment:
         self._write([register_num, value] * self.num_segments)
 
     def close(self, clear=True, shutdown=True):
-        """Close the spi connection"""
+        """
+        Close the spi connection
+
+        Args:
+            clear (bool): clear the display before closing
+            shutdown (bool): shutdown the display before closing
+        """
         if clear:
             self.clear()
         if shutdown:
@@ -107,13 +124,23 @@ class SevenSegment:
         self._spi.close()
 
     def clear(self, flush=True):
-        """Clears the buffer, and if specified, flushes the display"""
+        """
+        Clears the buffer, and if specified, flushes the display
+
+        Args:
+            flush (bool): flush the display after clearing
+        """
         self._buf = [0] * self.num_digits
         if flush:
             self.flush_legacy()
 
     def brightness(self, value):
-        """Sets the brightness for all of the segments ranging from 0 - 15"""
+        """
+        Sets the brightness for all of the segments ranging from 0 - 15
+
+        Args:
+            value (int): brightness value to set
+        """
         # check value is good
         if not isinstance(value, (int)) or (value > 16 or value < 0):
             raise ValueError("value is not a correct value")
@@ -145,7 +172,14 @@ class SevenSegment:
         self._flush_index.clear()
 
     def raw(self, position, value, flush=False):
-        """Given raw 0-255 value draw symbol at given postion"""
+        """
+        Given raw 0-255 value draw symbol at given postion
+
+        Args:
+            position (int): position to draw the symbol
+            value (int): value to draw at the position
+            flush (bool): flush the display after drawing
+        """
         # Check if position is valid
         if (
             not isinstance(position, (int))
@@ -163,12 +197,25 @@ class SevenSegment:
             self.flush()
 
     def raw2(self, x, y, value, flush=False):
-        """Given raw 0-255 value draw symbol at given coordinate"""
+        """
+        Given raw 0-255 value draw symbol at given coordinate
+
+        Args:
+            x (int): x coordinate to draw the symbol
+        """
         position = self._get_pos(x, y)
         self.raw(position, value, flush)
 
     def letter(self, position, char, dot=False, flush=False):
-        """Outputs ascii letter as close as it can, working letters/symbols found in symbols.py"""
+        """
+        Outputs ascii letter as close as it can, working letters/symbols found in symbols.py
+
+        Args:
+            position (int): position to draw the symbol
+            char (str): character to draw at the position
+            dot (bool): whether or not to draw a dot after the character
+            flush (bool): flush the display after drawing
+        """
         # Check if position is valid
         if (
             not isinstance(position, (int))
@@ -183,7 +230,16 @@ class SevenSegment:
             self.flush()
 
     def letter2(self, x, y, char, dot=False, flush=False):
-        """Output letter on the display at the coordinates provided if possible"""
+        """
+        Output letter on the display at the coordinates provided if possible
+
+        Args:
+            x (int): x coordinate to draw the symbol
+            y (int): y coordinate to draw the symbol
+            char (str): character to draw at the position
+            dot (bool): whether or not to draw a dot after the character
+            flush (bool): flush the display after drawing
+        """
         # Check to make sure segment array has been initialized
         if self.display is None:
             raise ValueError("segment_orientation_array has not been initialized")
@@ -191,7 +247,14 @@ class SevenSegment:
         self.letter(pos, char, dot, flush)
 
     def text(self, txt, start_position=0, flush=False):
-        """Output text on the display at the start position if possible"""
+        """
+        Output text on the display at the start position if possible
+
+        Args:
+            txt (str): text to draw on the display
+            start_position (int): position to start drawing the text
+            flush (bool): flush the display after drawing
+        """
         # Check if txt is going to overflow buffer
         if start_position + len(txt.replace(".", "")) > self.num_digits:
             raise OverflowError("Message would overflow spi buffer")
@@ -207,7 +270,16 @@ class SevenSegment:
             self.flush()
 
     def text2(self, x, y, txt, horizontal=True, flush=False):
-        """Output text on the display at the given x, y - option to display horizontal or vertical text"""
+        """
+        Output text on the display at the given x, y - option to display horizontal or vertical text
+
+        Args:
+            x (int): x coordinate to draw the symbol
+            y (int): y coordinate to draw the symbol
+            txt (str): text to draw on the display
+            horizontal (bool): whether or not to draw the text horizontally
+            flush (bool): flush the display after drawing
+        """
         # No initial checks and will let underlying functions do the work
         if horizontal:
             # self.text(txt, self._get_pos(x, y))

@@ -1,4 +1,4 @@
-To get started with the SSS, you will first need to make sure that it is installed on your machine. There are guides for both [Mac and Linux](../Installation/Install%20SSS%20on%20Mac%20or%20Linux.md) and [Windows](../Installation/Install%20SSS%20on%20Windows.md). Once you have completed this step, you are ready to start tinkering!
+To get started with the SSS, **you will first need to make sure that it is installed on your machine**. There are guides for both [Mac and Linux](../Installation/Install%20SSS%20on%20Mac%20or%20Linux.md) and [Windows](../Installation/Install%20SSS%20on%20Windows.md). Once you have completed this step, you are ready to start tinkering!
 
 ## Configuring the Environment 
 As was seen in the installation guides, most of the python libraries which the SSS depends on have been installed in a virtual environment. You will need to make sure that you have activated this environment before running the SSS or else you are bound to run into errors that claim you are missing dependencies/libraries.
