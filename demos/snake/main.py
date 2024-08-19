@@ -1,4 +1,5 @@
 """Snake Game"""
+
 import random
 
 from loguru import logger
@@ -132,16 +133,24 @@ class Snake:
 
                 # Get new snake location based on trajectory
                 current_location = (
-                    current_location[0] - 1
-                    if direction == 0
-                    else current_location[0] + 1
-                    if direction == 2
-                    else current_location[0],
-                    current_location[1] + 1
-                    if direction == 3
-                    else current_location[1] - 1
-                    if direction == 1
-                    else current_location[1],
+                    (
+                        current_location[0] - 1
+                        if direction == 0
+                        else (
+                            current_location[0] + 1
+                            if direction == 2
+                            else current_location[0]
+                        )
+                    ),
+                    (
+                        current_location[1] + 1
+                        if direction == 3
+                        else (
+                            current_location[1] - 1
+                            if direction == 1
+                            else current_location[1]
+                        )
+                    ),
                 )
 
                 # check food situation

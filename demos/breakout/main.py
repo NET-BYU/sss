@@ -17,7 +17,6 @@ SCORE_INC = 5
 
 
 class Breakout:
-
     """This is the breakout demo. It emulates the classic Atari game."""
 
     demo_time = None

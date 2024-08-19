@@ -156,16 +156,24 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     continue
                 elif not ai:
                     current_location = (
-                        current_location[0] - 1
-                        if direction == b"a" or direction == b"h"
-                        else current_location[0] + 1
-                        if direction == b"d" or direction == b"k"
-                        else current_location[0],
-                        current_location[1] + 1
-                        if direction == b"s" or direction == b"j"
-                        else current_location[1] - 1
-                        if direction == b"w" or direction == b"u"
-                        else current_location[1],
+                        (
+                            current_location[0] - 1
+                            if direction == b"a" or direction == b"h"
+                            else (
+                                current_location[0] + 1
+                                if direction == b"d" or direction == b"k"
+                                else current_location[0]
+                            )
+                        ),
+                        (
+                            current_location[1] + 1
+                            if direction == b"s" or direction == b"j"
+                            else (
+                                current_location[1] - 1
+                                if direction == b"w" or direction == b"u"
+                                else current_location[1]
+                            )
+                        ),
                     )
                 else:
                     if len(snek_path) == 0:

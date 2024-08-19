@@ -71,9 +71,11 @@ class Simulator:
         demos = utils.get_demos(self.demo_dir)
 
         self.demos = {
-            name: self._reload_module(self.demos[name])
-            if name in self.demos
-            else self._import_module(module)
+            name: (
+                self._reload_module(self.demos[name])
+                if name in self.demos
+                else self._import_module(module)
+            )
             for name, module in demos
         }
         self._repopulate_demo_list()
