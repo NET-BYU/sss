@@ -1,5 +1,7 @@
 import queue
 import datetime
+from os import stat
+from pathlib import Path as path
 from collections import Counter
 
 from demos.utils import get_all_from_queue
@@ -503,29 +505,41 @@ class Minesweeper:
 
     def game_over(self, win=False):
         self.is_game_over = True
-        if win:
+        if not win:
             self.stop_time = datetime.datetime.now()
 
             diff = self.stop_time - self.start_time
+            print(f"Time taken: {diff}")
+
+            # Check to see if the high score file exists
+            if not path.exists(path("demos/minesweeper/high_score.txt")):
+                with open("demos/minesweeper/high_score.txt", "w") as scores:
+                    hscore = datetime.timedelta(hours=23, minutes=59, seconds=59)
+                    scores.write(str(hscore))
+                    scores.close()
 
             with open("demos/minesweeper/high_score.txt", "r") as scores:
                 hscore = scores.read()
-                # Split the time string into components
-                hours, minutes, seconds = hscore.split(":")
 
-                # Convert the components to integers
-                hours = int(hours)
-                minutes = int(minutes)
-                seconds = int(seconds)
+            # Split the time string into components
+            print(hscore)
+            hours, minutes, seconds = str(hscore).split(":")
 
-                # Create the timedelta object
-                hscore = datetime.timedelta(
-                    hours=hours, minutes=minutes, seconds=seconds
-                )
+            # Convert the components to integers
+            hours = int(hours)
+            minutes = int(minutes)
+            seconds = int(seconds)
+
+            # Create the timedelta object
+            hscore = datetime.timedelta(
+                hours=hours, minutes=minutes, seconds=seconds
+            )
             if diff < hscore:
                 with open("demos/minesweeper/high_score.txt", "w") as scores:
+                    # clear file
+                    scores.truncate(0)
                     scores.write(str(diff).split(".")[0])
-                hscore = diff
+                    hscore = diff
 
             self.screen.clear()
             self.screen.draw_text(
