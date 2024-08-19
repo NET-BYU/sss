@@ -1,4 +1,6 @@
 from demos.maze.make_maze_map import Maze_Maker
+from demos.utils import get_all_from_queue
+from loguru import logger
 
 
 class Maze:
@@ -46,9 +48,23 @@ class Maze:
             [0x3, 0x0],
         ]
 
+        self.player_blink_tick = 10
+        self.coin_rotate_tick = 8
+        self.exit_blink_tick = 18
+        self.exit_open_tick = 4
+        self.exit_num_ticks = 5
+
         self.height = int(self.screen.y_height / 2)
         self.width = int(self.screen.x_width)
         self.num_coins = 6
+
+        # Set the logging level
+        DEBUG = False
+
+        if DEBUG:
+            logger.level("INFO")
+        else:
+            logger.level("WARNING")
 
         # Create maze and draw it on board
         self.maze = Maze_Maker(
@@ -68,6 +84,16 @@ class Maze:
                 self.exit_x = col
                 self.exit_y = len(self.maze) - 1
                 break
+
+        if DEBUG:
+            self.debug_board()
+
+    def debug_board(self):
+        logger.info(f"Maze demo: maze w*h is {len(self.maze[0])}*{len(self.maze)}")
+        for row in range(len(self.maze)):
+            for col in range(len(self.maze[0])):
+                if self.maze[row][col] == self.coin:
+                    logger.info(f"Coin at x = {col}, y = {row}")
 
     def draw_maze(self):
         # Every cycle, draw the maze on the screen
@@ -89,93 +115,150 @@ class Maze:
                         (row * 2) + 1,
                         self.screen_coin_list[self.coin_rotate_counter][1],
                     )
+                # There are a few cases for the exit point:
+                #  1. All coins have been connected, we blink the exit point fast five times
                 elif self.maze[row][col] == self.exit_point:
                     if self.all_coins_collected:
-                        self.screen.draw_pixel(col, (row * 2), self.screen_empty)
-                        self.screen.draw_pixel(col, (row * 2) + 1, self.screen_empty)
-                    else:
-                        self.screen.draw_pixel(col, (row * 2), self.screen_wall)
-                        self.screen.draw_pixel(col, (row * 2) + 1, self.screen_wall)
+                        if self.exit_enable < self.exit_num_ticks * self.exit_open_tick:
+                            if (self.exit_blink_counter % self.exit_open_tick) > (
+                                self.exit_open_tick / 2
+                            ):
+                                self.screen.draw_pixel(col, (row * 2), self.screen_wall)
+                                self.screen.draw_pixel(
+                                    col, (row * 2) + 1, self.screen_wall
+                                )
+                            else:
+                                self.screen.draw_pixel(
+                                    col, (row * 2), self.screen_empty
+                                )
+                                self.screen.draw_pixel(
+                                    col, (row * 2) + 1, self.screen_empty
+                                )
 
-    def draw_player(self, blink_off):
-        # Draw the player on the screen
-        if not blink_off:
-            self.screen.draw_pixel(
-                self.player_x, self.player_y * 2, self.screen_player_top
-            )
-            self.screen.draw_pixel(
-                self.player_x, (self.player_y * 2) + 1, self.screen_player_bottom
-            )
+                        # self.screen.draw_pixel(col, (row * 2), self.screen_empty)
+                        # self.screen.draw_pixel(col, (row * 2) + 1, self.screen_empty)
+                    else:
+                        if self.exit_blink_counter > self.exit_blink_tick / 2:
+                            self.screen.draw_pixel(col, (row * 2), self.screen_wall)
+                            self.screen.draw_pixel(col, (row * 2) + 1, self.screen_wall)
+                        else:
+                            self.screen.draw_pixel(col, (row * 2), self.screen_empty)
+                            self.screen.draw_pixel(
+                                col, (row * 2) + 1, self.screen_empty
+                            )
+
+    def draw_player(self, erase=False):
+        # If the player has not moved yet, we draw it as blinking
+        if self.maze[self.player_y][self.player_x] == self.start_point:
+            if self.player_blink_counter < self.player_blink_tick / 2:
+                self.screen.draw_pixel(
+                    self.player_x, self.player_y * 2, self.screen_player_top
+                )
+                self.screen.draw_pixel(
+                    self.player_x, (self.player_y * 2) + 1, self.screen_player_bottom
+                )
+            else:
+                self.screen.draw_pixel(
+                    self.player_x, self.player_y * 2, self.screen_empty
+                )
+                self.screen.draw_pixel(
+                    self.player_x, (self.player_y * 2) + 1, self.screen_empty
+                )
         else:
-            self.screen.draw_pixel(self.player_x, self.player_y * 2, self.screen_empty)
-            self.screen.draw_pixel(
-                self.player_x, (self.player_y * 2) + 1, self.screen_empty
-            )
+            if erase:
+                self.screen.draw_pixel(
+                    self.player_x, self.player_y * 2, self.screen_empty
+                )
+                self.screen.draw_pixel(
+                    self.player_x, (self.player_y * 2) + 1, self.screen_empty
+                )
+            else:
+                self.screen.draw_pixel(
+                    self.player_x, self.player_y * 2, self.screen_player_top
+                )
+                self.screen.draw_pixel(
+                    self.player_x, (self.player_y * 2) + 1, self.screen_player_bottom
+                )
 
     def move_player(self, direction):
         # Move the player in the maze
-        if direction == "up":
+        if direction == "u":
             if (
                 self.player_y > 0
                 and self.maze[self.player_y - 1][self.player_x] != self.wall
             ):
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_empty
-                )
-                self.player_y -= 2
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_player
-                )
-        elif direction == "down":
+                self.draw_player(erase=True)
+                self.player_y -= 1
+        elif direction == "d":
             if (
                 self.player_y < len(self.maze) - 1
                 and self.maze[self.player_y + 1][self.player_x] != self.wall
             ):
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_empty
-                )
-                self.player_y += 2
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_player
-                )
-        elif direction == "left":
+                self.draw_player(erase=True)
+                self.player_y += 1
+        elif direction == "l":
             if (
                 self.player_x > 0
                 and self.maze[self.player_y][self.player_x - 1] != self.wall
             ):
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_empty
-                )
+                self.draw_player(erase=True)
                 self.player_x -= 1
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_player
-                )
-        elif direction == "right":
+        elif direction == "r":
             if (
                 self.player_x < len(self.maze[0]) - 1
                 and self.maze[self.player_y][self.player_x + 1] != self.wall
             ):
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_empty
-                )
+                self.draw_player(erase=True)
                 self.player_x += 1
-                self.screen.draw_pixel(
-                    self.player_x, self.player_y * 2, self.screen_player
-                )
+
+        # Check to see if coin is collected
+        if self.maze[self.player_y][self.player_x] == self.coin:
+            logger.info(f"Coin collected at x = {self.player_x}, y = {self.player_y}")
+            self.maze[self.player_y][self.player_x] = self.cell
+            self.num_coins -= 1
+            self.draw_player(erase=True)
+            if self.num_coins == 0:
+                self.all_coins_collected = True
 
     def run(self):
         # Create generator here
         self.player_blink_counter = 0
         self.coin_rotate_counter = 0
+        self.exit_blink_counter = 0
+        self.exit_enable = 0
         self.all_coins_collected = False
 
         while True:
-            self.player_blink_counter = (self.player_blink_counter + 1) % 10
-            self.coin_rotate_counter = (self.coin_rotate_counter + 1) % 8
+            self.player_blink_counter = (
+                self.player_blink_counter + 1
+            ) % self.player_blink_tick
+            self.coin_rotate_counter = (
+                self.coin_rotate_counter + 1
+            ) % self.coin_rotate_tick
+            self.exit_blink_counter = (
+                self.exit_blink_counter + 1
+            ) % self.exit_blink_tick
 
-            self.draw_player(self.player_blink_counter > 5)
+            if self.all_coins_collected:
+                self.exit_enable = self.exit_enable + 1
+
+            temp = get_all_from_queue(self.input_queue)
+            direction = None
+            for command in temp:
+                if command == "LEFT_P":
+                    direction = "l"
+                elif command == "RIGHT_P":
+                    direction = "r"
+                elif command == "UP_P":
+                    direction = "u"
+                elif command == "DOWN_P":
+                    direction = "d"
+
+            if direction is not None:
+                self.move_player(direction)
 
             self.draw_maze()
+            self.draw_player()
 
             self.screen.push()
             yield

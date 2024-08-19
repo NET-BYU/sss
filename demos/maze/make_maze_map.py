@@ -1,5 +1,6 @@
 # Much of this code is sources from the online repository
 # https://github.com/OrWestSide/python-scripts/blob/master/maze.py
+# https://medium.com/swlh/fun-with-python-1-maze-generator-931639b4fb7e
 # Hash:
 # 0a7e50aeeafaf9a26f8f1af897b5e6dad768c1e7
 
@@ -257,11 +258,11 @@ class Maze_Maker:
 
         # Set coins
         for i in range(0, self.num_coins):
-            x = int(random.random() * self.width)
-            y = int(random.random() * self.height)
+            x = int(random.betavariate(0.5, 0.5) * self.width)
+            y = int(random.betavariate(0.5, 0.5) * self.height)
             while self.maze[y][x] != "c":
-                x = int(random.random() * self.width)
-                y = int(random.random() * self.height)
+                x = int(random.betavariate(0.5, 0.5) * self.width)
+                y = int(random.betavariate(0.5, 0.5) * self.height)
             self.maze[y][x] = self.coin
 
         return self.maze
