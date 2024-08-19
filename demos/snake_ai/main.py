@@ -1,4 +1,5 @@
 """Snake AI Demo"""
+
 import random
 from copy import deepcopy
 
