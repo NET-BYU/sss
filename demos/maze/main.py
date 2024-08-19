@@ -1,6 +1,7 @@
 from demos.maze.make_maze_map import Maze_Maker
 from demos.utils import get_all_from_queue
 from loguru import logger
+from sss_sounds import sss_sounds
 
 
 class Maze:
@@ -181,12 +182,18 @@ class Maze:
                 )
 
     def move_player(self, direction):
+        
+        
         # Move the player in the maze
         if direction == "u":
             if (
                 self.player_y > 0
                 and self.maze[self.player_y - 1][self.player_x] != self.wall
             ):
+                if self.maze[self.player_y - 1][self.player_x] == self.exit_point and not self.all_coins_collected:
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
+                    return
+                    
                 self.draw_player(erase=True)
                 self.player_y -= 1
         elif direction == "d":
@@ -194,6 +201,10 @@ class Maze:
                 self.player_y < len(self.maze) - 1
                 and self.maze[self.player_y + 1][self.player_x] != self.wall
             ):
+                if self.maze[self.player_y + 1][self.player_x] == self.exit_point and not self.all_coins_collected:
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
+                    return
+                
                 self.draw_player(erase=True)
                 self.player_y += 1
         elif direction == "l":
@@ -201,6 +212,10 @@ class Maze:
                 self.player_x > 0
                 and self.maze[self.player_y][self.player_x - 1] != self.wall
             ):
+                if self.maze[self.player_y][self.player_x - 1] == self.exit_point and not self.all_coins_collected:
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
+                    return
+                
                 self.draw_player(erase=True)
                 self.player_x -= 1
         elif direction == "r":
@@ -208,6 +223,10 @@ class Maze:
                 self.player_x < len(self.maze[0]) - 1
                 and self.maze[self.player_y][self.player_x + 1] != self.wall
             ):
+                if self.maze[self.player_y][self.player_x + 1] == self.exit_point and not self.all_coins_collected:
+                    self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
+                    return
+                
                 self.draw_player(erase=True)
                 self.player_x += 1
 
@@ -219,6 +238,16 @@ class Maze:
             self.draw_player(erase=True)
             if self.num_coins == 0:
                 self.all_coins_collected = True
+                self.output_queue.put("SOUND " + sss_sounds.PICKUP_02)
+            else:
+                self.output_queue.put("SOUND " + sss_sounds.BEEP_12)
+
+        # Check to see if player has reached the exit
+        if self.player_y == self.exit_y and self.player_x == self.exit_x:
+            if self.all_coins_collected:
+                self.output_queue.put("SOUND " + sss_sounds.WIN_01)
+                self.output_queue.put("WIN")
+            self.stop()
 
     def run(self):
         # Create generator here
