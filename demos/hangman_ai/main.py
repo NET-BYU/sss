@@ -132,13 +132,13 @@ class HangmanAi:
                     self.win = True
                     trace.draw_endgame(True)
                 x = 0
-                while x is not 15:
+                while x != 15:
                     x += 1
                     yield
                 yield
 
             x = 0
-            while x is not 25:
+            while x != 25:
                 x += 1
                 yield
             # Erase the hangman, the guessed letters, and the word from the screen
