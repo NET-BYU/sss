@@ -3,6 +3,7 @@ import datetime
 from os import stat
 from pathlib import Path as path
 from collections import Counter
+from loguru import logger
 
 from demos.utils import get_all_from_queue
 
@@ -375,10 +376,13 @@ class Minesweeper:
                             field[i][j] += 1
 
         # print("\n")
-        # for j in range(scale):
-        #     for i in range(scale):
-        #         print(str(field[i][j]) + " ", end="")
-        #     print("\n")
+        for j in range(scale):
+            logger.info(''.join([str(field[i][j]) + " " for i in range(scale)]))
+            # for i in range(scale):
+            #     print(str(field[i][j]) + " " , end="")
+            print("\n")
+
+
 
         return field
 
