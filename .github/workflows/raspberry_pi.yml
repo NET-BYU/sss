@@ -26,10 +26,12 @@ jobs:
           rm -rf /tmp/test
           mkdir /tmp/test
           pwd
-          which -a python
-          which -a python3
           python -V
           python3 -V
+          pyenv local ${{ matrix.python-version }}
+          python -V
+          python3 -V
+
           
       #     python -V
       #     python3 -V
