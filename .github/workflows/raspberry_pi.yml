@@ -16,6 +16,9 @@ jobs:
         run: |
           rm -rf /tmp/test
           mkdir /tmp/test
+          which -a python
+          which -a python3
+          pyenv local 3.10.14
           python -m venv /tmp/test/.venv
 
       - name: Install project dependencies
