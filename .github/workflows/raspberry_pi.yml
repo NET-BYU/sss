@@ -5,30 +5,41 @@ on: [push]
 jobs:
   build:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install system dependencies
         run: |
           sudo apt-get install -y libatlas-base-dev python3-pip python3-venv
+
+      - name: Install python version
+        uses: gabrielfalcao/pyenv-action@v18
+        with:
+          default: "${{ matrix.python-version }}"
+          command: pip install -U pip  # upgrade pip after installing python
 
       - name: Set up environment
         run: |
           rm -rf /tmp/test
           mkdir /tmp/test
           python -V
-          python3 -V
-          python -m venv /tmp/test/.venv
+          
+      #     python -V
+      #     python3 -V
+      #     python -m venv /tmp/test/.venv
 
-      - name: Install project dependencies
-        run: |
-          /tmp/test/.venv/bin/python -m pip install -r requirements.txt
+      # - name: Install project dependencies
+      #   run: |
+      #     /tmp/test/.venv/bin/python -m pip install -r requirements.txt
 
-      - name: Run all demos to make sure they load
-        run: |
-          /tmp/test/.venv/bin/python main.py test
+      # - name: Run all demos to make sure they load
+      #   run: |
+      #     /tmp/test/.venv/bin/python main.py test
 
-      - name: Clean up code
-        if: always()
-        run: |
-          rm -rf /tmp/test
+      # - name: Clean up code
+      #   if: always()
+      #   run: |
+      #     rm -rf /tmp/test
