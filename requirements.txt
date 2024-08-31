@@ -3,7 +3,7 @@ click==8.1.3
 inputs==0.5
 loguru==0.6.0
 numpy==1.23.0
-opencv-python==4.6.0.66
+opencv-python==4.8.1.78
 paho-mqtt==1.6.1
 perlin-noise==1.12
 pygame==2.1.2
