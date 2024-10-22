@@ -1,13 +1,13 @@
-import queue
 import datetime
+import queue
+from collections import Counter
 from os import stat
 from pathlib import Path as path
-from collections import Counter
+from random import randint
+
 from loguru import logger
 
 from demos.utils import get_all_from_queue
-
-from random import randint
 
 
 class Minesweeper:
@@ -18,7 +18,15 @@ class Minesweeper:
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
+
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+
+        Args:
+            input_queue (Queue): Queue for user input
+            output_queue (Queue): Queue for game output
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -42,6 +50,7 @@ class Minesweeper:
         self.is_game_over = False
 
     def run(self):
+        """Runs the game loop"""
         # Waits for user ready
         self.screen.draw_text(
             (self.screen.x_width // 2) - 5,
@@ -140,10 +149,17 @@ class Minesweeper:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass
 
     def draw_cell(self, x, y, scale):
+        """Draws a cell of the minefield
+
+        Args:
+            x (int): x coordinate of the cell
+            y (int): y coordinate of the cell
+            scale (int): scale of the minefield
+        """
         # TL Corner
         self.screen.draw_pixel(x, y, 0x6)
 
@@ -167,6 +183,13 @@ class Minesweeper:
         self.screen.push()
 
     def erase_cell(self, x, y, scale):
+        """Erases a cell of the minefield
+
+        Args:
+            x (int): x coordinate of the cell
+            y (int): y coordinate of the cell
+            scale (int): scale of the minefield
+        """
         x *= 6
         y *= 6
         # TL Corner
@@ -192,6 +215,12 @@ class Minesweeper:
         self.screen.push()
 
     def draw_num(self, x, y):
+        """Draws the number of mines around a cell
+
+        Args:
+            x (int): x coordinate of the cell
+            y (int): y coordinate of the cell
+        """
         val = self.minefield[x][y]
         if self.discovered[x][y]:
             return
@@ -239,11 +268,17 @@ class Minesweeper:
             self.draw_cursor(self.cursor[0], self.cursor[1])
 
     def init_screen(self):
+        """Draws the initial screen of the game"""
         for row in range(0, 48, int(48 / 8)):
             for col in range(0, 48, int(48 / 8)):
                 self.draw_cell(row, col, 8)
 
     def gen_minefield(self, scale):
+        """Generates the minefield
+
+        Args:
+            scale (int): scale of the minefield
+        """
         field = [[0 for j in range(scale)] for i in range(scale)]
 
         for i in range(10):
@@ -377,12 +412,10 @@ class Minesweeper:
 
         # print("\n")
         for j in range(scale):
-            logger.info(''.join([str(field[i][j]) + " " for i in range(scale)]))
+            logger.info("".join([str(field[i][j]) + " " for i in range(scale)]))
             # for i in range(scale):
             #     print(str(field[i][j]) + " " , end="")
             print("\n")
-
-
 
         return field
 
@@ -425,6 +458,13 @@ class Minesweeper:
             print("\n")
 
     def draw_cursor(self, x, y, erase=False):
+        """Draws the cursor of the selected mine cell
+
+        Args:
+            x (int): The x coordinate of the cursor
+            y (int): The y coordinate of the cursor
+            erase (bool, optional): If True, the cursor will be erased. Defaults to False.
+        """
         x *= 6
         y *= 6
 
@@ -474,6 +514,12 @@ class Minesweeper:
         self.screen.push()
 
     def toggle_flag(self, x, y):
+        """Toggles whether a flag is placed on a cell
+
+        Args:
+            x (int): The x coordinate of the cell
+            y (int): The y coordinate of the cell
+        """
         self.flags[x][y] = not self.flags[x][y]
 
         if not self.discovered[x][y]:
@@ -493,6 +539,7 @@ class Minesweeper:
             self.screen.push()
 
     def check_win(self):
+        """Checks if the player has won the game"""
         # Make sure there are 10 flags placed on the correct spots and that all the tiles have been discovered
         # print(f"Num of placed:\t{len(self.placed_flags)}")
         # print(
@@ -508,6 +555,11 @@ class Minesweeper:
             self.game_over(win=True)
 
     def game_over(self, win=False):
+        """Routine to run when the game is over. Displays the time taken and checks if the player has beaten the high score
+
+        Args:
+            win (bool, optional): If True, the player has won the game. Defaults to False.
+        """
         self.is_game_over = True
         if not win:
             self.stop_time = datetime.datetime.now()
@@ -535,9 +587,7 @@ class Minesweeper:
             seconds = int(seconds)
 
             # Create the timedelta object
-            hscore = datetime.timedelta(
-                hours=hours, minutes=minutes, seconds=seconds
-            )
+            hscore = datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds)
             if diff < hscore:
                 with open("demos/minesweeper/high_score.txt", "w") as scores:
                     # clear file
