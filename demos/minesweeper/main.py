@@ -1,13 +1,13 @@
-import queue
 import datetime
+import queue
+from collections import Counter
 from os import stat
 from pathlib import Path as path
-from collections import Counter
+from random import randint
+
 from loguru import logger
 
 from demos.utils import get_all_from_queue
-
-from random import randint
 
 
 class Minesweeper:
