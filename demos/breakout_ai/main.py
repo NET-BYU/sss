@@ -1,4 +1,5 @@
-from random import getrandbits, uniform, randint, random, choice
+from random import choice, getrandbits, randint, random, uniform
+
 from loguru import logger
 
 SCREEN_X = 48
@@ -23,7 +24,15 @@ class BreakoutAi:
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
+
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+
+        Args:
+            input_queue (Queue): Input queue
+            output_queue (Queue): Output queue
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 25
 
@@ -42,6 +51,7 @@ class BreakoutAi:
         self.last_predicted_landing = 1000
 
     def run(self):
+        """Runs the game loop"""
         screen = self.screen
 
         logger.info("BREAKOUT")
@@ -61,7 +71,7 @@ class BreakoutAi:
         self.level = 1
 
         self.init_screen(self.screen)
-        
+
         has_overshot = False
         random_idle_move_chance = 0.05  # Chance of idle movement (5%)
         random_overshoot_factor = randint(1, 2)  # Add some variability to overshooting
@@ -95,7 +105,7 @@ class BreakoutAi:
                         if lives <= 4:
                             lives += 1
                             self.output_queue.put("LIVES " + str(lives))
-                            
+
                         self.init_screen(screen)
 
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_OFF)
@@ -125,8 +135,10 @@ class BreakoutAi:
                     self.ball[1] = screen.y_height // 2
 
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
-                predicted_landing = self.predict_ball_landing(is_left, is_down, spin, screen)
-                
+                predicted_landing = self.predict_ball_landing(
+                    is_left, is_down, spin, screen
+                )
+
                 # Add random chance for idle movement (move the paddle randomly even if it's aligned)
                 if random() < random_idle_move_chance:
                     if choice([True, False]):
@@ -134,14 +146,34 @@ class BreakoutAi:
                         if self.paddle[0] > self.line_left + 1:
                             for val in range(len(self.paddle)):
                                 self.paddle[val] -= 1
-                            screen.draw_pixel(self.paddle[0], screen.y_height - 1, PIXEL_ON, combine=False)
-                            screen.draw_pixel(self.paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False)
+                            screen.draw_pixel(
+                                self.paddle[0],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1] + 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
                     else:
                         if self.paddle[-1] < self.line_right - 1:
                             for val in range(len(self.paddle)):
                                 self.paddle[val] += 1
-                            screen.draw_pixel(self.paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False)
-                            screen.draw_pixel(self.paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False)
+                            screen.draw_pixel(
+                                self.paddle[0] - 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
                     # Skip to the next frame after a random idle move
                     continue
 
@@ -152,28 +184,54 @@ class BreakoutAi:
                             # Move paddle right
                             for val in range(len(self.paddle)):
                                 self.paddle[val] += 1
-    
+
                             # If paddle overshoots by 1-2 spots (with randomness), mark it
-                            if self.paddle[-1] > predicted_landing + random_overshoot_factor:
+                            if (
+                                self.paddle[-1]
+                                > predicted_landing + random_overshoot_factor
+                            ):
                                 has_overshot = True
-    
+
                             # Update the screen pixels for the paddle movement
-                            screen.draw_pixel(self.paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False)
-                            screen.draw_pixel(self.paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False)
+                            screen.draw_pixel(
+                                self.paddle[0] - 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
 
                     elif predicted_landing < self.paddle[0]:
                         if self.paddle[0] > self.line_left + 1:
                             # Move paddle left
                             for val in range(len(self.paddle)):
                                 self.paddle[val] -= 1
-    
+
                             # If paddle overshoots by 1-2 spots (with randomness), mark it
-                            if self.paddle[0] < predicted_landing - random_overshoot_factor:
+                            if (
+                                self.paddle[0]
+                                < predicted_landing - random_overshoot_factor
+                            ):
                                 has_overshot = True
-    
+
                             # Update the screen pixels for the paddle movement
-                            screen.draw_pixel(self.paddle[0], screen.y_height - 1, PIXEL_ON, combine=False)
-                            screen.draw_pixel(self.paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False)
+                            screen.draw_pixel(
+                                self.paddle[0],
+                                screen.y_height - 1,
+                                PIXEL_ON,
+                                combine=False,
+                            )
+                            screen.draw_pixel(
+                                self.paddle[-1] + 1,
+                                screen.y_height - 1,
+                                PIXEL_OFF,
+                                combine=False,
+                            )
 
                 # If the paddle has overshot, move it back to the correct position
                 else:
@@ -184,28 +242,48 @@ class BreakoutAi:
                                 # Move left if overshot to the right
                                 for val in range(len(self.paddle)):
                                     self.paddle[val] -= 1
-    
+
                                 # If paddle aligns with the predicted landing spot, reset overshot flag
                                 if self.paddle[0] == predicted_landing:
                                     has_overshot = False
-    
+
                                 # Update the screen pixels for the paddle movement
-                                screen.draw_pixel(self.paddle[0], screen.y_height - 1, PIXEL_ON, combine=False)
-                                screen.draw_pixel(self.paddle[-1] + 1, screen.y_height - 1, PIXEL_OFF, combine=False)
+                                screen.draw_pixel(
+                                    self.paddle[0],
+                                    screen.y_height - 1,
+                                    PIXEL_ON,
+                                    combine=False,
+                                )
+                                screen.draw_pixel(
+                                    self.paddle[-1] + 1,
+                                    screen.y_height - 1,
+                                    PIXEL_OFF,
+                                    combine=False,
+                                )
 
                         elif self.paddle[-1] < predicted_landing:
                             if self.paddle[-1] < self.line_right - 1:
                                 # Move right if overshot to the left
                                 for val in range(len(self.paddle)):
                                     self.paddle[val] += 1
-    
+
                                 # If paddle aligns with the predicted landing spot, reset overshot flag
                                 if self.paddle[-1] == predicted_landing:
                                     has_overshot = False
-    
+
                                 # Update the screen pixels for the paddle movement
-                                screen.draw_pixel(self.paddle[0] - 1, screen.y_height - 1, PIXEL_OFF, combine=False)
-                                screen.draw_pixel(self.paddle[-1], screen.y_height - 1, PIXEL_ON, combine=False)
+                                screen.draw_pixel(
+                                    self.paddle[0] - 1,
+                                    screen.y_height - 1,
+                                    PIXEL_OFF,
+                                    combine=False,
+                                )
+                                screen.draw_pixel(
+                                    self.paddle[-1],
+                                    screen.y_height - 1,
+                                    PIXEL_ON,
+                                    combine=False,
+                                )
 
                 # Handle the ball
                 screen.draw_pixel(self.ball[0], self.ball[1], PIXEL_ON)
@@ -214,9 +292,15 @@ class BreakoutAi:
                 yield
 
     def stop(self):
+        """Reset the state of the demo if needed, else leave blank"""
         pass
 
     def init_screen(self, screen):
+        """Initialize the screen with the game elements
+
+        Args:
+            screen (Screen): The Screen object to draw on
+        """
         self.paddle = [24]
 
         if self.level == 1:
@@ -264,12 +348,18 @@ class BreakoutAi:
         screen.push()
 
     def level_up(self):
+        """Increase the level of the game"""
         for rows in self.bricks.values():
             if rows:
                 return False
         return True
 
     def get_angle(self, paddle):
+        """Get the angle of the ball based on the paddle position
+
+        Args:
+            paddle (list): The paddle position
+        """
         if paddle.index(self.ball[0]) < (len(paddle) // 2):
             spin = paddle.index(self.ball[0]) % len(paddle) + 1
             is_left = True
@@ -283,6 +373,14 @@ class BreakoutAi:
         return spin, is_left
 
     def ball_travel(self, is_left, is_down, spin, screen):
+        """Move the ball based on the angle and direction
+
+        Args:
+            is_left (bool): The direction of the ball
+            is_down (bool): The direction of the ball
+            spin (int): The angle of the ball
+            screen (Screen): The Screen object to draw on
+        """
         horizbound = 0
         vertbound = 0
 
@@ -348,22 +446,36 @@ class BreakoutAi:
         return is_left, is_down
 
     def predict_ball_landing(self, is_left, is_down, spin, screen):
+        """Predict the x position where the ball will land
+
+        Args:
+            is_left (bool): The direction of the ball
+            is_down (bool): The direction of the ball
+            spin (int): The angle of the ball
+            screen (Screen): The Screen object to draw on
+        """
         # Start with the ball's current position
         ball_x = self.ball[0]
         ball_y = self.ball[1]
-    
-        while ball_y < screen.y_height - 1:  # Simulate until the ball reaches the bottom
+
+        while (
+            ball_y < screen.y_height - 1
+        ):  # Simulate until the ball reaches the bottom
             if is_left:
                 ball_x -= 1
             else:
                 ball_x += 1
-    
-            if ball_x <= self.line_left + 1:  # Ball hits the left wall, reverse direction
+
+            if (
+                ball_x <= self.line_left + 1
+            ):  # Ball hits the left wall, reverse direction
                 is_left = False
-            elif ball_x >= self.line_right - 1:  # Ball hits the right wall, reverse direction
+            elif (
+                ball_x >= self.line_right - 1
+            ):  # Ball hits the right wall, reverse direction
                 is_left = True
-    
+
             ball_y += spin  # Ball moves down by its vertical speed (spin)
-    
+
         # Return the predicted x position where the ball will land
         return ball_x

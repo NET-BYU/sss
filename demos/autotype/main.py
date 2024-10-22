@@ -8,7 +8,7 @@ class Autotype:
     The stop function is called when the demo/game is being exited by the upper SSS software. It should reset the state for the game
     """
 
-    demo_time = 30
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue
