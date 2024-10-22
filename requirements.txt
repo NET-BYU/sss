@@ -6,7 +6,7 @@ numpy==1.23.0
 opencv-python==4.6.0.66
 paho-mqtt==1.6.1
 perlin-noise==1.12
-pygame==2.1.2
+pygame
 pygame-widgets==1.0.0
 PyYAML==6.0
 spidev==3.5
