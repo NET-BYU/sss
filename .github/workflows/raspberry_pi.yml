@@ -10,7 +10,7 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt-get install libatlas-base-dev python3-pip python3-venv
+          sudo apt update && sudo apt install -y libatlas-base-dev python3-pip python3-venv python3-dev libffi-dev build-essential libgl1-mesa-glx libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev libpng-dev libfreetype6-dev libportmidi-dev
 
       - name: Set up environment
         run: |
