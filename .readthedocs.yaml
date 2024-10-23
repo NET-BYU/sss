@@ -10,5 +10,10 @@ build:
   tools:
     python: "3.12"
 
+# Optionally declare the Python requirements required to build your docs
+python:
+  install:
+  - requirements: mkdocs-requirements.txt
+
 mkdocs:
   configuration: mkdocs.yml
