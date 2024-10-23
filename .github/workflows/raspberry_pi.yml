@@ -5,28 +5,55 @@ on: [push]
 jobs:
   build:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install system dependencies
         run: |
-          sudo apt update && sudo apt install -y libatlas-base-dev python3-pip python3-venv python3-dev libffi-dev build-essential libgl1-mesa-glx libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev libpng-dev libfreetype6-dev libportmidi-dev
+          sudo apt update
+          sudo apt install -y libatlas-base-dev \
+                              python3-pip \
+                              python3-venv \
+                              python3-dev \
+                              libffi-dev \
+                              build-essential \
+                              libgl1-mesa-glx \
+                              libsdl2-dev \
+                              libsdl2-image-dev \
+                              libsdl2-mixer-dev \
+                              libsdl2-ttf-dev \
+                              libjpeg-dev \
+                              libpng-dev \
+                              libfreetype6-dev \
+                              libportmidi-dev \
 
-      - name: Set up environment
+      - name: Set up folder
         run: |
-          rm -rf /tmp/test
-          mkdir /tmp/test
-          python -m venv /tmp/test/.venv
+          pwd
+          rm -rf /tmp/test-${{ matrix.python-version }}
+          mkdir /tmp/test-${{ matrix.python-version }}
+          cd /tmp/test-${{ matrix.python-version }}
 
+      - name: Set up Python version and virtual environment
+        run: |
+          export PYENV_ROOT="$HOME/.pyenv"
+          export PATH="$PYENV_ROOT/bin:$PATH"
+          eval "$(pyenv init --path)"
+          pyenv local ${{ matrix.python-version }}
+          python -m venv /tmp/test-${{ matrix.python-version }}/.venv
+          
       - name: Install project dependencies
         run: |
-          /tmp/test/.venv/bin/python -m pip install -r requirements.txt
+          /tmp/test-${{ matrix.python-version }}/.venv/bin/python -m pip install -r requirements.txt
 
       - name: Run all demos to make sure they load
         run: |
-          /tmp/test/.venv/bin/python main.py test
+          /tmp/test-${{ matrix.python-version }}/.venv/bin/python main.py test
 
       - name: Clean up code
         if: always()
         run: |
-          rm -rf /tmp/test
+          rm -rf /tmp/test-${{ matrix.python-version }}
