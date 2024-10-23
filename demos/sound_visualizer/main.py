@@ -6,7 +6,7 @@ import numpy as np
 
 def sound_visualizer(display, queue, sound_frames, fps):
     """Display a sound visualizer on the display.
-    
+
     Args:
         display (Display): Display object to draw on
         queue (Queue): Queue to receive messages from the main thread
@@ -82,7 +82,7 @@ class SoundVisualizer:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue to receive messages from the main thread
             output_queue (Queue): Queue to send messages to the main thread

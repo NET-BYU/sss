@@ -14,7 +14,7 @@ class Cube:
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): The input queue
             output_queue (Queue): The output queue

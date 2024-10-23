@@ -7,13 +7,13 @@ from .seven_seg import SevenSegment
 
 class PhysicalScreen:
     """PhysicalScreen class to handle the physical screen"""
-    
+
     def __init__(self, brightness=3):
         """Constructor
-        
+
         Args:
             brightness (int, optional): Brightness of the screen. Defaults to 3.
-        
+
         """
         self.brightness = brightness
         self.cs_num_lst = [
@@ -71,10 +71,10 @@ class PhysicalScreen:
 
     def create_tick(self, frame_rate):
         """Create a tick
-        
+
         Args:
             frame_rate (int): Frame rate
-            
+
         """
         period = 1.0 / frame_rate
         nextTime = time.time() + period

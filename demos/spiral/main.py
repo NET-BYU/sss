@@ -11,7 +11,7 @@ class Spiral:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue for user input
             output_queue (Queue): Queue for game output

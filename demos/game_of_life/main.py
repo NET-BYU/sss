@@ -5,16 +5,17 @@ import random
 
 class GameOfLife:
     """Game of Life simulation"""
+
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): The input queue
             output_queue (Queue): The output queue
             screen (Screen): The screen to draw on
-            
+
         """
         self.frame_rate = 10
 
@@ -26,12 +27,12 @@ class GameOfLife:
 
     def _create_board(self, width, height, density=0.25):
         """Create a new board
-        
+
         Args:
             width (int): The width of the board
             height (int): The height of the board
             density (float): The density of the board
-            
+
         Returns:
             list: The new board
         """
@@ -42,10 +43,10 @@ class GameOfLife:
 
     def _display_board(self, board):
         """Display the board
-        
+
         Args:
             board (list): The board to display
-            
+
         """
         for x in range(self.screen.x_width):
             for y in range(self.screen.y_height):
@@ -54,10 +55,10 @@ class GameOfLife:
 
     def _update_board(self, board):
         """Update the board
-        
+
         Args:
             board (list): The board to update
-            
+
         Returns:
             list: The updated board
         """
@@ -71,12 +72,12 @@ class GameOfLife:
 
     def _check_alive(self, x, y, board):
         """Check if a cell is alive
-        
+
         Args:
             x (int): The x position
             y (int): The y position
             board (list): The board
-            
+
         Returns:
             int: 1 if alive, 0 if dead
         """

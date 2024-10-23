@@ -15,12 +15,12 @@ class UnderConstruction:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Input queue
             output_queue (Queue): Output queue
             screen (Screen): Screen object
-        
+
         """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10

@@ -10,12 +10,12 @@ from runners import utils
 
 def run(demo_name, simulate, testing):
     """Main function that runs the demo.
-    
+
     Args:
         demo_name (str): Name of the demo to run.
         simulate (bool): Whether to simulate the screen or use the physical screen.
         testing (bool): Whether to run the demo in testing mode.
-    
+
     """
 
     if simulate:
@@ -85,12 +85,12 @@ def run(demo_name, simulate, testing):
 
 def _tick(runner, demo, testing):
     """Run the demo for one tick.
-    
+
     Args:
         runner (generator): Generator that runs the demo.
         demo (Demo): Demo object.
         testing (bool): Whether to run the demo in testing mode.
-        
+
     """
     if testing:
         before_time = time.time()

@@ -23,7 +23,7 @@ class Cell:
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): The input queue
             output_queue (Queue): The output queue
@@ -96,14 +96,14 @@ class Cell:
 
     def _map(self, x, in_min, in_max, out_min, out_max):
         """Maps a value from one range to another
-        
+
         Args:
             x (float): The value to map
             in_min (float): The minimum value of the input range
             in_max (float): The maximum value of the input range
             out_min (float): The minimum value of the output range
             out_max (float): The maximum value of the output range
-            
+
         Returns:
             float: The mapped value
         """

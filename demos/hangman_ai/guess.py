@@ -340,22 +340,23 @@ guess_list = []
 
 class Guess:
     """This class will be used to keep track of the guesses that have been made by the user. It will also be used to keep track of the word that has been chosen by the user"""
+
     # This will add to our list of letters that have been guessed
     def add_guess_list(self, letter):
         """Add the letter to the list of guessed letters
-        
+
         Args:
             letter (str): The letter that the user has guessed
-            
+
         """
         guess_list.append(letter)
 
     def letter_number(self, letter):
         """This function will return the index of the letter in the list of choices
-        
+
         Args:
             letter (str): The letter that the user has guessed
-            
+
         Returns:
             int: The index of the letter in the list of choices
         """
@@ -367,10 +368,10 @@ class Guess:
     # If no then it will return a false. If yes then it will return a true
     def check_guess_list(self, letter):
         """This function will check to see if the current choice of letter has been guessed or not.
-        
+
         Args:
             letter (str): The letter that the user has guessed
-            
+
         Returns:
             bool: True if the letter has been guessed, False if the letter has not been guessed
         """
@@ -382,13 +383,13 @@ class Guess:
     # This will randomly select a word from the list of words based on what time it is.
     def pick_word(self, seed):
         """This function will randomly select a word from the list of words based on what time it is.
-        
+
         Args:
             seed (str): The seed that will be used to generate the random number
-            
+
         Returns:
             str: The word that has been selected
-            
+
         """
         current_time = time.localtime()
         random.seed(current_time[4] + current_time[3] + seed)
@@ -404,10 +405,10 @@ class Guess:
     # Returns a letter from the list of letters
     def letter_select(self, choice):
         """Returns a letter from the list of letters
-        
+
         Args:
             choice (int): The index of the letter that the user has chosen
-            
+
         Returns:
             str: The letter that the user has chosen
         """

@@ -24,7 +24,7 @@ class Rain:
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue for receiving messages
             output_queue (Queue): Queue for sending messages

@@ -12,11 +12,11 @@ def test_demo(demo_name, demo_module_name):
     """
     Given a demo name and module, it runs the demo for a couple of ticks to
     make sure it doesn't crash.
-    
+
     Args:
         demo_name (str): Name of the demo to test.
         demo_module_name (str): Name of the module where the demo is located.
-        
+
     Returns:
         bool: Whether the demo passed or not.
     """

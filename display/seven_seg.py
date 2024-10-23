@@ -32,7 +32,7 @@ DEFAULT_BAUDRATE = 2000000
 
 class SevenSegment:
     """Object that controls a 7-segment display using the MAX7219 chip"""
-    
+
     def __init__(
         self,
         num_digits=8,
@@ -96,7 +96,7 @@ class SevenSegment:
         Args:
             register_num (int): which register to set
             value (int): value to set the register to
-            
+
         Raises:
             ValueError: if register_num is not in the correct range or if value is not an int or is not between 0 and 16
         """
@@ -145,7 +145,7 @@ class SevenSegment:
 
         Args:
             value (int): brightness value to set
-            
+
         Raises:
             ValueError: if value is not an int or is not between 0 and 16
         """
@@ -187,7 +187,7 @@ class SevenSegment:
             position (int): position to draw the symbol
             value (int): value to draw at the position
             flush (bool): flush the display after drawing
-            
+
         Raises:
             ValueError: if position is not a valid number or value is not a valid number
         """
@@ -226,7 +226,7 @@ class SevenSegment:
             char (str): character to draw at the position
             dot (bool): whether or not to draw a dot after the character
             flush (bool): flush the display after drawing
-            
+
         Raises:
             ValueError: if position is not a valid number
         """
@@ -253,7 +253,7 @@ class SevenSegment:
             char (str): character to draw at the position
             dot (bool): whether or not to draw a dot after the character
             flush (bool): flush the display after drawing
-            
+
         Raises:
             ValueError: if segment_orientation_array has not been initialized
         """
@@ -271,7 +271,7 @@ class SevenSegment:
             txt (str): text to draw on the display
             start_position (int): position to start drawing the text
             flush (bool): flush the display after drawing
-            
+
         Raises:
             OverflowError: if the message would overflow the spi buffer
         """
@@ -322,7 +322,7 @@ class SevenSegment:
     # Write to the SPI file through SPI library
     def _write(self, data):
         """Write to the SPI file through SPI library
-        
+
         Args:
             data (str): data to write to the SPI file
         """
@@ -331,14 +331,14 @@ class SevenSegment:
     # Get position in the buffer for a given x,y coordinate
     def _get_pos(self, x, y):
         """Get position in the buffer for a given x,y coordinate
-        
+
         Args:
             x (int): x coordinate to draw the symbol
             y (int): y coordinate to draw the symbol
-            
+
         Returns:
             int: position in the buffer
-            
+
         Raises:
             ValueError: if x or y are not valid numbers
         """
@@ -362,7 +362,7 @@ class SevenSegment:
     # Not current in use
     def _check_buf(self):
         """Check the buffer for any differences between the display buffer and the current buffer
-        
+
         Returns:
             list: list of indices that have changed
         """

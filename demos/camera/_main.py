@@ -15,11 +15,11 @@ NUM_SHADES = 5
 
 
 class Camera_Source:
-    """Object to hold the host and stream url of a camera source.
-    """
+    """Object to hold the host and stream url of a camera source."""
+
     def __init__(self, host, stream):
         """Constructor
-        
+
         Args:
             host (str): Host url of the camera
             stream (str): Stream url of the camera
@@ -29,7 +29,7 @@ class Camera_Source:
 
     def get_host(self):
         """Gets the host url of the camera
-        
+
         Returns:
             str: Host url of the camera
         """
@@ -37,7 +37,7 @@ class Camera_Source:
 
     def get_stream(self):
         """Gets the stream url of the camera
-        
+
         Returns:
             str: Stream url of the camera
         """
@@ -54,7 +54,7 @@ class Camera:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue to receive input from the user
             output_queue (Queue): Queue to send output to the user
@@ -186,7 +186,7 @@ class Camera:
             self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
     def run(self):
-        """Main generator function for the demo""""
+        """Main generator function for the demo"""
         # Create generator here
 
         self.first = True

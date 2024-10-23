@@ -7,6 +7,7 @@ from demos.utils import get_all_from_queue
 
 class Tetris:
     """This is the tetrus demo. It is a simple game where the player has to stack blocks to form lines. When a line is formed, it is removed and the player gets points. The game ends when the blocks reach the top of the screen."""
+
     demo_time = None
 
     # User input is passed through input_queue
@@ -14,12 +15,12 @@ class Tetris:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue to get user input
             output_queue (Queue): Queue to send output
             screen (Screen): Screen object to update the screen
-            
+
         """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
@@ -297,6 +298,7 @@ class Tetris:
 
     class Shape(Enum):
         """Enum for the different shapes."""
+
         O = 1
         I = 2
         S = 3
@@ -307,7 +309,7 @@ class Tetris:
 
     def is_high_score(self):
         """Check if the current score is a high score.
-        
+
         Returns:
             bool: True if the current score is a high score, False otherwise."""
         with open(self.high_score_file_path, "r") as scores:
@@ -336,7 +338,7 @@ class Tetris:
 
     def update_score(self, num_lines):
         """Update the score, lines, and level based on the number of lines cleared.
-        
+
         Args:
             num_lines (int): The number of lines cleared.
         """
@@ -366,7 +368,7 @@ class Tetris:
 
     def update_scoreboard(self, score=False, lines=False, level=False):
         """Update the scoreboard on the screen.
-        
+
         Args:
             score (bool, optional): Whether to update the score. Defaults to False.
             lines (bool, optional): Whether to update the lines. Defaults to False.
@@ -387,7 +389,7 @@ class Tetris:
 
     def is_game_over(self):
         """Check if the game is over.
-        
+
         Returns:
             bool: True if the game is over, False otherwise.
         """
@@ -397,8 +399,7 @@ class Tetris:
         return False
 
     def fill_empty_rows(self):
-        """Fill empty rows with the rows above them.
-        """
+        """Fill empty rows with the rows above them."""
         drop_complete = False
         while not drop_complete:
             drop_complete = True
@@ -423,7 +424,7 @@ class Tetris:
 
     def update_board(self):
         """Update the board with the current shape.
-        
+
         Returns:
             bool: True if the shape is placed on the board, False otherwise.
         """
@@ -442,10 +443,10 @@ class Tetris:
 
     def is_falling(self, shape_location):
         """Check if the shape is falling.
-        
+
         Args:
             shape_location (list): The location of the shape.
-        
+
         Returns:
             bool: True if the shape is falling, False otherwise.
         """
@@ -458,10 +459,10 @@ class Tetris:
 
     def rotate_shape(self, shape_location):
         """Rotate the shape.
-        
+
         Args:
             shape_location (list): The location of the shape.
-            
+
         Returns:
             list: The new location of the shape.
         """
@@ -494,10 +495,10 @@ class Tetris:
 
     def drop_shape(self, shape_location):
         """Drop the shape.
-        
+
         Args:
             shape_location (list): The location of the shape.
-            
+
         Returns:
             list: The new location of the shape.
         """
@@ -508,16 +509,16 @@ class Tetris:
 
     def shift_shape(self, shape_location, left, right):
         """Shift the shape.
-        
+
         Args:
             shape_location (list): The location of the shape.
             left (bool): True if the shape should be shifted left, False otherwise.
             right (bool): True if the shape should be shifted right, False otherwise.
-            
+
         Returns:
             list: The new location of the shape.
         """
-        
+
         if left == right:
             return shape_location
         offset = (right - left) * 2
@@ -537,23 +538,23 @@ class Tetris:
 
     def draw_shape(self, location, erase=False):
         """Draw the shape.
-        
+
         Args:
             location (list): The location of the shape.
             erase (bool): True if the shape should be erased, False otherwise.
-            
+
         """
         for coordinate in location:
             self.draw_brick(coordinate[0], coordinate[1], erase)
 
     def draw_brick(self, x, y, erase=False):
         """Draw a brick.
-        
+
         Args:
             x (int): The x coordinate of the brick.
             y (int): The y coordinate of the brick.
             erase (bool): True if the brick should be erased, False otherwise.
-            
+
         """
         if y > 3:
             if erase:
@@ -577,14 +578,14 @@ class Tetris:
 
     def init_shape_location(self, shape):
         """Initialize the location of the shape.
-        
+
         Args:
             shape (int): The shape.
-            
+
         Returns:
             list: The location of the shape.
         """
-        
+
         if shape is self.Shape.O:
             return [(11, 4), (13, 4), (11, 6), (13, 6)]
         if shape is self.Shape.I:
@@ -794,11 +795,11 @@ class Tetris:
 
     def get_letter(self, x, y):
         """Get the letter at the given position.
-        
+
         Args:
             x (int): The x position.
             y (int): The y position.
-            
+
         Returns:
             str: The letter at the given position.
         """

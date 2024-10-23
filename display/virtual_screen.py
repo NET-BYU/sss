@@ -7,7 +7,7 @@ from .virtual_seven_seg import VirtualSevenSegment
 
 class VirtualScreen:
     """Virtual screen for the emulator."""
-    
+
     def __init__(self):
         """Constructor for the VirtualScreen class."""
         pygame.init()
@@ -28,7 +28,7 @@ class VirtualScreen:
 
     def create_tick(self, frame_rate):
         """Creates a tick generator for the virtual screen.
-        
+
         Args:
             frame_rate (int): The frame rate of the virtual screen.
         """

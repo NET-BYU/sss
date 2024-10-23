@@ -5,11 +5,12 @@ from demos.digit_clock.trace import Trace
 
 class DigitClock:
     """This is the Digital Clock demo. It will display the current time on the screen in a digital format."""
+
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): The input queue
             output_queue (Queue): The output queue
@@ -32,7 +33,7 @@ class DigitClock:
 
         def draw_time(current_time, draw):
             """Draw the current time on the screen
-            
+
             Args:
                 current_time (tuple): The current time
                 draw (bool): If True then draw the time, else clear the time
@@ -75,7 +76,7 @@ class DigitClock:
 
     def get_input_buff(self):
         """Get all input off the queue
-        
+
         Returns:
             list: A list of all the input from the queue
         """

@@ -2,8 +2,7 @@ import numpy as np
 
 
 class Autotype:
-    """This is the autotype demo. It will type out a text file on the screen
-    """
+    """This is the autotype demo. It will type out a text file on the screen"""
 
     demo_time = None
 
@@ -12,7 +11,7 @@ class Autotype:
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
         """Constructor
-        
+
         Args:
             input_queue (Queue): Queue for user input
             output_queue (Queue): Queue for game output
@@ -91,7 +90,7 @@ class Autotype:
 
     def get_input_buff(self):
         """Return the input buffer"
-        
+
         Returns:
             list: List of input buffer
         """

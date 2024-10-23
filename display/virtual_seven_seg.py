@@ -3,10 +3,10 @@ import pygame
 
 class VirtualSevenSegment:
     """Virtual seven segment display."""
-    
+
     def __init__(self, start_x, start_y, display):
         """Constructor
-        
+
         Args:
             start_x (int): The starting x position of the display.
             start_y (int): The starting y position of the display.
@@ -32,7 +32,7 @@ class VirtualSevenSegment:
 
     def raw2(self, x, y, value, flush=False):
         """Updates the display with a raw value.
-        
+
         Args:
             x (int): The x position of the digit.
             y (int): The y position of the digit.
@@ -46,10 +46,10 @@ class VirtualSevenSegment:
 
 class Digit:
     """Digit class for the seven segment display."""
-    
+
     def __init__(self, display, x, y):
         """Constructor
-        
+
         Args:
             display (pygame.Surface): The display surface.
             x (int): The x position of the digit.
@@ -112,7 +112,7 @@ class Digit:
 
     def update(self, value):
         """Updates the digit with a new value.
-        
+
         Args:
             value (int): The new value to update the digit with.
         """

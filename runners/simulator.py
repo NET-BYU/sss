@@ -14,10 +14,10 @@ from runners import utils
 
 class Simulator:
     """This is the simulator class that runs the demos."""
-    
+
     def __init__(self, width, height, demo_dir="demos"):
         """Constructor
-        
+
         Args:
             width (int): Width of the screen.
             height (int): Height of the screen.
@@ -65,10 +65,10 @@ class Simulator:
     @staticmethod
     def _import_module(module):
         """Import the module for the first time.
-        
+
         Args:
             module (str): Name of the module to import.
-            
+
         Returns:
             module: The imported module.
         """
@@ -79,10 +79,10 @@ class Simulator:
     @staticmethod
     def _reload_module(module):
         """Reload the module.
-        
+
         Args:
             module (module): The module to reload.
-            
+
         Returns:
             module: The reloaded module.
         """
@@ -119,7 +119,7 @@ class Simulator:
 
     def _load_game(self, game_name="template"):
         """Load the game.
-        
+
         Args:
             game_name (str): Name of the game to load.
         """

@@ -312,7 +312,7 @@ class Display:
     # work in progress
     def fill_box(self, start_x, start_y, x_len, y_len, push=False):
         """Fill a box with the given dimensions
-        
+
         Args:
             start_x (int): starting x coordinate
             start_y (int): starting y coordinate

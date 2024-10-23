@@ -1,9 +1,9 @@
 class Trace:
     """This class is used to draw the hangman game on the screen."""
-    
+
     def __init__(self, screen):
         """Constructor
-        
+
         Args:
             screen (Screen): The screen to draw on
         """
@@ -29,7 +29,7 @@ class Trace:
     # Draws a hangman based on how  many errors someone has made
     def draw_person(self, num_errors, draw):
         """Draws the hangman based on the number of errors
-        
+
         Args:
             num_errors (int): The number of errors the player has made
             draw (bool): Whether or not to draw the hangman
@@ -95,12 +95,12 @@ class Trace:
     # This will draw a letter if it is guessed correctly in the word
     def draw_letter(self, position, character, draw):
         """Draws a letter in the word
-        
+
         Args:
             position (int): The position of the letter in the word
             character (str): The character to draw
             draw (bool): Whether or not to draw the character
-            
+
         """
         if draw == True:
             character = character
@@ -120,11 +120,11 @@ class Trace:
     # This will draw the letter that the player can choose to guess
     def draw_choice(self, character, draw):
         """Draws the letter that the player can choose to guess
-        
+
         Args:
             character (str): The character to draw
             draw (bool): Whether or not to draw the character
-            
+
         """
         if draw == True:
             character = character
@@ -171,10 +171,10 @@ class Trace:
     # This will draw an endgame message based on whether or not the player guessed the word correctly or not
     def draw_endgame(self, win):
         """Draws the endgame message
-        
+
         Args:
             win (bool): Whether or not the player won
-            
+
         """
         if win == True:
             self.screen.draw_text(30, 4, "GOOD JOB", True, True)

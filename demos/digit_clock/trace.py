@@ -1,10 +1,10 @@
 class Trace:
     def __init__(self, screen):
         """Constructor
-        
+
         Args:
             screen (Screen): The screen to draw on
-            
+
         """
         self.screen = screen
         # init demo/game specific variables here
@@ -12,11 +12,11 @@ class Trace:
     # Draws or erases a 0 based on the position given
     def draw_0(self, position, draw):
         """Draws or erases a 0 based on the position given
-        
+
         Args:
             position (int): The position to draw the 0
             draw (bool): If True then draw the 0, else clear the 0
-            
+
         """
         if draw == True:
             value = 15
@@ -68,11 +68,11 @@ class Trace:
     # Draws or erases a 1 based on position given
     def draw_1(self, position, draw):
         """Draws or erases a 1 based on the position given
-        
+
         Args:
             position (int): The position to draw the 1
             draw (bool): If True then draw the 1, else clear the 1
-            
+
         """
         if draw == True:
             value = 15
@@ -100,11 +100,11 @@ class Trace:
     # Draws or erases a 2 based on the position given
     def draw_2(self, position, draw):
         """Draws or erases a 2 based on the position given
-        
+
         Args:
             position (int): The position to draw the 2
             draw (bool): If True then draw the 2, else clear the 2
-            
+
         """
         if draw == True:
             value = 15
@@ -164,11 +164,11 @@ class Trace:
     # Draws or erases a 3 based on the position given
     def draw_3(self, position, draw):
         """Draws or erases a 3 based on the position given
-        
+
         Args:
             position (int): The position to draw the 3
             draw (bool): If True then draw the 3, else clear the 3
-            
+
         """
         if draw == True:
             value = 15
@@ -221,11 +221,11 @@ class Trace:
     # Draws or erases a 4 based on the position given
     def draw_4(self, position, draw):
         """Draws or erases a 4 based on the position given
-        
+
         Args:
             position (int): The position to draw the 4
             draw (bool): If True then draw the 4, else clear the 4
-            
+
         """
         if draw == True:
             value = 15
@@ -270,11 +270,11 @@ class Trace:
     # Draws or erases a 5 based on the position given
     def draw_5(self, position, draw):
         """Draws or erases a 5 based on the position given
-        
+
         Args:
             position (int): The position to draw the 5
             draw (bool): If True then draw the 5, else clear the 5
-            
+
         """
         if draw == True:
             value = 15
@@ -336,11 +336,11 @@ class Trace:
     # Draws or erases a 6 based on the position given
     def draw_6(self, position, draw):
         """Draws or erases a 6 based on the position given
-        
+
         Args:
             position (int): The position to draw the 6
             draw (bool): If True then draw the 6, else clear the 6
-            
+
         """
         if draw == True:
             value = 15
@@ -402,11 +402,11 @@ class Trace:
     # Draws or erases a 7 based on position given
     def draw_7(self, position, draw):
         """Draws or erases a 7 based on the position given
-        
+
         Args:
             position (int): The position to draw the 7
             draw (bool): If True then draw the 7, else clear the 7
-            
+
         """
         if draw == True:
             value = 15
@@ -443,11 +443,11 @@ class Trace:
     # Draws or erases an 8 based on the position given
     def draw_8(self, position, draw):
         """Draws or erases a 8 based on the position given
-        
+
         Args:
             position (int): The position to draw the 8
             draw (bool): If True then draw the 8, else clear the 8
-            
+
         """
         if draw == True:
             value = 15
@@ -509,11 +509,11 @@ class Trace:
     # Draws or erases a 9 nine based on position given
     def draw_9(self, position, draw):
         """Draws or erases a 9 based on the position given
-        
+
         Args:
             position (int): The position to draw the 9
             draw (bool): If True then draw the 9, else clear the 9
-            
+
         """
         if draw == True:
             value = 15
@@ -574,12 +574,12 @@ class Trace:
     # Helper function for drawing any number at any position.
     def draw_number(self, position, number, draw):
         """Draws or erases a number based on the position given
-        
+
         Args:
             position (int): The position to draw the number
             number (int): The number to draw
             draw (bool): If True then draw the number, else clear the number
-            
+
         """
         if number == 0:
             self.draw_0(position, draw)

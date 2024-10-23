@@ -16,7 +16,7 @@ def start_processing_output(system_queue, mqtt_q):
 
     def on_connect(client, userdata, flags, rc):
         """Callback function executed upon the successful connection to the desired broker
-        
+
         Args:
             client (mqtt.Client): The client instance for this callback
             userdata (Any): The private user data as set in Client() or user_data_set()
@@ -27,7 +27,7 @@ def start_processing_output(system_queue, mqtt_q):
 
     def on_disconnect(client, userdata, rc):
         """Callback function executed upon disconnecting from the broker
-        
+
         Args:
             client (mqtt.Client): The client instance for this callback
             userdata (Any): The private user data as set in Client() or user_data_set()
@@ -52,7 +52,7 @@ def start_processing_output(system_queue, mqtt_q):
 
     def process():
         """Contains generator which fetches all messages from the `byu_sss/output` topic on broker
-        
+
         Returns:
             Generator: Generator that fetches all messages from the `byu_sss/output` topic on broker
         """

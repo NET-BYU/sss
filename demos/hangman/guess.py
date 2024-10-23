@@ -341,10 +341,11 @@ guess_list = []
 
 class Guess:
     """This object will be used to keep track of the guesses that have been made by the user."""
+
     # This will add to our list of letters that have been guessed
     def add_guess_list(self, letter):
         """Add a letter to the list of guessed letters.
-        
+
         Args:
             letter (str): The letter that the user has guessed.
         """
@@ -354,10 +355,10 @@ class Guess:
     # If no then it will return a false. If yes then it will return a true
     def check_guess_list(self, letter):
         """Check to see if the letter has been guessed.
-        
+
         Args:
             letter (str): The letter that the user has guessed.
-        
+
         Returns:
             bool: True if the letter has been guessed, False if it has not been guessed
         """
@@ -369,10 +370,10 @@ class Guess:
     # This will randomly select a word from the list of words based on what time it is.
     def pick_word(self, seed):
         """Pick a word from the list of words.
-        
+
         Args:
             seed (str): A seed to use for the random number generator.
-            
+
         Returns:
             str: A word from the list of words.
         """
@@ -389,10 +390,10 @@ class Guess:
     # Returns a letter from the list of letters
     def letter_select(self, choice):
         """Select a letter from the list of letters.
-        
+
         Args:
             choice (int): The index of the letter to select.
-            
+
         Returns:
             str: The letter at the specified index.
         """

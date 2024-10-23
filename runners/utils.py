@@ -17,10 +17,10 @@ def get_demos(demo_dir="demos"):
     Given a directory, it finds all valid demos. It returns a list of tuples
     where the first value is the demo name and the second value is the module
     string of the demo.
-    
+
     Args:
         demo_dir (str): Directory where the demos are located.
-        
+
     Returns:
         list: List of tuples with the demo name and the module string.
     """
@@ -41,10 +41,10 @@ def get_demos(demo_dir="demos"):
 def get_demo_cls(demo_module):
     """
     For a given demo module, it gets the demo class.
-    
+
     Args:
         demo_module (module): Module that contains the demo.
-        
+
     Returns:
         class: The demo class.
     """

@@ -16,12 +16,12 @@ class Sine:
 
     def __init__(self, input_queue, output_queue, screen):
         """Constructor"
-        
+
         Args:
             input_queue (Queue): Queue to receive messages from the main thread
             output_queue (Queue): Queue to send messages to the main thread
             screen (Screen): Surface to draw on
-            
+
         """
         self.frame_rate = 10
 
