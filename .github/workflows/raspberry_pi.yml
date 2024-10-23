@@ -15,44 +15,29 @@ jobs:
         run: |
           sudo apt update && sudo apt install -y libatlas-base-dev python3-pip python3-venv python3-dev libffi-dev build-essential libgl1-mesa-glx libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev libpng-dev libfreetype6-dev libportmidi-dev
 
-      - name: Set up Python version
+      - name: Set up folder
         run: |
-          echo $HOME
-          export PYENV_ROOT="$HOME/.pyenv"
-          export PATH="$PYENV_ROOT/bin:$PATH"
-          eval "$(pyenv init --path)"
-          python -V
-          python3 -V
+          pwd
+          rm -rf /tmp/test-${{ matrix.python-version }}
+          mkdir /tmp/test-${{ matrix.python-version }}
+          cd /tmp/test-${{ matrix.python-version }}
+
+      - name: Set up Python version and virtual environment
+        run: |
           pyenv local ${{ matrix.python-version }}
           python -V
-          python3 -V
-
-      # - name: Set up environment
-      #   run: |
-      #     rm -rf /tmp/test-${{ matrix.python-version }}
-      #     mkdir /tmp/test-${{ matrix.python-version }}
-      #     pwd
-      #     python -V
-      #     python3 -V
-      #     pyenv local ${{ matrix.python-version }}
-      #     python -V
-      #     python3 -V
-      #     rm -rf /tmp/test-${{ matrix.python-version }}
-
+          python -m venv /tmp/test-${{ matrix.python-version }}/.venv
+          /tmp/test-${{ matrix.python-version }}/.venv/bin/python -V
           
-      #     python -V
-      #     python3 -V
-      #     python -m venv /tmp/test/.venv
+      - name: Install project dependencies
+        run: |
+          /tmp/test-${{ matrix.python-version }}/.venv/bin/python -m pip install -r requirements.txt
 
-      # - name: Install project dependencies
-      #   run: |
-      #     /tmp/test/.venv/bin/python -m pip install -r requirements.txt
+      - name: Run all demos to make sure they load
+        run: |
+          /tmp/test-${{ matrix.python-version }}/.venv/bin/python main.py test
 
-      # - name: Run all demos to make sure they load
-      #   run: |
-      #     /tmp/test/.venv/bin/python main.py test
-
-      # - name: Clean up code
-      #   if: always()
-      #   run: |
-      #     rm -rf /tmp/test
+      - name: Clean up code
+        if: always()
+        run: |
+          rm -rf /tmp/test-${{ matrix.python-version }}
