@@ -10,6 +10,7 @@ __pycache__
 *.log
 .venv
 .idea/
+!.readthedocs.yaml
 *.yaml
 *high_score*
 chocolate-doom
