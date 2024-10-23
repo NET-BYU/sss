@@ -19,16 +19,14 @@ def run(demo_name, simulate, testing):
     """
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
-            VirtualScreen,
-        )
+        from display.virtual_screen import \
+            VirtualScreen  # pylint: disable=import-outside-toplevel
 
         logger.debug("Starting virtual screen...")
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
-            PhysicalScreen,
-        )
+        from display.physical_screen import \
+            PhysicalScreen  # pylint: disable=import-outside-toplevel
 
         logger.debug("Starting physical screen...")
         screen = PhysicalScreen()

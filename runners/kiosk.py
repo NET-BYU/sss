@@ -261,15 +261,13 @@ def run(simulate, testing=False):
     """
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
-            VirtualScreen,
-        )
+        from display.virtual_screen import \
+            VirtualScreen  # pylint: disable=import-outside-toplevel
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
-            PhysicalScreen,
-        )
+        from display.physical_screen import \
+            PhysicalScreen  # pylint: disable=import-outside-toplevel
 
         screen = PhysicalScreen()
 
