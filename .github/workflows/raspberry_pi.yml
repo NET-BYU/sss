@@ -7,7 +7,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        python-version: ["3.10.14"]
+        python-version: ["3.10", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@v4
 
@@ -43,9 +43,7 @@ jobs:
           export PATH="$PYENV_ROOT/bin:$PATH"
           eval "$(pyenv init --path)"
           pyenv local ${{ matrix.python-version }}
-          python -V
           python -m venv /tmp/test-${{ matrix.python-version }}/.venv
-          /tmp/test-${{ matrix.python-version }}/.venv/bin/python -V
           
       - name: Install project dependencies
         run: |
