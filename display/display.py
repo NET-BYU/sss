@@ -266,15 +266,27 @@ class Display:
             self.push()
 
     def draw_text(self, x, y, msg, combine=True, push=False):
-        """Print a message to the screen, y_height-2 is lowest y value accepted without error
+        """
+        Print a message to the screen, y_height-2 is lowest y value accepted
+        without error. If the message is too long for the given x position, it
+        will throw a ValueError. This function does not provide any wrapping.
 
         Args:
             x (int): x coordinate
             y (int): y coordinate
             msg (int): string message to print
-            combine (bool): digits are split into two pixels, when drawing to one combine keeps what is already drawn on the other side of the digit
+            combine (bool): digits are split into two pixels, when drawing to
+                            one combine keeps what is already drawn on the
+                            other side of the digit
             push (bool): when true all the recent changes are pushed to the display
         """
+
+        # Check to make sure the message is not too big
+        if len(msg) + x > self.x_width:
+            raise ValueError(
+                "Message is too long for the display at the given x position"
+            )
+
         if y % 2:
             for pos, char in enumerate(msg):
                 value = symbols.get_char2(char)
