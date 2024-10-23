@@ -410,11 +410,8 @@ class Minesweeper:
                         if field[i + 1][j + 1] == "x":
                             field[i][j] += 1
 
-        # print("\n")
         for j in range(scale):
             logger.info("".join([str(field[i][j]) + " " for i in range(scale)]))
-            # for i in range(scale):
-            #     print(str(field[i][j]) + " " , end="")
             print("\n")
 
         return field
@@ -424,37 +421,6 @@ class Minesweeper:
             for i in range(scale):
                 print(str(field[i][j]) + " ", end="")
                 self.draw_num(i, j, str(field[i][j]))
-                # if (i == 0) and (j == 0):
-                #     print("c" + " ", end="")
-
-                # elif (i == (scale - 1)) and (j == 0):
-                #     print("c" + " ", end="")
-
-                # elif (i == 0) and (j == (scale - 1)):
-                #     print("c" + " ", end="")
-
-                # elif (i == (scale - 1)) and (j == (scale - 1)):
-                #     print("c" + " ", end="")
-
-                # # Top Border
-                # elif (j == 0) and (i >= 1) and (i < (scale - 1)):
-                #     print("t" + " ", end="")
-
-                # # Bottom Border
-                # elif (j == (scale - 1)) and (i >= 1) and (i < (scale - 1)):
-                #     print("b" + " ", end="")
-
-                # # Left Border
-                # elif (i == 0) and ((j >= 1) and (j < (scale - 1))):
-                #     print("l" + " ", end="")
-
-                # # Right Border
-                # elif (i == (scale - 1)) and (j >= 1) and (j < (scale - 1)):
-                #     print("r" + " ", end="")
-
-                # # Center
-                # elif (i >= 1) and (i < (scale - 1)) and (j >= 1) and (j < (scale - 1)):
-                #     print(" " + " ", end="")
             print("\n")
 
     def draw_cursor(self, x, y, erase=False):
@@ -540,13 +506,6 @@ class Minesweeper:
 
     def check_win(self):
         """Checks if the player has won the game"""
-        # Make sure there are 10 flags placed on the correct spots and that all the tiles have been discovered
-        # print(f"Num of placed:\t{len(self.placed_flags)}")
-        # print(
-        #     f"Placed:\t\t{self.placed_flags}\tMatched:\t{Counter(self.placed_flags) == Counter(self.mines)}"
-        # )
-        # print(f"Existing:\t{self.mines}")
-        # print(f"Discovered:\t{self.discovered_tiles}")
         if (
             len(self.placed_flags) == 10
             and Counter(self.placed_flags) == Counter(self.mines)
