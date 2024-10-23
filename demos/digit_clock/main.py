@@ -70,7 +70,7 @@ class DigitClock:
             yield
 
     def stop(self):
-        """Reset the state of the demo if needed, else leave blank""""
+        """Reset the state of the demo if needed, else leave blank"""
         pass
 
     def get_input_buff(self):
