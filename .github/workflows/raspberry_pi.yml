@@ -13,7 +13,22 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt update && sudo apt install -y libatlas-base-dev python3-pip python3-venv python3-dev libffi-dev build-essential libgl1-mesa-glx libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev libpng-dev libfreetype6-dev libportmidi-dev
+          sudo apt update
+          sudo apt install -y libatlas-base-dev \
+                              python3-pip \
+                              python3-venv \
+                              python3-dev \
+                              libffi-dev \
+                              build-essential \
+                              libgl1-mesa-glx \
+                              libsdl2-dev \
+                              libsdl2-image-dev \
+                              libsdl2-mixer-dev \
+                              libsdl2-ttf-dev \
+                              libjpeg-dev \
+                              libpng-dev \
+                              libfreetype6-dev \
+                              libportmidi-dev \
 
       - name: Set up folder
         run: |
@@ -24,6 +39,9 @@ jobs:
 
       - name: Set up Python version and virtual environment
         run: |
+          export PYENV_ROOT="$HOME/.pyenv"
+          export PATH="$PYENV_ROOT/bin:$PATH"
+          eval "$(pyenv init --path)"
           pyenv local ${{ matrix.python-version }}
           python -V
           python -m venv /tmp/test-${{ matrix.python-version }}/.venv
