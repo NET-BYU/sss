@@ -21,16 +21,26 @@ jobs:
           default: "${{ matrix.python-version }}"
           command: pip install -U pip  # upgrade pip after installing python
 
-      - name: Set up environment
+      - name: Set up Python version
         run: |
-          rm -rf /tmp/test
-          mkdir /tmp/test
-          pwd
+          eval "$(pyenv init --path)"
           python -V
           python3 -V
-          pyenv local ${{ matrix.python-version }}
+          pyenv ${{ matrix.python-version }}
           python -V
           python3 -V
+
+      # - name: Set up environment
+      #   run: |
+      #     rm -rf /tmp/test-${{ matrix.python-version }}
+      #     mkdir /tmp/test-${{ matrix.python-version }}
+      #     pwd
+      #     python -V
+      #     python3 -V
+      #     pyenv local ${{ matrix.python-version }}
+      #     python -V
+      #     python3 -V
+      #     rm -rf /tmp/test-${{ matrix.python-version }}
 
           
       #     python -V
