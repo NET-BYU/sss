@@ -23,7 +23,7 @@ jobs:
           eval "$(pyenv init --path)"
           python -V
           python3 -V
-          pyenv shell ${{ matrix.python-version }}
+          pyenv local ${{ matrix.python-version }}
           python -V
           python3 -V
 
