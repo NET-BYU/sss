@@ -500,7 +500,7 @@ class Tetris:
             
         Returns:
             list: The new location of the shape.
-        """"
+        """
         offset = 2
         for i in range(len(shape_location)):
             shape_location[i] = (shape_location[i][0], shape_location[i][1] + offset)
