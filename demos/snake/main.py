@@ -1,24 +1,8 @@
-"""Snake Game"""
-
 import random
 
 from loguru import logger
 
 from demos.utils import get_all_from_queue
-
-# import os, sys
-
-# # getting the name of the directory
-# # where the this file is present.
-# current = os.path.dirname(os.path.realpath(__file__))
-
-# # Getting the parent directory name
-# # where the current directory is present.
-# parent = os.path.dirname(current)
-
-# # adding the parent directory to
-# # the sys.path.
-# sys.path.append(parent)
 
 
 class Snake:
@@ -36,7 +20,13 @@ class Snake:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor that specifies game specifics"""
+        """Constructor that specifies game specifics
+        
+        Args:
+            input_queue (Queue): Queue to receive messages from the main thread
+            output_queue (Queue): Queue to send messages to the main thread
+            screen (Screen): Surface to draw on
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 

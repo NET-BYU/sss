@@ -18,6 +18,13 @@ class Video:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+        
+        Args:
+            input_queue (Queue): Queue for user input
+            output_queue (Queue): Queue for game output
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 25
 
@@ -37,6 +44,7 @@ class Video:
 
     # Get the next video in the list
     def get_next_video(self):
+        """Get the next video in the list"""
         if self.address < (len(self.targets) - 1):
             self.address += 1
             self.target = self.targets[self.address]
@@ -46,6 +54,7 @@ class Video:
 
     # Parse the user input
     def input_parsing(self, input_queue):
+        """Parse the user input"""
         for input in input_queue:  # allows the user to pause the video
             if input == "LEFT_P":
                 self.pause = True
@@ -59,6 +68,7 @@ class Video:
 
     # Draws frame to screen
     def draw_frame(self, frame):
+        """Draws frame to screen"""
         # Get frame of which pixels need to get updated
         diff_frame = np.not_equal(frame, self.previous_frame)
 
@@ -75,6 +85,7 @@ class Video:
         self.screen.push()
 
     def run(self):
+        """Run the demo"""
         # Create generator here
         while True:
             self.new_video = False
@@ -117,10 +128,10 @@ class Video:
             self.get_next_video()
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         self.screen.clear()
         pass
 
     def get_input_buff(self):
-        # Get all input off the queue
+        """Get all input off the queue"""
         return list(self.input_queue.queue)

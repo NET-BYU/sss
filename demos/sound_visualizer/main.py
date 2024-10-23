@@ -5,6 +5,14 @@ import numpy as np
 
 
 def sound_visualizer(display, queue, sound_frames, fps):
+    """Display a sound visualizer on the display.
+    
+    Args:
+        display (Display): Display object to draw on
+        queue (Queue): Queue to receive messages from the main thread
+        sound_frames (List[List[int]]): List of frames to display
+        fps (int): Frames per second to display
+    """
     tick = utils.frameRate(fps)
     bottom = display.y_height - 1
     # Display first frame
@@ -43,6 +51,7 @@ def sound_visualizer(display, queue, sound_frames, fps):
 
 
 def sound_visualizer_run(display, queue, mqtt_client):
+    """Run the sound visualizer demo."""
     input = ""
     while True:
         if not queue.empty():
@@ -72,6 +81,13 @@ class SoundVisualizer:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+        
+        Args:
+            input_queue (Queue): Queue to receive messages from the main thread
+            output_queue (Queue): Queue to send messages to the main thread
+            screen (Screen): Surface to draw on
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -81,12 +97,12 @@ class SoundVisualizer:
         # init demo/game specific variables here
 
     def run(self):
-        # Create generator here
+        """Main loop"""
         while True:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass
 
 

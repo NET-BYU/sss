@@ -6,9 +6,18 @@ from demos.utils import get_all_from_queue
 
 
 class Hangman:
+    """This is the hangman demo. It is a game where the player has to guess the word by selecting letters from the alphabet."""
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+        
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+            
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -20,10 +29,16 @@ class Hangman:
         self.restart = False
 
     def get_input_buff(self):
+        """Get all the input off the queue
+        
+        Returns:
+            list: A list of all the input off the queue
+        """
         # Get all input off the queue
         return list(self.input_queue.queue)
 
     def run(self):
+        """Runs the simulation loop"""
         # Initialize variables for choice, the number of correct guesses, the number of incorrect guesses and the random generator seed number
         repeat_left = False
         repeat_right = False
@@ -169,5 +184,5 @@ class Hangman:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

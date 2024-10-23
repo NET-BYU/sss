@@ -1,8 +1,16 @@
 class Trace:
+    """This class is used to draw the hangman game on the screen."""
+    
     def __init__(self, screen):
+        """Constructor
+        
+        Args:
+            screen (Screen): The screen to draw on
+        """
         self.screen = screen
 
     def draw_init(self):
+        """Draws the initial hangman game on the screen"""
         # Draw our gallows
         for i in range(11):
             self.screen.draw_pixel(i + 1, 47, 15, True, False)
@@ -20,6 +28,12 @@ class Trace:
 
     # Draws a hangman based on how  many errors someone has made
     def draw_person(self, num_errors, draw):
+        """Draws the hangman based on the number of errors
+        
+        Args:
+            num_errors (int): The number of errors the player has made
+            draw (bool): Whether or not to draw the hangman
+        """
         if draw:
             value = 15
             combine = True
@@ -80,6 +94,14 @@ class Trace:
 
     # This will draw a letter if it is guessed correctly in the word
     def draw_letter(self, position, character, draw):
+        """Draws a letter in the word
+        
+        Args:
+            position (int): The position of the letter in the word
+            character (str): The character to draw
+            draw (bool): Whether or not to draw the character
+            
+        """
         if draw == True:
             character = character
         else:
@@ -97,6 +119,13 @@ class Trace:
 
     # This will draw the letter that the player can choose to guess
     def draw_choice(self, character, draw):
+        """Draws the letter that the player can choose to guess
+        
+        Args:
+            character (str): The character to draw
+            draw (bool): Whether or not to draw the character
+            
+        """
         if draw == True:
             character = character
         else:
@@ -105,6 +134,7 @@ class Trace:
 
     # This will erase the entire body of the hangman
     def erase_person(self):
+        """Erases the hangman"""
         self.draw_person(1, False)
         self.draw_person(2, False)
         self.draw_person(3, False)
@@ -115,6 +145,7 @@ class Trace:
 
     # This will erase all the letters that have been guessed
     def erase_letters(self):
+        """Erases the letters"""
         self.draw_letter(0, "A", False)
         self.draw_letter(1, "A", False)
         self.draw_letter(2, "A", False)
@@ -123,6 +154,7 @@ class Trace:
 
     # This will draw some instructions for the player at the beginning of the game.
     def draw_instruct(self):
+        """Draws the instructions"""
         self.screen.draw_text(20, 4, "HANGMAN", True, True)
         self.screen.draw_text(10, 14, "USE LEFT AND RIGHT TO SCROLL", True, True)
         self.screen.draw_text(17, 18, "THROUGH LETTERS", True, True)
@@ -130,6 +162,7 @@ class Trace:
 
     # This will erase all the instructions at the beginning of the game
     def erase_instruct(self):
+        """Erases the instructions"""
         self.screen.draw_text(20, 4, "       ", True, True)
         self.screen.draw_text(10, 14, "                            ", True, True)
         self.screen.draw_text(17, 18, "               ", True, True)
@@ -137,6 +170,12 @@ class Trace:
 
     # This will draw an endgame message based on whether or not the player guessed the word correctly or not
     def draw_endgame(self, win):
+        """Draws the endgame message
+        
+        Args:
+            win (bool): Whether or not the player won
+            
+        """
         if win == True:
             self.screen.draw_text(30, 4, "GOOD JOB", True, True)
             self.screen.draw_text(22, 6, "PRESS START TO PLAY AGAIN", True, True)
@@ -146,6 +185,7 @@ class Trace:
 
     # This will erase the endgame message that was drawn
     def erase_endgame(self):
+        """Erases the endgame message"""
         self.screen.draw_text(30, 4, "          ", True, True)
         self.screen.draw_text(22, 6, "                          ", True, True)
         self.screen.draw_text(26, 46, "               ", True, True)

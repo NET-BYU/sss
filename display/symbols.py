@@ -95,10 +95,26 @@ char_map = {
 
 
 def get_char(char):
+    """Get the 7-segment code for a character.
+    
+    Args:
+        char (str): The character to get the code for.
+    
+    Returns:
+        int: The 7-segment code for the character.
+    """
     return char_map.get(str(char), char_map.get("_"))
 
 
 def get_char2(char):
+    """Get the 7-segment code for a character.
+    
+    Args:
+        char (str): The character to get the code for.
+        
+    Returns:
+        int: The 7-segment code for the character.
+    """
     # 7 Segment bit order: DP-A-B-C-D-E-F-G
     bits = get_char(char)
     tmp = "{:08b}".format(bits)

@@ -13,6 +13,13 @@ class Cube:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+        
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+        """
         self.frame_rate = 50
 
         self.input_queue = input_queue
@@ -22,6 +29,7 @@ class Cube:
         self.display = SegmentDisplay(self.screen)
 
     def run(self):
+        """Runs the simulation loop"""
         rotation_speed = 0.5
         angle = 0
         points_count = 16
@@ -110,4 +118,5 @@ class Cube:
             self.display.undraw()
 
     def stop(self):
+        """Reset the state of the demo if needed, else leave blank"""
         pass

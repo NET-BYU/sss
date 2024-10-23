@@ -22,7 +22,13 @@ class SnakeAi:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor that specifies game specifics"""
+        """Constructor that specifies game specifics
+        
+        Args:
+            input_queue (Queue): Queue to receive messages from the main thread
+            output_queue (Queue): Queue to send messages to the main thread
+            screen (Screen): Surface to draw on
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
 

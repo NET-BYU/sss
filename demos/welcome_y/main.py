@@ -28,6 +28,13 @@ class WelcomeY:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+
+        Args:
+            input_queue (Queue): Queue for user input
+            output_queue (Queue): Queue for game output
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -37,6 +44,7 @@ class WelcomeY:
         # init demo/game specific variables here
 
     def run(self):
+        """Main loop of the demo"""
         location = [random.randint(0, 41), random.randint(0, 42)]
         isLeft = random.choice([True, False])
         isDown = random.choice([True, False])
@@ -71,10 +79,18 @@ class WelcomeY:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass
 
     def draw_the_y(self, x, y, draw):
+        """Draws the Y at the given location
+
+        Args:
+            x (int): x coordinate of the top left corner of the Y
+            y (int): y coordinate of the top left corner of the Y
+            draw (bool): True to draw the Y, False to erase it
+        """
+
         if not draw:
             self.screen.draw_shape_line(
                 x, y, x + SERIF_OFFSET, y, 0, combine=False

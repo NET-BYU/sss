@@ -340,13 +340,27 @@ guess_list = []
 
 
 class Guess:
+    """This object will be used to keep track of the guesses that have been made by the user."""
     # This will add to our list of letters that have been guessed
     def add_guess_list(self, letter):
+        """Add a letter to the list of guessed letters.
+        
+        Args:
+            letter (str): The letter that the user has guessed.
+        """
         guess_list.append(letter)
 
     # This function will check to see if the current choice of letter has been guessed or not.
     # If no then it will return a false. If yes then it will return a true
     def check_guess_list(self, letter):
+        """Check to see if the letter has been guessed.
+        
+        Args:
+            letter (str): The letter that the user has guessed.
+        
+        Returns:
+            bool: True if the letter has been guessed, False if it has not been guessed
+        """
         for i in range(len(guess_list)):
             if guess_list[i] == letter:
                 return True
@@ -354,6 +368,14 @@ class Guess:
 
     # This will randomly select a word from the list of words based on what time it is.
     def pick_word(self, seed):
+        """Pick a word from the list of words.
+        
+        Args:
+            seed (str): A seed to use for the random number generator.
+            
+        Returns:
+            str: A word from the list of words.
+        """
         current_time = time.localtime()
         random.seed(current_time[4] + current_time[3] + seed)
         word = random.choice(word_list)
@@ -361,8 +383,17 @@ class Guess:
 
     # Clears the letters off of the guessed list
     def clear_guess_list(self):
+        """Clear the list of guessed letters."""
         guess_list.clear()
 
     # Returns a letter from the list of letters
     def letter_select(self, choice):
+        """Select a letter from the list of letters.
+        
+        Args:
+            choice (int): The index of the letter to select.
+            
+        Returns:
+            str: The letter at the specified index.
+        """
         return choice_list[choice]

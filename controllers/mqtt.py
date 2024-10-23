@@ -16,6 +16,13 @@ def start_processing_input(system_queue, demo_input_queue):
     """
 
     def on_message(client, userdata, message):
+        """Callback function executed upon receiving a message from the broker
+        
+        Args:
+            client (mqtt.Client): The client instance for this callback
+            userdata (Any): The private user data as set in Client() or user_data_set()
+            message (mqtt.MQTTMessage): The message received from the broker
+        """
         logger.debug("on_message triggered")
         try:
             data = json.loads(message.payload)
@@ -37,6 +44,14 @@ def start_processing_input(system_queue, demo_input_queue):
             logger.error("MQTT message did not have correct keys.")
 
     def on_connect(client, userdata, flags, rc):
+        """Callback function executed upon the successful connection to the desired broker
+        
+        Args:
+            client (mqtt.Client): The client instance for this callback
+            userdata (Any): The private user data as set in Client() or user_data_set()
+            flags (Dict): Response flags sent by the broker
+            rc (int): The connection result
+        """
         logger.info("MQTT Client connected ({})", rc)
 
         # Subscribing in on_connect() means that if we lose the connection and
@@ -44,6 +59,13 @@ def start_processing_input(system_queue, demo_input_queue):
         client.subscribe("byu_sss/input")
 
     def on_disconnect(client, userdata, rc):
+        """Callback function executed upon disconnecting from the broker
+        
+        Args:
+            client (mqtt.Client): The client instance for this callback
+            userdata (Any): The private user data as set in Client() or user_data_set()
+            rc (int): The connection result
+        """
         logger.info("MQTT Client disconnected ({})", rc)
 
     with open("mqtt_config.yaml") as f:
@@ -63,6 +85,12 @@ def start_processing_input(system_queue, demo_input_queue):
     client.on_disconnect = on_disconnect
 
     def process():
+        """Contains generator which fetches all messages from the `byu_sss/input` topic on broker
+        
+        Returns:
+            Generator: Generator that fetches all messages from the `byu_sss/input` topic on broker
+            
+        """
         logger.debug("In process func")
         while True:
             try:

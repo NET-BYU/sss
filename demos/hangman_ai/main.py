@@ -12,9 +12,18 @@ from demos.hangman_ai.trace import Trace
 # Then it will try and fill in the rest
 # Is there an algorithim for something like that?
 class HangmanAi:
+    """This is the hangman_ai demo. It is a game where the player has to guess the word by selecting letters from the alphabet."""
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
+        """Constructor
+        
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+            
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -30,10 +39,16 @@ class HangmanAi:
         self.word = "     "
 
     def get_input_buff(self):
-        # Get all input off the queue
+        """Get all the input off the queue
+        
+        Returns:
+            list: A list of all the input off the queue
+        """
+        
         return list(self.input_queue.queue)
 
     def run(self):
+        """Runs the simulation loop"""
         # Initialize variables for choice, the number of correct guesses, the number of incorrect guesses and the random generator seed number
         choice = 0
         seed_num = 0
@@ -160,5 +175,5 @@ class HangmanAi:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

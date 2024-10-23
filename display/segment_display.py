@@ -11,6 +11,12 @@ class SegmentDisplay:
     """
 
     def __init__(self, screen):
+        """Constructor
+        
+        Args:
+            screen (Display): the screen object to draw on
+        """
+        
         self.screen = screen
 
         self.screen_width = screen.x_width - 1
