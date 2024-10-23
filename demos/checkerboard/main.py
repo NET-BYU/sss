@@ -24,7 +24,7 @@ class Checkerboard:
         # init demo/game specific variables here
 
     def run(self):
-        """Runs the simulation loop""""
+        """Runs the simulation loop"""
         # Create generator here
         while True:
             for x in range(self.screen.x_width):
