@@ -9,4 +9,4 @@ mkdocs-rtd-dropdown==1.0.2
 mkdocs-windmill-dark==0.2.0
 mkdocstrings==0.20.0
 mkdocstrings-python==0.7.1
-
+griffe>=0.24.0
