@@ -15,6 +15,12 @@ def load_demo(module_name):
     """
     Given a module name it will load the module and get the modules demo
     class.
+    
+    Args:
+        module_name (str): Name of the module to load.
+        
+    Returns:
+        class: The demo class.
     """
     logger.debug(f"Loading {module_name}")
     return utils.get_demo_cls(import_module(module_name))
@@ -24,6 +30,12 @@ def load_demos(demo_dir="demos"):
     """
     Loads all demos for a given directory. It returns the demos in a dictionary
     with the name of the demo as key and the demo module as the value.
+    
+    Args:
+        demo_dir (str): Directory where the demos are located.
+        
+    Returns:
+        dict: Dictionary with the name of the demo as key and the demo module
     """
     logger.debug("Loading demos...")
 
@@ -39,6 +51,9 @@ def get_random_demo(demos):
     """
     Generator that gets a random demo. It makes sure all demos have been
     provided before it repeats a demo, so it's not truly random.
+    
+    Args:
+        demos (dict): Dictionary with the demos.
     """
 
     # Filter out demos that can't be shown without input
@@ -51,7 +66,15 @@ def get_random_demo(demos):
 
 
 def get_demo_from_user(system_queue, demos):
-    """Receives input from user and returns the selected demo."""
+    """Receives input from user and returns the selected demo.
+    
+    Args:
+        system_queue (Queue): Queue to receive input from the user.
+        demos (dict): Dictionary with the demos.
+        
+    Returns:
+        class: The demo class selected by the user.
+    """
 
     try:
         demo_name = system_queue.get(timeout=0.01)
@@ -81,6 +104,13 @@ def play_demo_from_user(
     """
     Plays a demo, monitoring user input. If no input is detected then the demo
     is stopped. If a demo is switched by the user, then this function exits.
+    
+    Args:
+        demo (class): The demo class to play.
+        handle_input (function): Function to handle input.
+        queues (dict): Dictionary with the queues.
+        screen (object): The screen object.
+        user_input_timeout (int): Time to wait for user input.
     """
 
     frame_tick = screen.create_tick(demo.frame_rate)
@@ -113,6 +143,13 @@ def play_demo_from_user(
 def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
     """
     Plays a demo until time expires or data comes into the system queue.
+    
+    Args:
+        demo (class): The demo class to play.
+        handle_input (function): Function to handle input.
+        queues (dict): Dictionary with the queues.
+        screen (object): The screen object.
+        demo_time_override (int): Time to play the demo.
     """
 
     frame_tick = screen.create_tick(demo.frame_rate)
@@ -152,7 +189,14 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
 
 
 def run_loop(screen, user_input_timeout=300, demo_time_override=None):
-    """Runs the event loop that takes care of input and running the demos."""
+    """Runs the event loop that takes care of input and running the demos.
+    
+    Args:
+        screen (object): The screen object.
+        user_input_timeout (int): Time to wait for user input.
+        demo_time_override (int): Time to play the demo.
+    
+    """
 
     queues = utils.Queues()
 
@@ -208,7 +252,13 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
 
 
 def run(simulate, testing=False):
-    """Runs the kiosk"""
+    """Runs the kiosk
+    
+    Args:
+        simulate (bool): If True, the kiosk will run in simulation mode.
+        testing (bool): If True, the kiosk will run in testing mode.
+        
+    """
 
     if simulate:
         from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
