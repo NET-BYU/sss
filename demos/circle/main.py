@@ -46,5 +46,5 @@ class Circle:
                 yield
 
     def stop(self):
-        """Reset the state of the demo if needed, else leave blank""""
+        """Reset the state of the demo if needed, else leave blank"""
         pass
