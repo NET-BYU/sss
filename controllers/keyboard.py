@@ -1,8 +1,20 @@
 import pygame
 import pygame_widgets
 from loguru import logger
-from pygame.locals import (K_DOWN, K_ESCAPE, K_LEFT, K_RCTRL, K_RETURN,
-                           K_RIGHT, K_SPACE, K_UP, KEYDOWN, KEYUP, QUIT, K_n)
+from pygame.locals import (
+    K_DOWN,
+    K_ESCAPE,
+    K_LEFT,
+    K_RCTRL,
+    K_RETURN,
+    K_RIGHT,
+    K_SPACE,
+    K_UP,
+    KEYDOWN,
+    KEYUP,
+    QUIT,
+    K_n,
+)
 
 
 def check_if_sim():
