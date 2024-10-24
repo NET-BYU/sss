@@ -25,7 +25,8 @@ class Breakout:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Input queue
@@ -285,7 +286,8 @@ class Breakout:
         self.gameover = True
 
     def init_screen(self, screen):
-        """Initialize the screen with the game elements
+        """
+        Initialize the screen with the game elements
 
         Args:
             screen (Screen): The Screen object to draw on
@@ -344,7 +346,8 @@ class Breakout:
         return True
 
     def get_angle(self, paddle):
-        """Get the angle of the ball based on the paddle position
+        """
+        Get the angle of the ball based on the paddle position
 
         Args:
             paddle (list): The paddle position
@@ -362,7 +365,8 @@ class Breakout:
         return spin, is_left
 
     def ball_travel(self, is_left, is_down, spin, screen):
-        """Move the ball based on the angle and direction
+        """
+        Move the ball based on the angle and direction
 
         Args:
             is_left (bool): The direction of the ball

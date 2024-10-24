@@ -5,7 +5,8 @@ class Display:
     """Game Display is a class that abstracts different S^3 panels into one display"""
 
     def __init__(self, board_objects, x_width, y_height):
-        """Constructor
+        """
+        Constructor
 
         Args:
             board_objects (int[][]): 2d array of seven segment objects oriented how the sign is put together, i.e. [[panel0, panel1],[panel2,panel3]]
@@ -21,7 +22,8 @@ class Display:
         self.changed_list = []
 
     def draw_raw(self, x, y, value, push=False):
-        """Draw to a specific segment on the screen
+        """
+        Draw to a specific segment on the screen
 
         Args:
             x (int): x coordinate
@@ -35,7 +37,8 @@ class Display:
             self.push()
 
     def get_raw(self, x, y):
-        """Get the value of the segment
+        """
+        Get the value of the segment
 
         Args:
             x (int): x coordinate
@@ -47,7 +50,8 @@ class Display:
         return self.display_buf[y][x]
 
     def draw_pixel(self, x, y, value, combine=True, push=False):
-        """Draw shape to one pixel location
+        """
+        Draw shape to one pixel location
 
         Args:
             x (int): x coordinate
@@ -91,7 +95,8 @@ class Display:
             self.push()
 
     def get_pixel(self, x, y):
-        """Get the value already at the pixel
+        """
+        Get the value already at the pixel
 
         Args:
             x (int): x coordinate
@@ -144,7 +149,8 @@ class Display:
         self.changed_list.clear()
 
     def draw_hline(self, start_x, start_y, length, top=True, combine=True, push=False):
-        """Draw horizontal line
+        """
+        Draw horizontal line
 
         Args:
             start_x (int): x coordinate
@@ -193,7 +199,8 @@ class Display:
             self.push()
 
     def draw_vline(self, start_x, start_y, length, left=True, combine=True, push=False):
-        """Draw vertical line
+        """
+        Draw vertical line
 
         Args:
             start_x (int): x coordinate
@@ -243,7 +250,8 @@ class Display:
     def draw_shape_line(
         self, start_x, start_y, end_x, end_y, value, combine=True, push=False
     ):
-        """Draw line with given value at each pixel, can be diagonal
+        """
+        Draw line with given value at each pixel, can be diagonal
 
         Args:
             start_x (int): starting x coordinate
@@ -311,7 +319,8 @@ class Display:
 
     # work in progress
     def fill_box(self, start_x, start_y, x_len, y_len, push=False):
-        """Fill a box with the given dimensions
+        """
+        Fill a box with the given dimensions
 
         Args:
             start_x (int): starting x coordinate

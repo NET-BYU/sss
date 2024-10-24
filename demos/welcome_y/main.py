@@ -28,7 +28,8 @@ class WelcomeY:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue for user input
@@ -83,7 +84,8 @@ class WelcomeY:
         pass
 
     def draw_the_y(self, x, y, draw):
-        """Draws the Y at the given location
+        """
+        Draws the Y at the given location
 
         Args:
             x (int): x coordinate of the top left corner of the Y

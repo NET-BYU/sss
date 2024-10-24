@@ -8,7 +8,8 @@ from demos.utils import get_all_from_queue
 
 
 class Video:
-    """This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
+    """
+    This demo takes a pre-processed video and plays it on the sss. It randomly chooses between the available
     assets and allows the user to play, pause, go through the video frame by frame, and switch between videos
     """
 
@@ -18,7 +19,8 @@ class Video:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue for user input

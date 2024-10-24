@@ -10,7 +10,8 @@ class Letters:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue

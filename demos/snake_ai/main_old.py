@@ -21,6 +21,12 @@ from demos.snake import snek_ai, snek_state
 
 
 def frameRate(fps):
+    """
+    Generator that yields a frame number and the time that the next frame should be drawn.
+
+    Args:
+        fps (int): The desired frames per second.
+    """
     period = 1.0 / fps
     nextTime = time.time() + period
     for i in count():
@@ -39,6 +45,19 @@ def frameRate(fps):
 
 
 def generate_game_state(width, height, start_loc, food_loc):
+    """
+    Generate a game state with a snake and food at the specified locations.
+
+    Args:
+        width (int): The width of the game board.
+        height (int): The height of the game board.
+        start_loc (tuple): The starting location of the snake.
+        food_loc (tuple): The location of the food.
+
+    Returns:
+        snek_state.snek_state: The game state.
+
+    """
     game_state = snek_state.snek_state(width, height)
     game_state.add_snake_part(start_loc)
     game_state.add_food(food_loc)
@@ -46,6 +65,18 @@ def generate_game_state(width, height, start_loc, food_loc):
 
 
 def generate_game_state2(width, height, start_loc, food_loc):
+    """
+    Generate a game state with a snake and food at the specified locations.
+
+    Args:
+        width (int): The width of the game board.
+        height (int): The height of the game board.
+        start_loc (tuple): The starting location of the snake.
+        food_loc (tuple): The location of the food.
+
+    Returns:
+        snek_state.snek_state: The game state.
+    """
     game_state = snek_state.snek_state(width, height)
     game_state.add_snake_part2(start_loc)
     game_state.add_food2(food_loc)
@@ -53,6 +84,17 @@ def generate_game_state2(width, height, start_loc, food_loc):
 
 
 def snek_game(display, queue, mqtt_client, fps=10, ai=False):
+    """
+    Run the snake game.
+
+    Args:
+        display (Display): The display to draw on.
+        queue (Queue): The queue to read input from.
+        mqtt_client (paho.mqtt.client.Client): The MQTT client to publish messages to.
+        fps (int): The frames per second to run the game at.
+        ai (bool): Whether or not to run the game in AI mode.
+
+    """
     game_over = False
     display.clear()
     tick = frameRate(fps)
@@ -64,6 +106,13 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
         h_score = int(scores.read())
 
     def get_new_food_location():
+        """
+        Get a new location for the food.
+
+        Returns:
+            tuple: The new location for the food.
+
+        """
         food_location = (
             round(random.randrange(0, display.x_width - 1)),
             round(random.randrange(4, display.y_height - 1)),
@@ -402,6 +451,14 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
 
 
 def snek_ai_game(screen, queue, client):
+    """
+    Run the snake game with the AI
+
+    Args:
+        screen (Screen): The screen object
+        queue (Queue): The queue object
+        client (MQTTClient): The MQTT client object
+    """
     snek_game(screen, queue, client, ai=True)
 
 

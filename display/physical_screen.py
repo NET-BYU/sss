@@ -9,7 +9,8 @@ class PhysicalScreen:
     """PhysicalScreen class to handle the physical screen"""
 
     def __init__(self, brightness=3):
-        """Constructor
+        """
+        Constructor
 
         Args:
             brightness (int, optional): Brightness of the screen. Defaults to 3.
@@ -70,7 +71,8 @@ class PhysicalScreen:
                 self.display.board_objects[row][panel].close()
 
     def create_tick(self, frame_rate):
-        """Create a tick
+        """
+        Create a tick
 
         Args:
             frame_rate (int): Frame rate

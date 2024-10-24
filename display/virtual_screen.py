@@ -27,7 +27,8 @@ class VirtualScreen:
         self.display.clear()
 
     def create_tick(self, frame_rate):
-        """Creates a tick generator for the virtual screen.
+        """
+        Creates a tick generator for the virtual screen.
 
         Args:
             frame_rate (int): The frame rate of the virtual screen.

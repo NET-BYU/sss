@@ -13,7 +13,8 @@ class Cube:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue

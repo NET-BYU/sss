@@ -11,7 +11,8 @@ class Hangman:
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue
@@ -30,7 +31,8 @@ class Hangman:
         self.restart = False
 
     def get_input_buff(self):
-        """Get all the input off the queue
+        """
+        Get all the input off the queue
 
         Returns:
             list: A list of all the input off the queue

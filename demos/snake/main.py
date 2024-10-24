@@ -6,7 +6,8 @@ from demos.utils import get_all_from_queue
 
 
 class Snake:
-    """This is the playable snake game. The user inputs either from the controller
+    """
+    This is the playable snake game. The user inputs either from the controller
     or the phone to control the snake
     The init function does nothing spdef runecial.
     The run function calculates the snake trajectory and checks to see if the
@@ -20,7 +21,8 @@ class Snake:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor that specifies game specifics
+        """
+        Constructor that specifies game specifics
 
         Args:
             input_queue (Queue): Queue to receive messages from the main thread

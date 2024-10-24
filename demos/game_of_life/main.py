@@ -9,7 +9,8 @@ class GameOfLife:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue
@@ -26,7 +27,8 @@ class GameOfLife:
         self.new_board_wait_frames = self.frame_rate
 
     def _create_board(self, width, height, density=0.25):
-        """Create a new board
+        """
+        Create a new board
 
         Args:
             width (int): The width of the board
@@ -42,7 +44,8 @@ class GameOfLife:
         ]
 
     def _display_board(self, board):
-        """Display the board
+        """
+        Display the board
 
         Args:
             board (list): The board to display
@@ -54,7 +57,8 @@ class GameOfLife:
         self.screen.push()
 
     def _update_board(self, board):
-        """Update the board
+        """
+        Update the board
 
         Args:
             board (list): The board to update
@@ -71,7 +75,8 @@ class GameOfLife:
         return new_board
 
     def _check_alive(self, x, y, board):
-        """Check if a cell is alive
+        """
+        Check if a cell is alive
 
         Args:
             x (int): The x position

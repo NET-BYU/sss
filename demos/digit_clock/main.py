@@ -9,7 +9,8 @@ class DigitClock:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue
@@ -32,7 +33,8 @@ class DigitClock:
         trace = Trace(self.screen)
 
         def draw_time(current_time, draw):
-            """Draw the current time on the screen
+            """
+            Draw the current time on the screen
 
             Args:
                 current_time (tuple): The current time

@@ -95,7 +95,8 @@ char_map = {
 
 
 def get_char(char):
-    """Get the 7-segment code for a character.
+    """
+    Get the 7-segment code for a character.
 
     Args:
         char (str): The character to get the code for.
@@ -107,7 +108,8 @@ def get_char(char):
 
 
 def get_char2(char):
-    """Get the 7-segment code for a character.
+    """
+    Get the 7-segment code for a character.
 
     Args:
         char (str): The character to get the code for.

@@ -43,7 +43,8 @@ class SevenSegment:
         clear=True,
         segment_orientation_array=None,
     ):
-        """Constructor
+        """
+        Constructor
 
         Args:
             num_digits (int): total number of digits in your display
@@ -321,7 +322,8 @@ class SevenSegment:
 
     # Write to the SPI file through SPI library
     def _write(self, data):
-        """Write to the SPI file through SPI library
+        """
+        Write to the SPI file through SPI library
 
         Args:
             data (str): data to write to the SPI file
@@ -330,7 +332,8 @@ class SevenSegment:
 
     # Get position in the buffer for a given x,y coordinate
     def _get_pos(self, x, y):
-        """Get position in the buffer for a given x,y coordinate
+        """
+        Get position in the buffer for a given x,y coordinate
 
         Args:
             x (int): x coordinate to draw the symbol
@@ -361,7 +364,8 @@ class SevenSegment:
 
     # Not current in use
     def _check_buf(self):
-        """Check the buffer for any differences between the display buffer and the current buffer
+        """
+        Check the buffer for any differences between the display buffer and the current buffer
 
         Returns:
             list: list of indices that have changed

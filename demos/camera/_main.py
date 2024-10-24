@@ -18,7 +18,8 @@ class Camera_Source:
     """Object to hold the host and stream url of a camera source."""
 
     def __init__(self, host, stream):
-        """Constructor
+        """
+        Constructor
 
         Args:
             host (str): Host url of the camera
@@ -28,7 +29,8 @@ class Camera_Source:
         self.stream_url = stream
 
     def get_host(self):
-        """Gets the host url of the camera
+        """
+        Gets the host url of the camera
 
         Returns:
             str: Host url of the camera
@@ -36,7 +38,8 @@ class Camera_Source:
         return self.host_url
 
     def get_stream(self):
-        """Gets the stream url of the camera
+        """
+        Gets the stream url of the camera
 
         Returns:
             str: Stream url of the camera
@@ -53,7 +56,8 @@ class Camera:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue to receive input from the user
@@ -314,5 +318,10 @@ class Camera:
         pass
 
     def get_input_buff(self):
-        """Get all input off the queue"""
+        """
+        Get all input off the queue
+
+        Returns:
+            list: list of all inputs in the queue
+        """
         return list(self.input_queue.queue)

@@ -17,7 +17,8 @@ class HangmanAi:
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue
@@ -40,7 +41,8 @@ class HangmanAi:
         self.word = "     "
 
     def get_input_buff(self):
-        """Get all the input off the queue
+        """
+        Get all the input off the queue
 
         Returns:
             list: A list of all the input off the queue
@@ -89,6 +91,13 @@ class HangmanAi:
         # If yes then it will draw the letter
         # If no then it will draw a part of the hangman
         def check_for_correct(choice):
+            """
+            Check to see if the guess was correct.
+
+            Args:
+                choice (int): The letter that was guessed
+
+            """
             correct = False
             guessed = guess.check_guess_list(guess.letter_select(choice))
             for i in range(len(word)):
@@ -106,6 +115,16 @@ class HangmanAi:
                 )
 
         def pick_choice(num_guessed):
+            """
+            Pick the choice of letter to guess
+
+            Args:
+                num_guessed (int): The number of letters guessed so far
+
+            Returns:
+                int: The letter to guess
+
+            """
             choice = prob_list[num_guessed - 1]
             if self.correct == 4:
                 num = random.choice(range(5))

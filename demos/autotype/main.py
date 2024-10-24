@@ -10,7 +10,8 @@ class Autotype:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue for user input
@@ -89,7 +90,8 @@ class Autotype:
         pass
 
     def get_input_buff(self):
-        """Return the input buffer"
+        """
+        Return the input buffer
 
         Returns:
             list: List of input buffer

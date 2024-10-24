@@ -44,7 +44,8 @@ def start_processing_input(system_queue, demo_input_queue):
     thread.start()
 
     def process():
-        """Contains generator which fetches all messages from the `byu_sss/output` topic on broker
+        """
+        Contains generator which fetches all messages from the `byu_sss/output` topic on broker
 
         Returns:
             Generator: Generator that fetches all messages from the `byu_sss/output` topic on broker

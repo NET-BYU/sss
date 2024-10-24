@@ -5,7 +5,8 @@ class VirtualSevenSegment:
     """Virtual seven segment display."""
 
     def __init__(self, start_x, start_y, display):
-        """Constructor
+        """
+        Constructor
 
         Args:
             start_x (int): The starting x position of the display.
@@ -31,7 +32,8 @@ class VirtualSevenSegment:
                 dig.update(0)
 
     def raw2(self, x, y, value, flush=False):
-        """Updates the display with a raw value.
+        """
+        Updates the display with a raw value.
 
         Args:
             x (int): The x position of the digit.
@@ -48,7 +50,8 @@ class Digit:
     """Digit class for the seven segment display."""
 
     def __init__(self, display, x, y):
-        """Constructor
+        """
+        Constructor
 
         Args:
             display (pygame.Surface): The display surface.
@@ -111,7 +114,8 @@ class Digit:
         self.state = 255
 
     def update(self, value):
-        """Updates the digit with a new value.
+        """
+        Updates the digit with a new value.
 
         Args:
             value (int): The new value to update the digit with.

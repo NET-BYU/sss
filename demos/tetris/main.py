@@ -14,7 +14,8 @@ class Tetris:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue to get user input
@@ -308,7 +309,8 @@ class Tetris:
         T = 7
 
     def is_high_score(self):
-        """Check if the current score is a high score.
+        """
+        Check if the current score is a high score.
 
         Returns:
             bool: True if the current score is a high score, False otherwise."""
@@ -337,7 +339,8 @@ class Tetris:
             scores.writelines(lines)
 
     def update_score(self, num_lines):
-        """Update the score, lines, and level based on the number of lines cleared.
+        """
+        Update the score, lines, and level based on the number of lines cleared.
 
         Args:
             num_lines (int): The number of lines cleared.
@@ -367,7 +370,8 @@ class Tetris:
         self.update_scoreboard(score=True, lines=True, level=update_level)
 
     def update_scoreboard(self, score=False, lines=False, level=False):
-        """Update the scoreboard on the screen.
+        """
+        Update the scoreboard on the screen.
 
         Args:
             score (bool, optional): Whether to update the score. Defaults to False.
@@ -388,7 +392,8 @@ class Tetris:
             self.screen.draw_text(34, 18, output_string, push=True)
 
     def is_game_over(self):
-        """Check if the game is over.
+        """
+        Check if the game is over.
 
         Returns:
             bool: True if the game is over, False otherwise.
@@ -423,7 +428,8 @@ class Tetris:
                         self.screen.draw_pixel(x, y + 3, pixel2)
 
     def update_board(self):
-        """Update the board with the current shape.
+        """
+        Update the board with the current shape.
 
         Returns:
             bool: True if the shape is placed on the board, False otherwise.
@@ -442,7 +448,8 @@ class Tetris:
         return num_rows
 
     def is_falling(self, shape_location):
-        """Check if the shape is falling.
+        """
+        Check if the shape is falling.
 
         Args:
             shape_location (list): The location of the shape.
@@ -458,7 +465,8 @@ class Tetris:
         return True
 
     def rotate_shape(self, shape_location):
-        """Rotate the shape.
+        """
+        Rotate the shape.
 
         Args:
             shape_location (list): The location of the shape.
@@ -494,7 +502,8 @@ class Tetris:
         return shape_location
 
     def drop_shape(self, shape_location):
-        """Drop the shape.
+        """
+        Drop the shape.
 
         Args:
             shape_location (list): The location of the shape.
@@ -508,7 +517,8 @@ class Tetris:
         return shape_location
 
     def shift_shape(self, shape_location, left, right):
-        """Shift the shape.
+        """
+        Shift the shape.
 
         Args:
             shape_location (list): The location of the shape.
@@ -537,7 +547,8 @@ class Tetris:
         return new_location
 
     def draw_shape(self, location, erase=False):
-        """Draw the shape.
+        """
+        Draw the shape.
 
         Args:
             location (list): The location of the shape.
@@ -548,7 +559,8 @@ class Tetris:
             self.draw_brick(coordinate[0], coordinate[1], erase)
 
     def draw_brick(self, x, y, erase=False):
-        """Draw a brick.
+        """
+        Draw a brick.
 
         Args:
             x (int): The x coordinate of the brick.
@@ -577,7 +589,8 @@ class Tetris:
                 )
 
     def init_shape_location(self, shape):
-        """Initialize the location of the shape.
+        """
+        Initialize the location of the shape.
 
         Args:
             shape (int): The shape.
@@ -794,7 +807,8 @@ class Tetris:
         self.screen.push()
 
     def get_letter(self, x, y):
-        """Get the letter at the given position.
+        """
+        Get the letter at the given position.
 
         Args:
             x (int): The x position.

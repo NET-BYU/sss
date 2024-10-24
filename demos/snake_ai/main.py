@@ -9,12 +9,14 @@ from demos.snake_ai import snek_ai, snek_state
 
 
 class SnakeAi:
-    """This is the ai snake game.
+    """
+    This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the
     snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written
-    before exiting"""
+    before exiting
+    """
 
     demo_time = 120
 
@@ -22,7 +24,8 @@ class SnakeAi:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor that specifies game specifics
+        """
+        Constructor that specifies game specifics
 
         Args:
             input_queue (Queue): Queue to receive messages from the main thread

@@ -343,7 +343,8 @@ class Guess:
 
     # This will add to our list of letters that have been guessed
     def add_guess_list(self, letter):
-        """Add the letter to the list of guessed letters
+        """
+        Add the letter to the list of guessed letters
 
         Args:
             letter (str): The letter that the user has guessed
@@ -352,7 +353,8 @@ class Guess:
         guess_list.append(letter)
 
     def letter_number(self, letter):
-        """This function will return the index of the letter in the list of choices
+        """
+        This function will return the index of the letter in the list of choices
 
         Args:
             letter (str): The letter that the user has guessed
@@ -367,7 +369,8 @@ class Guess:
     # This function will check to see if the current choice of letter has been guessed or not.
     # If no then it will return a false. If yes then it will return a true
     def check_guess_list(self, letter):
-        """This function will check to see if the current choice of letter has been guessed or not.
+        """
+        This function will check to see if the current choice of letter has been guessed or not.
 
         Args:
             letter (str): The letter that the user has guessed
@@ -382,7 +385,8 @@ class Guess:
 
     # This will randomly select a word from the list of words based on what time it is.
     def pick_word(self, seed):
-        """This function will randomly select a word from the list of words based on what time it is.
+        """
+        This function will randomly select a word from the list of words based on what time it is.
 
         Args:
             seed (str): The seed that will be used to generate the random number
@@ -404,7 +408,8 @@ class Guess:
 
     # Returns a letter from the list of letters
     def letter_select(self, choice):
-        """Returns a letter from the list of letters
+        """
+        Returns a letter from the list of letters
 
         Args:
             choice (int): The index of the letter that the user has chosen

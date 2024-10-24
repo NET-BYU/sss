@@ -7,6 +7,19 @@ PATH_COST = 1
 
 
 def run_Search(x, y, dst, state, len):
+    """
+    Run the A* search algorithm to find the path from the start to the destination
+
+    Args:
+        x (int): The x-coordinate of the start
+        y (int): The y-coordinate of the start
+        dst (tuple): The destination (x, y)
+        state (snek_state): The current state of the game
+        len (int): The length of the snek
+
+    Returns:
+        list: The path from the start to the destination
+    """
     root = snek_state.snek_Node(
         x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
     )
@@ -36,6 +49,17 @@ def run_Search(x, y, dst, state, len):
 
 
 def A_Star_Reverse(state, fringe, goal):
+    """
+    Run the A* search algorithm to find the path from the start to the destination
+
+    Args:
+        state (snek_state): The current state of the game
+        fringe (PriorityQueue): The fringe to store the nodes
+        goal (tuple): The destination (x, y)
+
+    Returns:
+        snek_Node: The goal node
+    """
     # List to store the expanded states on this search
     expanded = []
     inFringe = {(-1, -1)}
@@ -77,6 +101,18 @@ def A_Star_Reverse(state, fringe, goal):
 
 
 def getChildren2(node, state, goal):
+    """
+    Get the children of the current node
+
+    Args:
+        node (snek_Node): The current node
+        state (snek_state): The current state of the game
+        goal (tuple): The destination (x, y)
+
+    Returns:
+        list: The children of the current node
+
+    """
     children = []
     x = int(node.loc[0])
     y = int(node.loc[1])
@@ -129,6 +165,20 @@ def getChildren2(node, state, goal):
 
 
 def run_Search2(x, y, dst, state, len):
+    """
+    Run the A* search algorithm to find the path from the start to the destination
+
+    Args:
+        x (int): The x-coordinate of the start
+        y (int): The y-coordinate of the start
+        dst (tuple): The destination (x, y)
+        state (snek_state): The current state of the game
+        len (int): The length of the snek
+
+    Returns:
+        list: The path from the start to the destination
+
+    """
     root = snek_state.snek_Node(
         x, y, heuristic((x, y), dst), None, state.snek_parts, 0.0
     )
@@ -165,6 +215,17 @@ def run_Search2(x, y, dst, state, len):
 
 
 def A_Star_Revised(state, fringe):
+    """
+    Run the A* search algorithm to find the path from the start to the destination
+
+    Args:
+        state (snek_state): The current state of the game
+        fringe (PriorityQueue): The fringe to store the nodes
+
+    Returns:
+        snek_Node: The goal node
+
+    """
     # print("Goal:", state.food_locs)
     # List to store the expanded states on this search
     infringe = []
@@ -206,6 +267,18 @@ def A_Star_Revised(state, fringe):
 
 
 def getChildren3(node, state, goal):
+    """
+    Get the children of the current node
+
+    Args:
+        node (snek_Node): The current node
+        state (snek_state): The current state of the game
+        goal (tuple): The destination (x, y)
+
+    Returns:
+        list: The children of the current node
+
+    """
     children = []
     x = int(node.loc[0])
     y = int(node.loc[1])
@@ -261,6 +334,17 @@ def getChildren3(node, state, goal):
 
 
 def A_Star(state, fringe, goal):
+    """
+    Run the A* search algorithm to find the path from the start to the destination
+
+    Args:
+        state (snek_state): The current state of the game
+        fringe (PriorityQueue): The fringe to store the nodes
+        goal (tuple): The destination (x, y)
+
+    Returns:
+        snek_Node: The goal node
+    """
     # print("Goal:", goal)
     # List to store the expanded states on this search
     expanded = []
@@ -287,15 +371,45 @@ def A_Star(state, fringe, goal):
 
 
 def heuristic(start_loc, goal_loc):
+    """
+    Calculate the heuristic cost between two points
+
+    Args:
+        start_loc (tuple): The start location (x, y)
+        goal_loc (tuple): The goal location (x, y)
+
+    Returns:
+        int: The heuristic cost
+    """
     cost = abs(start_loc[0] - goal_loc[0]) + abs(start_loc[1] - goal_loc[1])
     return cost
 
 
 def cost(previous):
+    """
+    Calculate the cost of the current node
+
+    Args:
+        previous (int): The cost of the previous node
+
+    Returns:
+        int: The cost of the current node
+    """
     return previous + 1
 
 
 def getChildren(node, state, goal):
+    """
+    Get the children of the current node
+
+    Args:
+        node (snek_Node): The current node
+        state (snek_state): The current state of the game
+        goal (tuple): The destination (x, y)
+
+    Returns:
+        list: The children of the current node
+    """
     children = []
     x = int(node.loc[0])
     y = int(node.loc[1])

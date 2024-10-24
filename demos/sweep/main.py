@@ -7,7 +7,8 @@ class Sweep:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue for user input
@@ -39,7 +40,8 @@ class Sweep:
         pass
 
     def draw_vline_loc(self, x, val):
-        """Draw a vertical line at location x with value val
+        """
+        Draw a vertical line at location x with value val
 
         Args:
             x (int): x location of the line

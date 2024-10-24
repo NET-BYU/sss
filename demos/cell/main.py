@@ -22,7 +22,8 @@ class Cell:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): The input queue
@@ -95,7 +96,8 @@ class Cell:
             count += 1
 
     def _map(self, x, in_min, in_max, out_min, out_max):
-        """Maps a value from one range to another
+        """
+        Maps a value from one range to another
 
         Args:
             x (float): The value to map
