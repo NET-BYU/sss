@@ -14,6 +14,15 @@ class UnderConstruction:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Input queue
+            output_queue (Queue): Output queue
+            screen (Screen): Screen object
+
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -23,6 +32,7 @@ class UnderConstruction:
         # init demo/game specific variables here
 
     def run(self):
+        """Main loop of the demo"""
         # Create generator here
         xmax = self.screen.x_width
         ymax = self.screen.y_height
@@ -67,5 +77,5 @@ class UnderConstruction:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

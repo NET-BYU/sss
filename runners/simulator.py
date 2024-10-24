@@ -13,7 +13,16 @@ from runners import utils
 
 
 class Simulator:
+    """This is the simulator class that runs the demos."""
+
     def __init__(self, width, height, demo_dir="demos"):
+        """Constructor
+
+        Args:
+            width (int): Width of the screen.
+            height (int): Height of the screen.
+            demo_dir (str): Directory where the demos are located.
+        """
         self.width = width
         self.height = height
         self.demo_dir = demo_dir
@@ -55,30 +64,50 @@ class Simulator:
 
     @staticmethod
     def _import_module(module):
+        """Import the module for the first time.
+
+        Args:
+            module (str): Name of the module to import.
+
+        Returns:
+            module: The imported module.
+        """
         # First time loading of the demo module
         logger.info(f"Loading {module}")
         return import_module(module)
 
     @staticmethod
     def _reload_module(module):
+        """Reload the module.
+
+        Args:
+            module (module): The module to reload.
+
+        Returns:
+            module: The reloaded module.
+        """
         # Hot reload the demo module
         logger.info(f"Reloading {module}")
         return reload(module)
 
     def _reload_demos(self):
+        """Reload all the demos in the demo folder."""
         # Hot load all the demos in the demo folder
         logger.info("Loading demos...")
         demos = utils.get_demos(self.demo_dir)
 
         self.demos = {
-            name: self._reload_module(self.demos[name])
-            if name in self.demos
-            else self._import_module(module)
+            name: (
+                self._reload_module(self.demos[name])
+                if name in self.demos
+                else self._import_module(module)
+            )
             for name, module in demos
         }
         self._repopulate_demo_list()
 
     def _repopulate_demo_list(self):
+        """Repopulate the demo list."""
         # if there are more than 13 demos break them up into different pages
         self.demo_lst.clear()
         # create lists to display demos better
@@ -89,6 +118,11 @@ class Simulator:
         self.demo_list_index = 0
 
     def _load_game(self, game_name="template"):
+        """Load the game.
+
+        Args:
+            game_name (str): Name of the game to load.
+        """
         self.lives_text = self.text_font.render(
             "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
         )
@@ -108,6 +142,7 @@ class Simulator:
         self.screen.clear()
 
     def repopulate(self):
+        """Repopulate the screen."""
         # Hot load demos and populate selection buttons on the screen
         self._reload_demos()
         # for i in range(1, (self.height - 50) // 50):
@@ -167,6 +202,7 @@ class Simulator:
             )
 
     def _update_page_count(self):
+        """Update the page count."""
         # update which demo buttons are displayed
         self.demo_list_index += 1
         if self.demo_list_index >= len(self.demo_lst):
@@ -204,6 +240,7 @@ class Simulator:
             )
 
     def _generate_buttons(self):
+        """Generate the buttons for the screen."""
         self.buttons = [
             Button(
                 # Mandatory Parameters
@@ -269,6 +306,7 @@ class Simulator:
         )
 
     def start(self):
+        """Start the main loop."""
         handle_input = controllers.start_inputs(self.system_q, self.input_q)
         tick = self.screen.create_tick(self.game.frame_rate)
 
@@ -323,6 +361,7 @@ class Simulator:
 
 
 def run():
+    """Run the simulator."""
     sim = Simulator(25 * 48 + 150, 30 * 24 + 30, "demos")
     sim.start()
 

@@ -11,6 +11,7 @@ __pycache__
 .venv
 .idea/
 *.yaml
+!.readthedocs.yaml
 *high_score*
 chocolate-doom
 site

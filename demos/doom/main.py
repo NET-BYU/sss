@@ -29,6 +29,17 @@ class Doom:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+
+        Raises:
+            Exception: If the game is not found
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 50
 
@@ -103,6 +114,7 @@ class Doom:
                 self.arr[i].append(0)
 
     def run(self):
+        """Run the game"""
         # In case memory cannot be initialized correctly or game is not found
         if not self.game_installed or not self.shared_mem_init:
             self.screen.draw_text(
@@ -168,6 +180,7 @@ class Doom:
             yield
 
     def stop(self):
+        """Stop the game"""
         # Close game, release memory to OS, and close processes attached
         logger.info("Releasing system resources...")
         if self.shared_mem_init:

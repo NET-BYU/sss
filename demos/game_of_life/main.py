@@ -4,9 +4,20 @@ import random
 
 
 class GameOfLife:
+    """Game of Life simulation"""
+
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+
+        """
         self.frame_rate = 10
 
         self.input_queue = input_queue
@@ -16,18 +27,45 @@ class GameOfLife:
         self.new_board_wait_frames = self.frame_rate
 
     def _create_board(self, width, height, density=0.25):
+        """
+        Create a new board
+
+        Args:
+            width (int): The width of the board
+            height (int): The height of the board
+            density (float): The density of the board
+
+        Returns:
+            list: The new board
+        """
         return [
             [int(random.random() < density) for x in range(width)]
             for y in range(height)
         ]
 
     def _display_board(self, board):
+        """
+        Display the board
+
+        Args:
+            board (list): The board to display
+
+        """
         for x in range(self.screen.x_width):
             for y in range(self.screen.y_height):
                 self.screen.draw_pixel(x, y, 0xF if board[y][x] else 0x0)
         self.screen.push()
 
     def _update_board(self, board):
+        """
+        Update the board
+
+        Args:
+            board (list): The board to update
+
+        Returns:
+            list: The updated board
+        """
         new_board = copy.deepcopy(board)
         for y in range(len(board)):
             for x in range(len(board[y])):
@@ -37,6 +75,17 @@ class GameOfLife:
         return new_board
 
     def _check_alive(self, x, y, board):
+        """
+        Check if a cell is alive
+
+        Args:
+            x (int): The x position
+            y (int): The y position
+            board (list): The board
+
+        Returns:
+            int: 1 if alive, 0 if dead
+        """
         alive = board[y][x]
         board_width = len(board[0])
         board_height = len(board)
@@ -72,6 +121,7 @@ class GameOfLife:
                 return 0
 
     def run(self):
+        """Run the simulation"""
         old_boards = collections.deque(maxlen=5)
 
         while True:
@@ -97,4 +147,5 @@ class GameOfLife:
                 yield
 
     def stop(self):
+        """Stop the simulation"""
         pass

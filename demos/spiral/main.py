@@ -10,6 +10,14 @@ class Spiral:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Queue for user input
+            output_queue (Queue): Queue for game output
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 200
 
@@ -19,6 +27,7 @@ class Spiral:
         # init demo/game specific variables here
 
     def run(self):
+        """Main loop for the demo"""
         width = self.screen.x_width
         height = self.screen.y_height
         across = width
@@ -78,5 +87,5 @@ class Spiral:
                 continue
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

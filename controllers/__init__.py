@@ -2,6 +2,13 @@ from loguru import logger
 
 
 def start_inputs(system_queue, demo_input_queue):
+    """
+    Start the input processing.
+
+    Args:
+        system_queue (Queue): The system queue.
+        demo_input_queue (Queue): The demo input queue.
+    """
     try:
         logger.info("Loading MQTT input...")
         from . import mqtt

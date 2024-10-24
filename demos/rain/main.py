@@ -23,6 +23,14 @@ class Rain:
     demo_time = 30
 
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Queue for receiving messages
+            output_queue (Queue): Queue for sending messages
+            screen (pygame.Surface): Surface to draw on
+        """
         self.frame_rate = 10
 
         self.input_queue = input_queue
@@ -35,6 +43,7 @@ class Rain:
         self.rain_length = 2
 
     def run(self):
+        """Run the rain demo"""
         # Set up rain
         noise = PerlinNoise()
         rain = [
@@ -80,4 +89,5 @@ class Rain:
             count += 1
 
     def stop(self):
+        """Stop the rain demo"""
         pass

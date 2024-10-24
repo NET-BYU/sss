@@ -12,9 +12,20 @@ from demos.hangman_ai.trace import Trace
 # Then it will try and fill in the rest
 # Is there an algorithim for something like that?
 class HangmanAi:
+    """This is the hangman_ai demo. It is a game where the player has to guess the word by selecting letters from the alphabet."""
+
     demo_time = None
 
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -30,10 +41,17 @@ class HangmanAi:
         self.word = "     "
 
     def get_input_buff(self):
-        # Get all input off the queue
+        """
+        Get all the input off the queue
+
+        Returns:
+            list: A list of all the input off the queue
+        """
+
         return list(self.input_queue.queue)
 
     def run(self):
+        """Runs the simulation loop"""
         # Initialize variables for choice, the number of correct guesses, the number of incorrect guesses and the random generator seed number
         choice = 0
         seed_num = 0
@@ -73,6 +91,13 @@ class HangmanAi:
         # If yes then it will draw the letter
         # If no then it will draw a part of the hangman
         def check_for_correct(choice):
+            """
+            Check to see if the guess was correct.
+
+            Args:
+                choice (int): The letter that was guessed
+
+            """
             correct = False
             guessed = guess.check_guess_list(guess.letter_select(choice))
             for i in range(len(word)):
@@ -90,6 +115,16 @@ class HangmanAi:
                 )
 
         def pick_choice(num_guessed):
+            """
+            Pick the choice of letter to guess
+
+            Args:
+                num_guessed (int): The number of letters guessed so far
+
+            Returns:
+                int: The letter to guess
+
+            """
             choice = prob_list[num_guessed - 1]
             if self.correct == 4:
                 num = random.choice(range(5))
@@ -132,13 +167,13 @@ class HangmanAi:
                     self.win = True
                     trace.draw_endgame(True)
                 x = 0
-                while x is not 15:
+                while x != 15:
                     x += 1
                     yield
                 yield
 
             x = 0
-            while x is not 25:
+            while x != 25:
                 x += 1
                 yield
             # Erase the hangman, the guessed letters, and the word from the screen
@@ -160,5 +195,5 @@ class HangmanAi:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass
