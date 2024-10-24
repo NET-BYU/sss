@@ -44,7 +44,7 @@ class Sine:
         while True:
             sinPoints = self.display.width
             psinx = 0
-            psiny = int(self.display.height / 2)
+            psiny = 0
 
             if sin == 30:
                 increase_factor = 1
