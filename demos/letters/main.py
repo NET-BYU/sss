@@ -10,6 +10,15 @@ class Letters:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
 
@@ -19,6 +28,7 @@ class Letters:
         # init demo/game specific variables here
 
     def run(self):
+        """Runs the simulation loop"""
         while True:
             for _ in range(4):
                 self.screen.draw_text(
@@ -36,5 +46,5 @@ class Letters:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

@@ -25,6 +25,14 @@ class Breakout:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Input queue
+            output_queue (Queue): Output queue
+            screen (Screen): Screen object
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
 
@@ -44,6 +52,7 @@ class Breakout:
         self.gameover = False
 
     def run(self):
+        """Runs the game loop"""
         # Set game session states
         screen = self.screen
         is_left = True
@@ -272,10 +281,17 @@ class Breakout:
             yield
 
     def stop(self):
+        """Reset the state of the demo if needed, else leave blank"""
         self.start = True
         self.gameover = True
 
     def init_screen(self, screen):
+        """
+        Initialize the screen with the game elements
+
+        Args:
+            screen (Screen): The Screen object to draw on
+        """
         self.paddle = [24]
 
         if self.level == 1:
@@ -323,12 +339,19 @@ class Breakout:
         screen.push()
 
     def level_up(self):
+        """Increase the level of the game"""
         for rows in self.bricks.values():
             if rows:
                 return False
         return True
 
     def get_angle(self, paddle):
+        """
+        Get the angle of the ball based on the paddle position
+
+        Args:
+            paddle (list): The paddle position
+        """
         if paddle.index(self.ball[0]) < (len(paddle) // 2):
             spin = paddle.index(self.ball[0]) % len(paddle) + 1
             is_left = True
@@ -342,6 +365,15 @@ class Breakout:
         return spin, is_left
 
     def ball_travel(self, is_left, is_down, spin, screen):
+        """
+        Move the ball based on the angle and direction
+
+        Args:
+            is_left (bool): The direction of the ball
+            is_down (bool): The direction of the ball
+            spin (int): The angle of the ball
+            screen (Screen): The Screen object to draw on
+        """
         horizbound = 0
         vertbound = 0
 

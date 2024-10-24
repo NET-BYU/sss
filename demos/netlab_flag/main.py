@@ -7,6 +7,14 @@ class NetlabFlag:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Queue to receive user input
+            output_queue (Queue): Queue to send game output
+            screen (Screen): Screen object to draw on
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -16,6 +24,7 @@ class NetlabFlag:
         # init demo/game specific variables here
 
     def run(self):
+        """Main loop of the demo/game"""
         # Create generator here
         # draw the logo in the center of the screen
         self.screen.draw_pixel(23, 2, 0xF, combine=False)
@@ -135,5 +144,5 @@ class NetlabFlag:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass

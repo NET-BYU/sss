@@ -7,6 +7,15 @@ class Checkerboard:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): The input queue
+            output_queue (Queue): The output queue
+            screen (Screen): The screen to draw on
+
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 5
 
@@ -16,6 +25,7 @@ class Checkerboard:
         # init demo/game specific variables here
 
     def run(self):
+        """Runs the simulation loop"""
         # Create generator here
         while True:
             for x in range(self.screen.x_width):
@@ -41,5 +51,5 @@ class Checkerboard:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         pass
