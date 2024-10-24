@@ -1,4 +1,5 @@
 """Snake AI Demo"""
+
 import random
 from copy import deepcopy
 
@@ -122,6 +123,10 @@ class SnakeAi:
                         game_state,
                         self.snek_length,
                     )
+                    if len(snek_path) == 0:
+                        # no way out so we need to game over
+                        game_over = True
+                        continue
                 current_location = snek_path.pop(0)
                 # logger.debug(str(current_location) + " " + str(current_food_location))
                 # game_state.add_snake_part(current_location)
@@ -262,7 +267,7 @@ class SnakeAi:
                 self.snek_length,
             )
             self.screen.clear()
-
+            self._draw_set_up()
             # draw snek part
             for part in snek_list:
                 self.screen.draw_pixel(part[0], part[1], 15)
