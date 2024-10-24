@@ -87,6 +87,17 @@ class Video:
             loaded_video = np.load(self.path + self.target)
             loaded_video = loaded_video["arr_0"]
 
+            # Let Sully Groan if it is the right video
+            if self.target == "sully.npz":
+                self.output_queue.put(
+                    "BACKGROUND SOUND " + "sss_sounds/Sully_Groan.mp3"
+                )
+                pass
+
+            if self.target == "nyan.npz":
+                self.output_queue.put("BACKGROUND SOUND " + "sss_sounds/Nyan_Cat.mp3")
+                pass
+
             # Iterate through the frames
             for frame in loaded_video:
                 self.next_frame = False
@@ -107,6 +118,7 @@ class Video:
 
                 # Skip to the next video
                 if self.new_video:
+                    self.output_queue.put("STOP SOUND")
                     break
 
                 # Draw frame to screen
@@ -119,6 +131,7 @@ class Video:
     def stop(self):
         # Reset the state of the demo if needed, else leave blank
         self.screen.clear()
+        self.output_queue.put("STOP SOUND")
         pass
 
     def get_input_buff(self):
