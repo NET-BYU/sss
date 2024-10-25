@@ -1,10 +1,8 @@
 from pathlib import Path
 from threading import Thread
 
-import paho.mqtt.client as mqtt
-from playsound import playsound
 from loguru import logger
-from yaml import safe_load
+from playsound import playsound
 
 from . import utils
 from .broadcast_message import BroadcastType

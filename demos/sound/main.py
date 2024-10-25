@@ -1,8 +1,8 @@
 from loguru import logger
 
+from broadcasters.broadcast_message import BroadcastMessage, BroadcastType
 from demos.utils import get_all_from_queue
 from display.segment_display import SegmentDisplay
-from broadcasters.broadcast_message import BroadcastMessage, BroadcastType
 
 
 class Sound:
