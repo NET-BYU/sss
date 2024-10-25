@@ -21,7 +21,7 @@ class NetlabFlag:
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.screen = screen
-        
+
         self.logo_height = 10
         # init demo/game specific variables here
 
@@ -56,52 +56,92 @@ class NetlabFlag:
         self.screen.draw_pixel(32, 18 + (self.screen.y_height // 4), 0xF, combine=False)
 
         for line in range(11):
-            self.screen.draw_pixel(15, 6 + line + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(32, 6 + line + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                15, 6 + line + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                32, 6 + line + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         # Text
 
         for n in range(5):
-            self.screen.draw_pixel(17, 7 + n + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(20, 7 + n + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                17, 7 + n + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                20, 7 + n + (self.screen.y_height // 4), 0xF, combine=True
+            )
         self.screen.draw_pixel(18, 8 + (self.screen.y_height // 4), 0xF, combine=True)
         self.screen.draw_pixel(19, 9 + (self.screen.y_height // 4), 0xF, combine=True)
 
         for e in range(5):
-            self.screen.draw_pixel(22, 7 + e + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                22, 7 + e + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for ee in range(3):
-            self.screen.draw_pixel(23 + ee, 7 + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(23 + ee, 9 + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(23 + ee, 11 + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                23 + ee, 7 + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                23 + ee, 9 + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                23 + ee, 11 + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for t in range(4):
-            self.screen.draw_pixel(27 + t, 7 + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(28, 8 + t + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                27 + t, 7 + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                28, 8 + t + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for l in range(5):
-            self.screen.draw_pixel(17, 13 + l + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                17, 13 + l + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for ll in range(3):
-            self.screen.draw_pixel(18 + ll, 17 + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                18 + ll, 17 + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for a in range(5):
-            self.screen.draw_pixel(22, 13 + a + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(25, 13 + a + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                22, 13 + a + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                25, 13 + a + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for aa in range(2):
-            self.screen.draw_pixel(23 + aa, 13 + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(23 + aa, 15 + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                23 + aa, 13 + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                23 + aa, 15 + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for b in range(5):
-            self.screen.draw_pixel(27, 13 + b + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                27, 13 + b + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for bb in range(3):
-            self.screen.draw_pixel(28 + bb, 15 + (self.screen.y_height // 4), 0xF, combine=True)
-            self.screen.draw_pixel(28 + bb, 17 + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                28 + bb, 15 + (self.screen.y_height // 4), 0xF, combine=True
+            )
+            self.screen.draw_pixel(
+                28 + bb, 17 + (self.screen.y_height // 4), 0xF, combine=True
+            )
 
         for bbb in range(2):
-            self.screen.draw_pixel(28 + bbb, 13 + (self.screen.y_height // 4), 0xF, combine=True)
+            self.screen.draw_pixel(
+                28 + bbb, 13 + (self.screen.y_height // 4), 0xF, combine=True
+            )
         self.screen.draw_pixel(30, 16 + (self.screen.y_height // 4), 0xF)
         self.screen.draw_pixel(30, 14 + (self.screen.y_height // 4), 0xF)
 
