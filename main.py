@@ -55,7 +55,9 @@ def run_kiosk(simulate, testing):
 @cli.command("demo")
 @click.argument(
     "name",
-    type=click.Choice([name for name, _ in utils.get_demos()], case_sensitive=False),
+    type=click.Choice(
+        sorted([name for name, _ in utils.get_demos()]), case_sensitive=False
+    ),
 )
 @click.option(
     "-s",
