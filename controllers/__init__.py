@@ -61,15 +61,15 @@ def start_inputs(system_queue, demo_input_queue):
 
     while True:
         if mqtt_runner:
-            logger.debug("Fetch MQTT")
+            logger.trace("Fetch MQTT")
             next(mqtt_runner)
 
         if gamepad_runner:
-            logger.debug("Fetch GamePad")
+            logger.trace("Fetch GamePad")
             next(gamepad_runner)
 
         if keyboard_runner:
-            logger.debug("Fetch Keyboard")
+            logger.trace("Fetch Keyboard")
             next(keyboard_runner)
 
         yield
