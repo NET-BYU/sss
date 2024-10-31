@@ -101,11 +101,7 @@ class Menu:
                         selected -= 1
                     elif keypress == "DOWN_P":
                         selected += 1
-                    # If the user presses the select button
-                    elif keypress == "SEL_P":
-                        # Stop the menu demo
-                        self.system_input_queue.put("QUIT")
-                    elif keypress == "PRI_P":
+                    elif keypress == "START_P":
                         # Start the selected demo
                         self.system_input_queue.put(self.demos[selected])
 
