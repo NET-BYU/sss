@@ -52,7 +52,7 @@ def run(demo_name, simulate, new_hardware, testing):
     # Set up state to run game
     tick = screen.create_tick(demo.frame_rate)
     handle_input = controllers.start_inputs(
-        queues.system_queue, queues.demo_input_queue
+        queues.system_queue, queues.demo_input_queue,simulated=simulate
     )
     handle_output = broadcasters.start_outputs(
         queues.system_queue, queues.demo_output_queue
