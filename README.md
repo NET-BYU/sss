@@ -1,6 +1,6 @@
 # Seven Segment Sign
 
-![Black Formatter 2](https://github.com/NET-BYU/sss/actions/workflows/formatting.yml/badge.svg) ![Docs](https://github.com/NET-BYU/sss/actions/workflows/pages/pages-build-deployment/badge.svg) ![Test](https://github.com/NET-BYU/sss/actions/workflows/test.yaml/badge.svg) ![Raspberry Pi](https://github.com/NET-BYU/sss/actions/workflows/raspberry_pi.yml/badge.svg)
+![Black Formatter 2](https://github.com/NET-BYU/sss/actions/workflows/formatting.yml/badge.svg) ![Docs](https://github.com/NET-BYU/sss/actions/workflows/pages/pages-build-deployment/badge.svg) ![Test](https://github.com/NET-BYU/sss/actions/workflows/test.yaml/badge.svg) ![Raspberry Pi](https://github.com/NET-BYU/sss/actions/workflows/raspberry_pi.yml/badge.svg) [![Documentation Status](https://readthedocs.org/projects/sss/badge/?version=latest)](https://sss.readthedocs.io/en/latest/?badge=latest)
 
 ## Welcome to the Seven Segment Sign! (SSS)
 ![ricky](docs/assets/doom_video.GIF)

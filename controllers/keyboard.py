@@ -18,6 +18,12 @@ from pygame.locals import (
 
 
 def check_if_sim():
+    """
+    Check if the program is running in simulator mode.
+
+    Returns:
+        bool: True if running in simulator mode, False otherwise.
+    """
     try:
         pygame.event.get()
         return True

@@ -9,12 +9,14 @@ from demos.snake_ai import snek_ai, snek_state
 
 
 class SnakeAi:
-    """This is the ai snake game.
+    """
+    This is the ai snake game.
     The init function does nothing special.
     The run function calculates the snake trajectory and checks to see if the
     snake as eaten an apple. It always checks for game over.
     The stop function will check to see if a high score needs to be written
-    before exiting"""
+    before exiting
+    """
 
     demo_time = 120
 
@@ -22,7 +24,14 @@ class SnakeAi:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor that specifies game specifics"""
+        """
+        Constructor that specifies game specifics
+
+        Args:
+            input_queue (Queue): Queue to receive messages from the main thread
+            output_queue (Queue): Queue to send messages to the main thread
+            screen (Screen): Surface to draw on
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 20
 
@@ -123,6 +132,10 @@ class SnakeAi:
                         game_state,
                         self.snek_length,
                     )
+                    if len(snek_path) == 0:
+                        # no way out so we need to game over
+                        game_over = True
+                        continue
                 current_location = snek_path.pop(0)
                 # logger.debug(str(current_location) + " " + str(current_food_location))
                 # game_state.add_snake_part(current_location)
@@ -263,7 +276,7 @@ class SnakeAi:
                 self.snek_length,
             )
             self.screen.clear()
-
+            self._draw_set_up()
             # draw snek part
             for part in snek_list:
                 self.screen.draw_pixel(part[0], part[1], 15)

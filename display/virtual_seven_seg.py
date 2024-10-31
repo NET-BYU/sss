@@ -2,7 +2,17 @@ import pygame
 
 
 class VirtualSevenSegment:
+    """Virtual seven segment display."""
+
     def __init__(self, start_x, start_y, display):
+        """
+        Constructor
+
+        Args:
+            start_x (int): The starting x position of the display.
+            start_y (int): The starting y position of the display.
+            display (pygame.Surface): The display surface.
+        """
         self.digits = [
             [Digit(display, start_x + j * 25, start_y + i * 30) for j in range(16)]
             for i in range(6)
@@ -12,21 +22,42 @@ class VirtualSevenSegment:
 
     @staticmethod
     def flush():
+        """Flushes the display."""
         pygame.display.flip()
 
     def clear(self):
+        """Clears the display."""
         for row in self.digits:
             for dig in row:
                 dig.update(0)
 
     def raw2(self, x, y, value, flush=False):
+        """
+        Updates the display with a raw value.
+
+        Args:
+            x (int): The x position of the digit.
+            y (int): The y position of the digit.
+            value (int): The value to update the digit with.
+            flush (bool): Whether to flush the display.
+        """
         self.digits[y][x].update(value)
         if flush:
             self.flush()
 
 
 class Digit:
+    """Digit class for the seven segment display."""
+
     def __init__(self, display, x, y):
+        """
+        Constructor
+
+        Args:
+            display (pygame.Surface): The display surface.
+            x (int): The x position of the digit.
+            y (int): The y position of the digit.
+        """
         self.display = display
         self.x = x
         self.y = y
@@ -83,6 +114,12 @@ class Digit:
         self.state = 255
 
     def update(self, value):
+        """
+        Updates the digit with a new value.
+
+        Args:
+            value (int): The new value to update the digit with.
+        """
         # 7 Segment bit order: DP-G-F-E-D-C-B-A
         # 7 Segment bit order: DP-A-B-C-D-E-F-G
         diff = self.state ^ value

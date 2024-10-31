@@ -31,6 +31,8 @@ DEFAULT_BAUDRATE = 2000000
 
 
 class SevenSegment:
+    """Object that controls a 7-segment display using the MAX7219 chip"""
+
     def __init__(
         self,
         num_digits=8,
@@ -41,7 +43,8 @@ class SevenSegment:
         clear=True,
         segment_orientation_array=None,
     ):
-        """Constructor
+        """
+        Constructor
 
         Args:
             num_digits (int): total number of digits in your display
@@ -94,6 +97,9 @@ class SevenSegment:
         Args:
             register_num (int): which register to set
             value (int): value to set the register to
+
+        Raises:
+            ValueError: if register_num is not in the correct range or if value is not an int or is not between 0 and 16
         """
         # check register_num is good
         if register_num not in [
@@ -140,6 +146,9 @@ class SevenSegment:
 
         Args:
             value (int): brightness value to set
+
+        Raises:
+            ValueError: if value is not an int or is not between 0 and 16
         """
         # check value is good
         if not isinstance(value, (int)) or (value > 16 or value < 0):
@@ -179,6 +188,9 @@ class SevenSegment:
             position (int): position to draw the symbol
             value (int): value to draw at the position
             flush (bool): flush the display after drawing
+
+        Raises:
+            ValueError: if position is not a valid number or value is not a valid number
         """
         # Check if position is valid
         if (
@@ -215,6 +227,9 @@ class SevenSegment:
             char (str): character to draw at the position
             dot (bool): whether or not to draw a dot after the character
             flush (bool): flush the display after drawing
+
+        Raises:
+            ValueError: if position is not a valid number
         """
         # Check if position is valid
         if (
@@ -239,6 +254,9 @@ class SevenSegment:
             char (str): character to draw at the position
             dot (bool): whether or not to draw a dot after the character
             flush (bool): flush the display after drawing
+
+        Raises:
+            ValueError: if segment_orientation_array has not been initialized
         """
         # Check to make sure segment array has been initialized
         if self.display is None:
@@ -254,6 +272,9 @@ class SevenSegment:
             txt (str): text to draw on the display
             start_position (int): position to start drawing the text
             flush (bool): flush the display after drawing
+
+        Raises:
+            OverflowError: if the message would overflow the spi buffer
         """
         # Check if txt is going to overflow buffer
         if start_position + len(txt.replace(".", "")) > self.num_digits:
@@ -301,10 +322,29 @@ class SevenSegment:
 
     # Write to the SPI file through SPI library
     def _write(self, data):
+        """
+        Write to the SPI file through SPI library
+
+        Args:
+            data (str): data to write to the SPI file
+        """
         self._spi.writebytes(bytes(data))
 
     # Get position in the buffer for a given x,y coordinate
     def _get_pos(self, x, y):
+        """
+        Get position in the buffer for a given x,y coordinate
+
+        Args:
+            x (int): x coordinate to draw the symbol
+            y (int): y coordinate to draw the symbol
+
+        Returns:
+            int: position in the buffer
+
+        Raises:
+            ValueError: if x or y are not valid numbers
+        """
         # Check y is within bounds
         if not isinstance(y, (int)) or y < 0 or y >= self._display_y_len:
             return ValueError("y value is not a valid number")
@@ -324,6 +364,12 @@ class SevenSegment:
 
     # Not current in use
     def _check_buf(self):
+        """
+        Check the buffer for any differences between the display buffer and the current buffer
+
+        Returns:
+            list: list of indices that have changed
+        """
         indices = []
         for pos in range(len(self._buf)):
             if self._buf[pos] != self._display_buf[pos]:

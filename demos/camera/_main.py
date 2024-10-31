@@ -15,14 +15,35 @@ NUM_SHADES = 5
 
 
 class Camera_Source:
+    """Object to hold the host and stream url of a camera source."""
+
     def __init__(self, host, stream):
+        """
+        Constructor
+
+        Args:
+            host (str): Host url of the camera
+            stream (str): Stream url of the camera
+        """
         self.host_url = host
         self.stream_url = stream
 
     def get_host(self):
+        """
+        Gets the host url of the camera
+
+        Returns:
+            str: Host url of the camera
+        """
         return self.host_url
 
     def get_stream(self):
+        """
+        Gets the stream url of the camera
+
+        Returns:
+            str: Stream url of the camera
+        """
         return self.stream_url
 
 
@@ -35,6 +56,14 @@ class Camera:
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
     def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Queue to receive input from the user
+            output_queue (Queue): Queue to send output to the user
+            screen (Screen): Screen object to update the screen
+        """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
         self.frame_rate = 10
 
@@ -99,6 +128,7 @@ class Camera:
             self.can_run = False
 
     def check_url(self):
+        """Checks if the url is valid"""
         # If we don't have any cameras in our yaml, just print so
         if len(self.cameras) == 0:
             self.url_rets["url_ret"] = 1
@@ -135,11 +165,12 @@ class Camera:
             return
 
     def capture(self):
+        """Captures the frame from the camera stream"""
         self.cap_rets["ret"], self.cap_rets["frame"] = self.cap.read()
         self.cap_rets["cap_ret"] = 1
-        return
 
     def check_keys(self):
+        """Handles the key presses from the user"""
         for keypress in self.get_input_buff():
             self.input_queue.get(False)
             num_stream_options = len(self.cameras)
@@ -159,6 +190,7 @@ class Camera:
             self.stream_url = self.cameras[self.current_camera_index].get_stream()
 
     def run(self):
+        """Main generator function for the demo"""
         # Create generator here
 
         self.first = True
@@ -277,7 +309,7 @@ class Camera:
             yield
 
     def stop(self):
-        # Reset the state of the demo if needed, else leave blank
+        """Reset the state of the demo if needed, else leave blank"""
         try:
             self.cap.release()
         except:
@@ -286,5 +318,10 @@ class Camera:
         pass
 
     def get_input_buff(self):
-        # Get all input off the queue
+        """
+        Get all input off the queue
+
+        Returns:
+            list: list of all inputs in the queue
+        """
         return list(self.input_queue.queue)

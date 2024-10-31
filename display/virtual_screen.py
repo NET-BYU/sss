@@ -6,7 +6,10 @@ from .virtual_seven_seg import VirtualSevenSegment
 
 
 class VirtualScreen:
+    """Virtual screen for the emulator."""
+
     def __init__(self):
+        """Constructor for the VirtualScreen class."""
         pygame.init()
 
         self.window = pygame.display.set_mode((25 * 48 + 150, 30 * 24 + 30))
@@ -24,6 +27,12 @@ class VirtualScreen:
         self.display.clear()
 
     def create_tick(self, frame_rate):
+        """
+        Creates a tick generator for the virtual screen.
+
+        Args:
+            frame_rate (int): The frame rate of the virtual screen.
+        """
         clock = pygame.time.Clock()
 
         while True:
@@ -32,7 +41,9 @@ class VirtualScreen:
             yield
 
     def clear(self):
+        """Clears the virtual screen."""
         self.display.clear()
 
     def refresh(self):
+        """Refreshes the virtual screen."""
         self.display.clear()

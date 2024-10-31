@@ -6,7 +6,16 @@ from .seven_seg import SevenSegment
 
 
 class PhysicalScreen:
+    """PhysicalScreen class to handle the physical screen"""
+
     def __init__(self, brightness=3):
+        """
+        Constructor
+
+        Args:
+            brightness (int, optional): Brightness of the screen. Defaults to 3.
+
+        """
         self.brightness = brightness
         self.cs_num_lst = [
             11,
@@ -28,6 +37,7 @@ class PhysicalScreen:
         self._create_display()
 
     def _create_display(self):
+        """Create the display"""
         panel_array = [
             [
                 SevenSegment(
@@ -55,11 +65,19 @@ class PhysicalScreen:
         )
 
     def _close_display(self):
+        """Close the display"""
         for row in range(len(self.display.board_objects)):
             for panel in range(len(self.display.board_objects[row])):
                 self.display.board_objects[row][panel].close()
 
     def create_tick(self, frame_rate):
+        """
+        Create a tick
+
+        Args:
+            frame_rate (int): Frame rate
+
+        """
         period = 1.0 / frame_rate
         nextTime = time.time() + period
 
@@ -76,8 +94,10 @@ class PhysicalScreen:
             yield i, nextTime
 
     def clear(self):
+        """Clear the screen"""
         self.display.clear()
 
     def refresh(self):
+        """Refresh the screen"""
         self._close_display()
         self._create_display()

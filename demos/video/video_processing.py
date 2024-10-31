@@ -59,6 +59,15 @@ logger.info(f"Found {len(targets)} videos")
 
 # Normalize the values in the video
 def normalize(x):
+    """
+    Normalize the values in the video
+
+    Args:
+        x (int): The value to normalize
+
+    Returns:
+        int: The normalized value
+    """
     return num_to_pixel[int((x - screen_min) / (screen_max / 12))]
 
 

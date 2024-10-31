@@ -20,7 +20,8 @@ class Minesweeper:
     # Screen updates are done through the screen object
 
     def __init__(self, input_queue, output_queue, screen):
-        """Constructor
+        """
+        Constructor
 
         Args:
             input_queue (Queue): Queue for user input
@@ -153,7 +154,8 @@ class Minesweeper:
         pass
 
     def draw_cell(self, x, y, scale):
-        """Draws a cell of the minefield
+        """
+        Draws a cell of the minefield
 
         Args:
             x (int): x coordinate of the cell
@@ -183,7 +185,8 @@ class Minesweeper:
         self.screen.push()
 
     def erase_cell(self, x, y, scale):
-        """Erases a cell of the minefield
+        """
+        Erases a cell of the minefield
 
         Args:
             x (int): x coordinate of the cell
@@ -215,7 +218,8 @@ class Minesweeper:
         self.screen.push()
 
     def draw_num(self, x, y):
-        """Draws the number of mines around a cell
+        """
+        Draws the number of mines around a cell
 
         Args:
             x (int): x coordinate of the cell
@@ -274,7 +278,8 @@ class Minesweeper:
                 self.draw_cell(row, col, 8)
 
     def gen_minefield(self, scale):
-        """Generates the minefield
+        """
+        Generates the minefield
 
         Args:
             scale (int): scale of the minefield
@@ -424,7 +429,8 @@ class Minesweeper:
             print("\n")
 
     def draw_cursor(self, x, y, erase=False):
-        """Draws the cursor of the selected mine cell
+        """
+        Draws the cursor of the selected mine cell
 
         Args:
             x (int): The x coordinate of the cursor
@@ -480,7 +486,8 @@ class Minesweeper:
         self.screen.push()
 
     def toggle_flag(self, x, y):
-        """Toggles whether a flag is placed on a cell
+        """
+        Toggles whether a flag is placed on a cell
 
         Args:
             x (int): The x coordinate of the cell
@@ -514,7 +521,8 @@ class Minesweeper:
             self.game_over(win=True)
 
     def game_over(self, win=False):
-        """Routine to run when the game is over. Displays the time taken and checks if the player has beaten the high score
+        """
+        Routine to run when the game is over. Displays the time taken and checks if the player has beaten the high score
 
         Args:
             win (bool, optional): If True, the player has won the game. Defaults to False.

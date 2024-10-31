@@ -2,6 +2,13 @@ from loguru import logger
 
 
 def start_inputs(system_queue, demo_input_queue):
+    """
+    Start the input processing.
+
+    Args:
+        system_queue (Queue): The system queue.
+        demo_input_queue (Queue): The demo input queue.
+    """
     try:
         logger.info("Loading MQTT input...")
         from . import mqtt
@@ -53,16 +60,16 @@ def start_inputs(system_queue, demo_input_queue):
         logger.warning("Program will continue to run without this input.")
 
     while True:
-        logger.debug("Fetch MQTT")
         if mqtt_runner:
+            logger.trace("Fetch MQTT")
             next(mqtt_runner)
 
-        logger.debug("Fetch GamePad")
         if gamepad_runner:
+            logger.trace("Fetch GamePad")
             next(gamepad_runner)
 
-        logger.debug("Fetch Keyboard")
         if keyboard_runner:
+            logger.trace("Fetch Keyboard")
             next(keyboard_runner)
 
         yield

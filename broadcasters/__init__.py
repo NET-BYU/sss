@@ -7,6 +7,13 @@ from . import utils
 
 
 def start_outputs(system_queue, demo_output_queue):
+    """
+    Start the output processing.
+
+    Args:
+        system_queue (Queue): The system queue.
+        demo_output_queue (Queue): The demo output queue.
+    """
     try:
         logger.info("Loading MQTT output...")
         from . import mqtt
