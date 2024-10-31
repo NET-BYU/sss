@@ -8,7 +8,7 @@ import controllers
 from runners import utils
 
 
-def run(demo_name, simulate, testing):
+def run(demo_name, simulate, newhardware, testing):
     """Main function that runs the demo."""
 
     if simulate:
@@ -18,6 +18,13 @@ def run(demo_name, simulate, testing):
 
         logger.debug("Starting virtual screen...")
         screen = VirtualScreen()
+    elif newhardware:
+        from display.physical_screen2 import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
+        )
+
+        logger.debug("Starting new physical screen...")
+        screen = PhysicalScreen()
     else:
         from display.physical_screen import (  # pylint: disable=import-outside-toplevel
             PhysicalScreen,

@@ -65,6 +65,13 @@ def run_kiosk(simulate, testing):
     help="Run in simulated environment.",
 )
 @click.option(
+    "-n",
+    "--newhardware",
+    is_flag=True,
+    default=False,
+    help="Run on new hardware.",
+)
+@click.option(
     "testing",
     "-t",
     "--test",
@@ -73,9 +80,9 @@ def run_kiosk(simulate, testing):
     help="Run in test mode. This provides feedback for if your demo is "
     "running fast enough relative to the set frame rate.",
 )
-def run_demo(name, simulate, testing):
+def run_demo(name, simulate,newhardware, testing):
     """CLI command to run demo."""
-    demo.run(name, simulate, testing=testing)
+    demo.run(name, simulate, newhardware, testing=testing)
 
 
 @cli.command("test")
