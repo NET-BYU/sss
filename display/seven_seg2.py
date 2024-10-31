@@ -74,7 +74,7 @@ class SevenSegment:
             [7, 8],
             [9, 10],
             [11, 12],
-        ] # needed to make some functions work properly
+        ]  # needed to make some functions work properly
         self._display_y_len = len(self.display) if self.display is not None else None
 
         self._flush_index = []
