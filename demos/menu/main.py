@@ -47,6 +47,7 @@ class Menu:
         ]
 
         self.flash_rate = 5
+        self.title = "DEMOS"
 
     def _draw_menu(self):
         # Draw the list of demos
@@ -86,7 +87,9 @@ class Menu:
         count = 0
 
         # Set up initial screen
-        self.screen.draw_text(self.screen.x_width // 2, 0, "DEMOS")
+        self.screen.draw_text(
+            (self.screen.x_width - len(self.title)) // 2, 0, self.title
+        )
         self.screen.draw_hline(0, 2, self.screen.x_width)
         self._draw_menu()
         self._update_menu(old_selected, selected)
