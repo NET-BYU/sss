@@ -47,15 +47,15 @@ class SevenSegment:
         self.num_per_segment = 8
         self.baudrate = baudrate if baudrate < 10000000 else 10000000
         # self._buf = [0] * self.num_digits
-        self._command_buf = [0]*(2+self.num_segments)
-        self._buf = [0] *(2+ self.num_digits)
-        self._buf[0] = 0 # data
+        self._command_buf = [0] * (2 + self.num_segments)
+        self._buf = [0] * (2 + self.num_digits)
+        self._buf[0] = 0  # data
         self._buf[1] = self.num_digits
-        self._display_buf = [0]*self.num_digits
-        self.addr = (ip_address,port)
-        self.panel_sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        self.commandSerializer = struct.Struct("B"*(self.num_segments+2))
-        self.dataSerialer = struct.Struct("B"*(self.num_digits+2))
+        self._display_buf = [0] * self.num_digits
+        self.addr = (ip_address, port)
+        self.panel_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.commandSerializer = struct.Struct("B" * (self.num_segments + 2))
+        self.dataSerialer = struct.Struct("B" * (self.num_digits + 2))
 
         # Setup the display
         self.command(MAX7219_REG_SHUTDOWN, 1)  # 1 enables the display
@@ -67,9 +67,14 @@ class SevenSegment:
         self.brightness(brightness)
 
         # Set up cascaded segemtn orientation stuff to enable 2 functions
-        self.display = (
-            [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
-        )  # [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
+        self.display = [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [7, 8],
+            [9, 10],
+            [11, 12],
+        ]  # [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
         self._display_y_len = len(self.display) if self.display is not None else None
 
         self._flush_index = []
@@ -94,7 +99,7 @@ class SevenSegment:
         ]:
             raise ValueError(f"register_num is not a correct value: {register_num}")
         # check value is good
-        if not isinstance(value, (int,list)):
+        if not isinstance(value, (int, list)):
             raise ValueError(f"value is not a correct type: {type(value)}")
         if type(value) == int and not (0 <= value < 16):
             raise ValueError(f"value is not within bounds [1:15]: {value}")
@@ -103,7 +108,9 @@ class SevenSegment:
         # generate command buffer
         self._command_buf[0] = register_num
         self._command_buf[1] = self.num_segments
-        self._command_buf[2:] = value if type(value) == list else [value]*self.num_segments
+        self._command_buf[2:] = (
+            value if type(value) == list else [value] * self.num_segments
+        )
         self._write_command()
 
     def close(self, clear=True, shutdown=True):
@@ -140,7 +147,7 @@ class SevenSegment:
             value (int) or (list): brightness value to set
         """
         # check value is good
-        if not isinstance(value, (int,list)):
+        if not isinstance(value, (int, list)):
             raise ValueError(f"value is not a correct type: {type(value)}")
         if type(value) == int and not (0 <= value < 16):
             raise ValueError(f"value is not within bounds [1:15]: {value}")
@@ -194,7 +201,7 @@ class SevenSegment:
         # Check if char is int between 0 and 255
         if not isinstance(value, (int)) or value < 0 or value > 255:
             raise ValueError("value is either not an int or out of bounds (0-255)")
-        self._buf[position+2] = value
+        self._buf[position + 2] = value
         # self._flush_index.append(position)
 
         if flush:
@@ -228,7 +235,7 @@ class SevenSegment:
         ):
             raise ValueError("position is not a valid number")
         value = sy.get_char2(char) | (dot << 7)
-        self._buf[position+2] = value
+        self._buf[position + 2] = value
         # self._flush_index.append(position)
         if flush:
             self.flush()
@@ -305,12 +312,13 @@ class SevenSegment:
 
     # Write data buffer to panel through socket
     def _write_data(self):
-        self.panel_sock.sendto(self.dataSerialer.pack(*self._buf),self.addr)
+        self.panel_sock.sendto(self.dataSerialer.pack(*self._buf), self.addr)
 
     # Write command buffer to panel through socket
     def _write_command(self):
-        self.panel_sock.sendto(self.commandSerializer.pack(*self._command_buf),self.addr)
-        
+        self.panel_sock.sendto(
+            self.commandSerializer.pack(*self._command_buf), self.addr
+        )
 
     # Get position in the buffer for a given x,y coordinate
     def _get_pos(self, x, y):

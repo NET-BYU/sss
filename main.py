@@ -56,7 +56,7 @@ def run_simulator():
 )
 def run_kiosk(simulate, newhardware, testing):
     """CLI command to run kiosk."""
-    kiosk.run(simulate, testing=testing,newhardware=newhardware)
+    kiosk.run(simulate, testing=testing, newhardware=newhardware)
 
 
 @cli.command("demo")

@@ -264,6 +264,7 @@ def run(simulate, testing=False, newhardware=False):
         from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
             VirtualScreen,
         )
+
         logger.debug("Starting virtual screen")
         screen = VirtualScreen()
     elif newhardware:
