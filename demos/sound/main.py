@@ -1,6 +1,6 @@
 from loguru import logger
 
-from broadcasters.broadcast_message import BroadcastMessage, BroadcastType
+from broadcasters.broadcast_message import BroadcastSoundMessage
 from demos.utils import get_all_from_queue
 from display.segment_display import SegmentDisplay
 
@@ -62,9 +62,7 @@ class Sound:
                 self.display.undraw()
                 self.screen.draw_text(5, 6, "Playing sound {}".format(sound).upper())
                 self.display.draw()
-                self.output_queue.put(
-                    BroadcastMessage(type=BroadcastType.SOUND, message=sound)
-                )
+                self.output_queue.put(BroadcastSoundMessage(file=sound))
                 yield
 
             yield

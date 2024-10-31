@@ -5,7 +5,7 @@ from loguru import logger
 from playsound import playsound
 
 from . import utils
-from .broadcast_message import BroadcastType
+from .broadcast_message import BroadcastSoundMessage
 
 
 def start_processing_output(system_queue, sound_q):
@@ -23,13 +23,12 @@ def start_processing_output(system_queue, sound_q):
         while True:
             for item in utils.get_all_from_queue(sound_q):
                 # Filter out things that the sound broadcaster doesn't care about
-                if item.type != BroadcastType.SOUND:
+                if not isinstance(item, BroadcastSoundMessage):
                     continue
 
-                sound = item.message
-                logger.debug("Playing sound: {}", sound)
+                logger.debug("Playing sound: {}", item.file)
 
-                sound_file = sound_path / sound
+                sound_file = sound_path / item.file
                 if not sound_file.exists():
                     logger.error("Sound file does not exist: {}", sound_file)
                     continue

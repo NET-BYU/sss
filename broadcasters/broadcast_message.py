@@ -1,16 +1,20 @@
 from dataclasses import dataclass
 
 
-class BroadcastType:
-    SOUND = "sound"
-    TEXT = "text"
-
-
 @dataclass
-class BroadcastMessage:
+class BroadcastSoundMessage:
     """
     A dataclass to hold a broadcast message.
     """
 
-    type: BroadcastType
-    message: str
+    file: str
+    # channel: int
+
+
+@dataclass
+class BroadcastTextMessage:
+    """
+    A dataclass to hold a broadcast message.
+    """
+
+    text: str
