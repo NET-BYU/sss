@@ -251,7 +251,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None,simulated=F
             screen.clear()
 
 
-def run(simulate, testing=False):
+def run(simulate, testing=False, newhardware=False):
     """Runs the kiosk
 
     Args:
@@ -265,12 +265,21 @@ def run(simulate, testing=False):
             VirtualScreen,
         )
 
+        logger.debug("Starting virtual screen")
         screen = VirtualScreen()
+    elif newhardware:
+        from display.physical_screen2 import (  # pylint: disable=import-outside-toplevel
+            PhysicalScreen,
+        )
+
+        logger.debug("Starting new physical screen...")
+        screen = PhysicalScreen()
     else:
         from display.physical_screen import (  # pylint: disable=import-outside-toplevel
             PhysicalScreen,
         )
 
+        logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
 
     # Start up logger
