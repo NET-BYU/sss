@@ -188,7 +188,7 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
         screen.refresh()
 
 
-def run_loop(screen, user_input_timeout=300, demo_time_override=None):
+def run_loop(screen, user_input_timeout=300, demo_time_override=None,simulated=False):
     """Runs the event loop that takes care of input and running the demos.
 
     Args:
@@ -203,7 +203,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     demos = load_demos()
     random_demos = get_random_demo(demos)
     handle_input = controllers.start_inputs(
-        queues.system_queue, queues.demo_input_queue
+        queues.system_queue, queues.demo_input_queue,simulated=simulated
     )
     handle_output = broadcasters.start_outputs(
         queues.system_queue, queues.demo_input_queue
@@ -290,9 +290,9 @@ def run(simulate, testing=False):
     logger.info("-=:___________/")
 
     if testing:
-        run_loop(screen, user_input_timeout=5, demo_time_override=5)
+        run_loop(screen, user_input_timeout=5, demo_time_override=5,simulated=simulate)
     else:
-        run_loop(screen)
+        run_loop(screen,simulated=simulate)
 
 
 if __name__ == "__main__":
