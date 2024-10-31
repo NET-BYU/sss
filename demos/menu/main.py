@@ -35,12 +35,12 @@ class Menu:
 
         # init demo/game specific variables here
         self.system_input_queue = system_input_queue
-        self.demos = demos or {}
 
+        self.demos = demos or {}
         # Pull out the name of each demo
-        self.demo_names = [demo for demo in self.demos.keys()]
+        self.demos = [demo for demo in self.demos.keys()]
         # Fix up names
-        self.demo_names = [demo.replace("_", " ") for demo in self.demo_names]
+        self.demo_names = [demo.replace("_", " ") for demo in self.demos]
         # Truncate list of demos
         self.demo_names = self.demo_names[
             : self.max_demos_per_column * self.num_columns
@@ -104,10 +104,10 @@ class Menu:
                     # If the user presses the select button
                     elif keypress == "SEL_P":
                         # Stop the menu demo
-                        self.system_input_queue.put(None)
+                        self.system_input_queue.put("QUIT")
                     elif keypress == "PRI_P":
                         # Start the selected demo
-                        self.system_input_queue.put(self.demo_names[selected])
+                        self.system_input_queue.put(self.demos[selected])
 
                 # Roll around the selected demo
                 selected %= len(self.demo_names)
