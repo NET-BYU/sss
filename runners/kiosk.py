@@ -128,6 +128,7 @@ def play_demo_from_user(
         if not queues.demo_input_queue.empty() and demo.demo_time is None:
             last_input_time = time.time()
 
+        # TODO: Should this also handle output?
         next(handle_input)
         next(runner)
         next(frame_tick)
@@ -164,12 +165,19 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
     while demo_time > (time.time() - start_time):
         # We have received input from the user, so we need to stop the demo
         if not queues.system_queue.empty():
-            logger.info("User input has been received. Exiting demo...")
+            logger.info("User input has been received on system queue. Exiting demo...")
+            demo.stop()
+            screen.clear()
+            break
+
+        if not queues.demo_input_queue.empty():
+            logger.info("Demo input has been received on demo queue. Exiting demo...")
             demo.stop()
             screen.clear()
             break
 
         try:
+            # TODO: Should there also be handle output?
             next(handle_input)
             next(runner)
             next(frame_tick)
@@ -206,17 +214,17 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
         queues.system_queue, queues.demo_input_queue
     )
     handle_output = broadcasters.start_outputs(
-        queues.system_queue, queues.demo_input_queue
+        queues.system_queue, queues.demo_output_queue
     )
     current_demo = None
 
     try:
         while True:
-            while not queues.system_queue.empty():
-                logger.info("Got input from the user...")
+            next(handle_input)
+            next(handle_output)
 
-                next(handle_input)
-                next(handle_output)
+            if not queues.system_queue.empty():
+                logger.info("Got input from the system...")
 
                 demo_cls = get_demo_from_user(queues.system_queue, demos)
                 if demo_cls is None:
@@ -233,7 +241,29 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                     user_input_timeout,
                 )
 
-            while queues.system_queue.empty():
+            elif not queues.demo_input_queue.empty():
+                logger.info("Got input from the user...")
+
+                # Clear out the queue so that no input gets passed to the demo
+                queues.demo_input_queue.queue.clear()
+
+                menu_demo = demos["menu"](
+                    queues.demo_input_queue,
+                    queues.demo_output_queue,
+                    screen.display,
+                    system_input_queue=queues.system_queue,
+                    demos=demos,
+                )
+
+                play_demo_from_user(
+                    menu_demo,
+                    handle_input,
+                    queues,
+                    screen,
+                    user_input_timeout,
+                )
+
+            else:
                 logger.info("No input from user...")
 
                 current_demo = next(random_demos)(
@@ -261,15 +291,15 @@ def run(simulate, testing=False):
     """
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
+        from display.virtual_screen import (
             VirtualScreen,
-        )
+        )  # pylint: disable=import-outside-toplevel
 
         screen = VirtualScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
+        from display.physical_screen import (
             PhysicalScreen,
-        )
+        )  # pylint: disable=import-outside-toplevel
 
         screen = PhysicalScreen()
 
