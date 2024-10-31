@@ -3,22 +3,22 @@ import struct
 
 from display import symbols as sy  # get_char2
 
-MAX7219_DIGITS = 8
+MAX72XX_DIGITS = 8
 
-MAX7219_REG_NOOP = 0x0
-MAX7219_REG_DIGIT0 = 0x1
-MAX7219_REG_DIGIT1 = 0x02
-MAX7219_REG_DIGIT2 = 0x3
-MAX7219_REG_DIGIT3 = 0x4
-MAX7219_REG_DIGIT4 = 0x5
-MAX7219_REG_DIGIT5 = 0x6
-MAX7219_REG_DIGIT6 = 0x7
-MAX7219_REG_DIGIT7 = 0x8
-MAX7219_REG_DECODEMODE = 0x9
-MAX7219_REG_INTENSITY = 0xA
-MAX7219_REG_SCANLIMIT = 0xB
-MAX7219_REG_SHUTDOWN = 0xC
-MAX7219_REG_DISPLAYTEST = 0xF
+MAX72XX_REG_NOOP = 0x0
+MAX72XX_REG_DIGIT0 = 0x1
+MAX72XX_REG_DIGIT1 = 0x02
+MAX72XX_REG_DIGIT2 = 0x3
+MAX72XX_REG_DIGIT3 = 0x4
+MAX72XX_REG_DIGIT4 = 0x5
+MAX72XX_REG_DIGIT5 = 0x6
+MAX72XX_REG_DIGIT6 = 0x7
+MAX72XX_REG_DIGIT7 = 0x8
+MAX72XX_REG_DECODEMODE = 0x9
+MAX72XX_REG_INTENSITY = 0xA
+MAX72XX_REG_SCANLIMIT = 0xB
+MAX72XX_REG_SHUTDOWN = 0xC
+MAX72XX_REG_DISPLAYTEST = 0xF
 
 
 DEFAULT_BAUDRATE = 2000000
@@ -58,15 +58,15 @@ class SevenSegment:
         self.dataSerialer = struct.Struct("B" * (self.num_digits + 2))
 
         # Setup the display
-        self.command(MAX7219_REG_SHUTDOWN, 1)  # 1 enables the display
+        self.command(MAX72XX_REG_SHUTDOWN, 1)  # 1 enables the display
         self.command(
-            MAX7219_REG_DECODEMODE, 0
+            MAX72XX_REG_DECODEMODE, 0
         )  # 0x01, 0x0F, 0xFF for different Code B modes
-        self.command(MAX7219_REG_SCANLIMIT, self.num_per_segment - 1)
-        self.command(MAX7219_REG_DISPLAYTEST, 0)
+        self.command(MAX72XX_REG_SCANLIMIT, self.num_per_segment - 1)
+        self.command(MAX72XX_REG_DISPLAYTEST, 0)
         self.brightness(brightness)
 
-        # Set up cascaded segemtn orientation stuff to enable 2 functions
+        # Set up cascaded segment orientation stuff to enable 2 functions
         self.display = [
             [1, 2],
             [3, 4],
@@ -74,7 +74,7 @@ class SevenSegment:
             [7, 8],
             [9, 10],
             [11, 12],
-        ]  # [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]]
+        ] # needed to make some functions work properly
         self._display_y_len = len(self.display) if self.display is not None else None
 
         self._flush_index = []
@@ -91,11 +91,11 @@ class SevenSegment:
         """
         # check register_num is good
         if register_num not in [
-            MAX7219_REG_DECODEMODE,
-            MAX7219_REG_INTENSITY,
-            MAX7219_REG_SCANLIMIT,
-            MAX7219_REG_SHUTDOWN,
-            MAX7219_REG_DISPLAYTEST,
+            MAX72XX_REG_DECODEMODE,
+            MAX72XX_REG_INTENSITY,
+            MAX72XX_REG_SCANLIMIT,
+            MAX72XX_REG_SHUTDOWN,
+            MAX72XX_REG_DISPLAYTEST,
         ]:
             raise ValueError(f"register_num is not a correct value: {register_num}")
         # check value is good
@@ -124,7 +124,7 @@ class SevenSegment:
         if clear:
             self.clear()
         if shutdown:
-            self.command(MAX7219_REG_SHUTDOWN, 0)
+            self.command(MAX72XX_REG_SHUTDOWN, 0)
         # self._spi.close()
         self.panel_sock.close()
 
@@ -153,33 +153,15 @@ class SevenSegment:
             raise ValueError(f"value is not within bounds [1:15]: {value}")
         if type(value) == list and not (max(value) < 16 and min(value) >= 0):
             raise ValueError(f"values in list are not within bounds [1:15]: {value}")
-        self.command(MAX7219_REG_INTENSITY, value)
+        self.command(MAX72XX_REG_INTENSITY, value)
 
     # Original flush, about 2 times slower than the current flush function, used in clear
     def flush_legacy(self):
         """Cascade the buffer onto the display"""
-        # for seg in range(self.num_segments):
-        #     for pos in range(self.num_per_segment):
-        #         self._write(
-        #             ([MAX7219_REG_NOOP, 0] * (self.num_segments - seg))
-        #             + [
-        #                 pos + MAX7219_REG_DIGIT0,
-        #                 self._buf[pos + (seg * self.num_per_segment)],
-        #             ]
-        #             + ([MAX7219_REG_NOOP, 0] * seg)
-        #        )
         self.flush()
 
     def flush(self):
         """Flush all the current changes to the display"""
-        # for pos in self._flush_index:
-        #     self._write(
-        #         [MAX7219_REG_NOOP, 0]
-        #         * (self.num_segments - 1 - int(pos / self.num_per_segment))
-        #         + [MAX7219_REG_DIGIT0 + pos % self.num_per_segment, self._buf[pos]]
-        #         + [MAX7219_REG_NOOP, 0] * int(pos / self.num_per_segment)
-        #     )
-        # self._flush_index.clear()
         self._write_data()
 
     def raw(self, position, value, flush=False):
@@ -202,7 +184,6 @@ class SevenSegment:
         if not isinstance(value, (int)) or value < 0 or value > 255:
             raise ValueError("value is either not an int or out of bounds (0-255)")
         self._buf[position + 2] = value
-        # self._flush_index.append(position)
 
         if flush:
             self.flush()
@@ -236,7 +217,6 @@ class SevenSegment:
             raise ValueError("position is not a valid number")
         value = sy.get_char2(char) | (dot << 7)
         self._buf[position + 2] = value
-        # self._flush_index.append(position)
         if flush:
             self.flush()
 
@@ -293,7 +273,6 @@ class SevenSegment:
         """
         # No initial checks and will let underlying functions do the work
         if horizontal:
-            # self.text(txt, self._get_pos(x, y))
             for pos, char in enumerate(txt):
                 # Check if current char is a dot and append to previous letter
                 if char == "." and pos != 0:  # mutliple dots in a row cause an error
