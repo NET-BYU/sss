@@ -84,8 +84,15 @@ def start_processing_input(system_queue, demo_input_queue):
                     demo_input_queue.put("PRI_R")
                 elif event.key == K_n:
                     system_queue.put("SEC_R")
-                elif event.key in [K_RCTRL, K_RMETA, K_LMETA]:
-                    system_queue.put("SEL_R")
+
+                # Note: this has purposely been removed. I argue that we don't
+                # need to know when *this* key has been released. I would like
+                # to use it only for system queue stuff and not for game input
+                # in which case, I don't think anything cares about when it got
+                # pressed vs when it got released. It just makes processing the
+                # key stroke harder because there is two events.
+                # elif event.key in [K_RCTRL, K_RMETA, K_LMETA]:
+                #     system_queue.put("SEL_R")
 
             # Check for QUIT event.
             elif event.type == QUIT:
