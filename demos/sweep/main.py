@@ -39,7 +39,7 @@ class Sweep:
         """Reset the state of the demo if needed, else leave blank"""
         pass
 
-    def draw_vline_loc(self, x,value):
+    def draw_vline_loc(self, x, value):
         """
         Draw a vertical line at location x with value val
 
@@ -47,7 +47,7 @@ class Sweep:
             x (int): x location of the line
             val (int): value of the line
         """
-        for y in range(self.screen.y_height//2):
-            self.screen.draw_raw(x,y,value)
+        for y in range(self.screen.y_height // 2):
+            self.screen.draw_raw(x, y, value)
             # self.screen.draw_pixel(x, pix, val)
         self.screen.push()
