@@ -5,9 +5,11 @@ from pygame.locals import (
     K_DOWN,
     K_ESCAPE,
     K_LEFT,
+    K_LMETA,
     K_RCTRL,
     K_RETURN,
     K_RIGHT,
+    K_RMETA,
     K_SPACE,
     K_UP,
     KEYDOWN,
@@ -63,7 +65,7 @@ def start_processing_input(system_queue, demo_input_queue):
                     demo_input_queue.put("PRI_P")
                 elif event.key == K_n:
                     system_queue.put("SEC_P")
-                elif event.key == K_RCTRL:
+                elif event.key in [K_RCTRL, K_RMETA, K_LMETA]:
                     system_queue.put("SEL_P")
 
             # check for KEYUP event and pass into input queue
@@ -82,7 +84,7 @@ def start_processing_input(system_queue, demo_input_queue):
                     demo_input_queue.put("PRI_R")
                 elif event.key == K_n:
                     system_queue.put("SEC_R")
-                elif event.key == K_RCTRL:
+                elif event.key in [K_RCTRL, K_RMETA, K_LMETA]:
                     system_queue.put("SEL_R")
 
             # Check for QUIT event.
