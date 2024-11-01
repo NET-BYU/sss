@@ -170,12 +170,6 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
             screen.clear()
             break
 
-        if not queues.demo_input_queue.empty():
-            logger.info("Demo input has been received on demo queue. Exiting demo...")
-            demo.stop()
-            screen.clear()
-            break
-
         try:
             # TODO: Should there also be handle output?
             next(handle_input)
@@ -226,37 +220,33 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
             if not queues.system_queue.empty():
                 logger.info("Got input from the system...")
 
-                demo_cls = get_demo_from_user(queues.system_queue, demos)
-                if demo_cls is None:
-                    continue
-                current_demo = demo_cls(
-                    queues.demo_input_queue, queues.demo_output_queue, screen.display
-                )
+                if queues.system_queue.queue[0] == "SEC_P":
+                    logger.info("Select was pressed—bring up menu")
+
+                    # Capture that item from the queue
+                    queues.system_queue.get()
+
+                    current_demo = demos["menu"](
+                        queues.demo_input_queue,
+                        queues.demo_output_queue,
+                        screen.display,
+                        system_input_queue=queues.system_queue,
+                        demos=demos,
+                    )
+
+                else:
+                    demo_cls = get_demo_from_user(queues.system_queue, demos)
+                    if demo_cls is None:
+                        continue
+
+                    current_demo = demo_cls(
+                        queues.demo_input_queue,
+                        queues.demo_output_queue,
+                        screen.display,
+                    )
 
                 play_demo_from_user(
                     current_demo,
-                    handle_input,
-                    queues,
-                    screen,
-                    user_input_timeout,
-                )
-
-            elif not queues.demo_input_queue.empty():
-                logger.info("Got input from the user...")
-
-                # Clear out the queue so that no input gets passed to the demo
-                queues.demo_input_queue.queue.clear()
-
-                menu_demo = demos["menu"](
-                    queues.demo_input_queue,
-                    queues.demo_output_queue,
-                    screen.display,
-                    system_input_queue=queues.system_queue,
-                    demos=demos,
-                )
-
-                play_demo_from_user(
-                    menu_demo,
                     handle_input,
                     queues,
                     screen,
