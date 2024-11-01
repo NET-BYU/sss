@@ -1,7 +1,7 @@
 from loguru import logger
 
 
-def start_inputs(system_queue, demo_input_queue,simulated):
+def start_inputs(system_queue, demo_input_queue, simulated):
     """
     Start the input processing.
 
@@ -43,7 +43,6 @@ def start_inputs(system_queue, demo_input_queue,simulated):
         logger.warning("Unable to import modules necessary to run gamepad input.")
         logger.warning("Program will continue to run without this input.")
 
-    
     keyboard_runner = None
     if simulated:
         try:
