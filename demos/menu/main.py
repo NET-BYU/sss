@@ -97,7 +97,7 @@ class Menu:
 
         while True:
             if not self.input_queue.empty():
-                # Check to see if there are any keypresses to read
+                # Check to see if there are any key presses to read
                 for keypress in get_all_from_queue(self.input_queue):
                     # If there are directional buttons pressed
                     if keypress == "UP_P":
