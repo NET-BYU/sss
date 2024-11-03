@@ -194,7 +194,6 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                         queues.demo_output_queue,
                         screen.display,
                         system_input_queue=queues.system_queue,
-                        demos=demos,
                     )
 
                 else:

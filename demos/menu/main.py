@@ -1,6 +1,7 @@
 from loguru import logger
 
 from demos.utils import get_all_from_queue
+from runners.utils import get_demos
 
 
 class Menu:
@@ -13,9 +14,7 @@ class Menu:
     # User input is passed through input_queue
     # Game output is passed through output_queue
     # Screen updates are done through the screen object
-    def __init__(
-        self, input_queue, output_queue, screen, system_input_queue=None, demos=None
-    ):
+    def __init__(self, input_queue, output_queue, screen, system_input_queue=None):
         """
         Constructor
 
@@ -36,9 +35,8 @@ class Menu:
         # init demo/game specific variables here
         self.system_input_queue = system_input_queue
 
-        self.demos = demos or {}
         # Pull out the name of each demo
-        self.demos = [demo for demo in self.demos.keys()]
+        self.demos = [name for name, _ in get_demos()]
         # Fix up names
         self.demo_names = [demo.replace("_", " ") for demo in self.demos]
         # Truncate list of demos
