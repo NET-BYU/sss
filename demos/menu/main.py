@@ -104,7 +104,7 @@ class Menu:
                         selected -= 1
                     elif keypress == "DOWN_P":
                         selected += 1
-                    elif keypress == "START_P":
+                    elif keypress == "START_P" and self.system_input_queue:
                         # Start the selected demo
                         self.system_input_queue.put(self.demos[selected])
 
