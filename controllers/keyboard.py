@@ -64,7 +64,7 @@ def start_processing_input(system_queue, demo_input_queue):
                 elif event.key == K_SPACE:
                     demo_input_queue.put("PRI_P")
                 elif event.key == K_n:
-                    system_queue.put("SEC_P")
+                    demo_input_queue.put("SEC_P")
                 elif event.key in [K_RCTRL, K_RMETA, K_LMETA]:
                     system_queue.put("SEL")
 
@@ -83,7 +83,7 @@ def start_processing_input(system_queue, demo_input_queue):
                 elif event.key == K_SPACE:
                     demo_input_queue.put("PRI_R")
                 elif event.key == K_n:
-                    system_queue.put("SEC_R")
+                    demo_input_queue.put("SEC_R")
 
             # Check for QUIT event.
             elif event.type == QUIT:
