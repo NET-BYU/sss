@@ -9,99 +9,12 @@ PTERODACTYL_FLAP_TIMER = 20
 SCORE_TIMER = 20
 
 
-class Dino:
-    """
-    This is a demo that imitates the dino game from chrome
-    """
-
-    demo_time = None  # Number of seconds or None if its game
-
-    # User input is passed through input_queue
-    # Game output is passed through output_queue
-    # Screen updates are done through the screen object
-    def __init__(self, input_queue, output_queue, screen):
-        """
-        Constructor
-
-        Args:
-            input_queue (Queue): Queue for user input
-            output_queue (Queue): Queue for game output
-            screen (Screen): Screen object
-        """
-        # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 120
-
-        self.input_queue = input_queue
-        self.output_queue = output_queue
-        self.screen = screen
-        self.running_timer = RUNNING_TIMER
+class Cactus:
+    def __init__(self, x, y, type):
+        self.x = x
+        self.y = y
+        self.type = type
         self.cactus_timer = CACTUS_TIMER
-        self.pterodactyl_timer = PTERODACTYL_TIMER
-        self.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-        self.score_timer = SCORE_TIMER
-        self.right_leg = True
-        self.flap_up = True
-        self.gameover = False
-        self.is_jumping = False
-
-        self.score = 0
-        # init demo/game specific variables here
-
-    def draw_score(self, score):
-        """
-        Draw the score on the screen
-
-        Args:
-            score (int): The score to be displayed
-        """
-
-        self.screen.draw_text(
-            self.screen.x_width - 20, 2, f"HI 00000 SCORE {score:05}", push=True
-        )
-
-    def draw_dino(self, y, duck=False, right=False, jump=False, erase=False):
-        """
-        Draw the dino on the screen
-
-        Args:
-            y (int): The y coordinate of the dino
-        """
-
-        if not erase:
-            if not duck:
-                self.screen.draw_pixel(3, y, 0x0F)
-                self.screen.draw_pixel(2, y + 1, 0x0F)
-                self.screen.draw_pixel(3, y + 2, 0x04)
-                self.screen.draw_pixel(2, y + 2, 0x0F)
-                self.screen.draw_pixel(1, y + 2, 0x03)
-                self.screen.draw_pixel(2, y + 3, 0x0A)
-
-                if jump:
-                    self.screen.draw_pixel(2, y + 4, 0x0A)
-                elif right:
-                    self.screen.draw_pixel(2, y + 4, 0x08)
-                else:
-                    self.screen.draw_pixel(2, y + 4, 0x02)
-            else:
-                self.screen.draw_pixel(4, y + 2, 0x0F)
-                self.screen.draw_pixel(3, y + 2, 0x0F)
-                self.screen.draw_pixel(3, y + 2, 0x04)
-                self.screen.draw_pixel(2, y + 2, 0x0F)
-                self.screen.draw_pixel(1, y + 2, 0x03)
-                self.screen.draw_pixel(2, y + 3, 0x0A)
-                self.screen.draw_pixel(4, y + 3, 0x03)
-
-                if jump:
-                    self.screen.draw_pixel(2, y + 4, 0x0A)
-                elif right:
-                    self.screen.draw_pixel(2, y + 4, 0x08)
-                else:
-                    self.screen.draw_pixel(2, y + 4, 0x02)
-        else:
-            for i in [1, 2, 3, 4]:
-                for j in [0, 1, 2, 3, 4]:
-                    self.screen.draw_pixel(i, j, 0x00)
-                    self.screen.draw_pixel(i, y + j, 0x00)
 
     def draw_cactus(self, x, type, erase=False):
         """
@@ -171,6 +84,16 @@ class Dino:
                 self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
                 self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
 
+
+class Pterodactyl:
+    def __init__(self, x, y, up):
+        self.x = x
+        self.y = y
+        self.up = up
+        self.pterodactyl_timer = PTERODACTYL_TIMER
+        self.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
+        self.flap_up = True
+
     def draw_pterodactyl(self, x, y, up=False, erase=False):
         """
         Draw the pterodactyl on the screen
@@ -198,6 +121,106 @@ class Dino:
             self.screen.draw_pixel(x + 2, y - 1, 0x00)
             self.screen.draw_pixel(x + 2, y + 1, 0x00)
             self.screen.draw_pixel(x + 3, y, 0x00)
+
+
+class Dinosaur:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        # self.duck = duck
+        # self.right = right
+        # self.jump = jump
+        self.running_timer = RUNNING_TIMER
+        self.right_leg = True
+        self.is_jumping = False
+
+    def draw_dino(self, y, duck=False, right=False, jump=False, erase=False):
+        """
+        Draw the dino on the screen
+
+        Args:
+            y (int): The y coordinate of the dino
+        """
+
+        if not erase:
+            if not duck:
+                self.screen.draw_pixel(3, y, 0x0F)
+                self.screen.draw_pixel(2, y + 1, 0x0F)
+                self.screen.draw_pixel(3, y + 2, 0x04)
+                self.screen.draw_pixel(2, y + 2, 0x0F)
+                self.screen.draw_pixel(1, y + 2, 0x03)
+                self.screen.draw_pixel(2, y + 3, 0x0A)
+
+                if jump:
+                    self.screen.draw_pixel(2, y + 4, 0x0A)
+                elif right:
+                    self.screen.draw_pixel(2, y + 4, 0x08)
+                else:
+                    self.screen.draw_pixel(2, y + 4, 0x02)
+            else:
+                self.screen.draw_pixel(4, y + 2, 0x0F)
+                self.screen.draw_pixel(3, y + 2, 0x0F)
+                self.screen.draw_pixel(3, y + 2, 0x04)
+                self.screen.draw_pixel(2, y + 2, 0x0F)
+                self.screen.draw_pixel(1, y + 2, 0x03)
+                self.screen.draw_pixel(2, y + 3, 0x0A)
+                self.screen.draw_pixel(4, y + 3, 0x03)
+
+                if jump:
+                    self.screen.draw_pixel(2, y + 4, 0x0A)
+                elif right:
+                    self.screen.draw_pixel(2, y + 4, 0x08)
+                else:
+                    self.screen.draw_pixel(2, y + 4, 0x02)
+        else:
+            for i in [1, 2, 3, 4]:
+                for j in [0, 1, 2, 3, 4]:
+                    self.screen.draw_pixel(i, j, 0x00)
+                    self.screen.draw_pixel(i, y + j, 0x00)
+
+
+class Dino:
+    """
+    This is a demo that imitates the dino game from chrome
+    """
+
+    demo_time = None  # Number of seconds or None if its game
+
+    # User input is passed through input_queue
+    # Game output is passed through output_queue
+    # Screen updates are done through the screen object
+    def __init__(self, input_queue, output_queue, screen):
+        """
+        Constructor
+
+        Args:
+            input_queue (Queue): Queue for user input
+            output_queue (Queue): Queue for game output
+            screen (Screen): Screen object
+        """
+        # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
+        self.frame_rate = 120
+
+        # init demo/game specific variables here
+        self.input_queue = input_queue
+        self.output_queue = output_queue
+        self.screen = screen
+        self.score_timer = SCORE_TIMER
+        self.gameover = False
+        self.score = 0
+        self.player = Dinosaur(0, 0)
+
+    def draw_score(self, score):
+        """
+        Draw the score on the screen
+
+        Args:
+            score (int): The score to be displayed
+        """
+
+        self.screen.draw_text(
+            self.screen.x_width - 20, 2, f"HI 00000 SCORE {score:05}", push=True
+        )
 
     def draw_ground(self):
         """
@@ -312,23 +335,23 @@ class Dino:
                 #     self.draw_cactus(j + 1, 0, erase=True)
                 #     self.draw_cactus(j, 0, erase=False)
 
-                # if not self.pterodactyl_timer:
-                #     k -= 1 if k > 0 else 0
-                #     self.pterodactyl_timer = PTERODACTYL_TIMER
-                #     if not self.pterodactyl_flap_timer:
-                #         self.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-                #         self.flap_up = not self.flap_up
-                #     self.draw_pterodactyl(
-                #         k + 1,
-                #         self.screen.y_height // 2 - 3,
-                #         up=self.flap_up,
-                #         erase=True,
-                #     )
-                #     self.draw_pterodactyl(
-                #         k,
-                #         self.screen.y_height // 2 - 3,
-                #         up=self.flap_up,
-                #     )
+                if not self.pterodactyl_timer:
+                    k -= 1 if k > 0 else 0
+                    self.pterodactyl_timer = PTERODACTYL_TIMER
+                    if not self.pterodactyl_flap_timer:
+                        self.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
+                        self.flap_up = not self.flap_up
+                    self.draw_pterodactyl(
+                        k + 1,
+                        self.screen.y_height // 2 - 3,
+                        up=self.flap_up,
+                        erase=True,
+                    )
+                    self.draw_pterodactyl(
+                        k,
+                        self.screen.y_height // 2 - 3,
+                        up=self.flap_up,
+                    )
 
                 self.draw_ground()
                 self.screen.push()
