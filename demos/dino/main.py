@@ -2,7 +2,8 @@ import queue
 from demos.utils import get_all_from_queue
 import random
 
-RUNNING_TIMER = 6
+DINO_JUMP_TIMER = 3
+DINO_RUNNING_TIMER = 5
 OBSTACLE_TIMER = 5
 PTERODACTYL_FLAP_TIMER = 10
 SCORE_TIMER = 10
@@ -149,7 +150,8 @@ class Dino:
         self.screen = screen
 
         # Timers
-        self.running_timer = RUNNING_TIMER
+        self.running_timer = DINO_RUNNING_TIMER
+        self.jump_timer = DINO_JUMP_TIMER
         self.obstacle_timer = OBSTACLE_TIMER
         self.score_timer = SCORE_TIMER
 
@@ -314,6 +316,7 @@ class Dino:
                         self.is_going_up = True
 
                 self.running_timer -= 1
+                self.jump_timer -= 1
                 self.obstacle_timer -= 1
                 self.test_pterodactyl.pterodactyl_flap_timer -= 1
                 self.score_timer -= 1
@@ -323,22 +326,23 @@ class Dino:
                     self.score_timer = SCORE_TIMER
                     self.draw_score(self.score)
 
-                # if not self.running_timer:
-                if self.is_jumping:
-                    self.dino_y_prev = self.dino_y
-                    if self.is_going_up:
-                        if self.dino_y > self.screen.y_height // 2 - 12:
-                            self.dino_y -= 1
-                        elif self.dino_y == self.screen.y_height // 2 - 12:
-                            self.is_going_up = False
-                    else:
-                        if self.dino_y < self.screen.y_height // 2 - 3:
-                            self.dino_y += 1
-                        elif self.dino_y == self.screen.y_height // 2 - 3:
-                            self.is_jumping = False
+                if not self.jump_timer and self.is_jumping:
+                    self.jump_timer = DINO_JUMP_TIMER
+                    if self.is_jumping:
+                        self.dino_y_prev = self.dino_y
+                        if self.is_going_up:
+                            if self.dino_y > self.screen.y_height // 2 - 12:
+                                self.dino_y -= 1
+                            elif self.dino_y == self.screen.y_height // 2 - 12:
+                                self.is_going_up = False
+                        else:
+                            if self.dino_y < self.screen.y_height // 2 - 3:
+                                self.dino_y += 1
+                            elif self.dino_y == self.screen.y_height // 2 - 3:
+                                self.is_jumping = False
 
 
-                    self.running_timer = RUNNING_TIMER
+                    self.running_timer = DINO_RUNNING_TIMER
                     self.right_leg = not self.right_leg
                     self.draw_dino(
                         self.dino_y_prev,
