@@ -1,6 +1,6 @@
 import queue
 from demos.utils import get_all_from_queue
-
+import random
 
 RUNNING_TIMER = 6
 OBSTACLE_TIMER = 5
@@ -166,6 +166,8 @@ class Dino:
         self.duck = False
         self.jump = False
 
+        self.obstacles = [" " for i in range(48)]
+
         self.test_pterodactyl = Pterodactyl(10, self.screen.y_height // 2 - 3, self.screen)
         self.test_cactus = Cactus(10, 0, self.screen)
 
@@ -321,19 +323,19 @@ class Dino:
                     self.score_timer = SCORE_TIMER
                     self.draw_score(self.score)
 
-                if not self.running_timer:
-                    if self.is_jumping:
-                        self.dino_y_prev = self.dino_y
-                        if self.is_going_up:
-                            if self.dino_y > self.screen.y_height // 2 - 10:
-                                self.dino_y -= 1
-                            elif self.dino_y == self.screen.y_height // 2 - 10:
-                                self.is_going_up = False
-                        else:
-                            if self.dino_y < self.screen.y_height // 2 - 3:
-                                self.dino_y += 1
-                            elif self.dino_y == self.screen.y_height // 2 - 3:
-                                self.is_jumping = False
+                # if not self.running_timer:
+                if self.is_jumping:
+                    self.dino_y_prev = self.dino_y
+                    if self.is_going_up:
+                        if self.dino_y > self.screen.y_height // 2 - 12:
+                            self.dino_y -= 1
+                        elif self.dino_y == self.screen.y_height // 2 - 12:
+                            self.is_going_up = False
+                    else:
+                        if self.dino_y < self.screen.y_height // 2 - 3:
+                            self.dino_y += 1
+                        elif self.dino_y == self.screen.y_height // 2 - 3:
+                            self.is_jumping = False
 
 
                     self.running_timer = RUNNING_TIMER
@@ -349,28 +351,38 @@ class Dino:
                     )
 
                 if not self.obstacle_timer:
-                    j -= 1 if j > 0 else 0
                     self.obstacle_timer = OBSTACLE_TIMER
-                    self.test_cactus.draw(j + 1, 0, erase=True)
-                    self.test_cactus.draw(j, 0, erase=False)
+                    if len(self.obstacles) < 100:
+                        next = random.choice([["p"], ["c"], [" ", " ", " ", " ", " ", " ", " ", " ", " "]]) if self.obstacles[-1] == " " else random.choice([[" ", " ", " ", " ", " ", " ", " ", " ", " "], [" ", " ", " ", " ", " ", " ", " ", " ", " "], [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]])
+                        self.obstacles += next
+                    self.obstacles = self.obstacles[1:]
+                    print(f"\r{self.obstacles[:48]} {len(self.obstacles)}", end="")
 
-                # if not self.pterodactyl_timer:
-                    k -= 1 if k > 0 else 0
-                    self.pterodactyl_timer = OBSTACLE_TIMER
-                    if not self.test_pterodactyl.pterodactyl_flap_timer:
-                        self.test_pterodactyl.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-                        self.test_pterodactyl.flap_up = not self.test_pterodactyl.flap_up
-                    self.test_pterodactyl.draw(
-                        k + 1,
-                        self.screen.y_height // 2 - 3,
-                        up=self.test_pterodactyl.flap_up,
-                        erase=True,
-                    )
-                    self.test_pterodactyl.draw(
-                        k,
-                        self.screen.y_height // 2 - 3,
-                        up=self.test_pterodactyl.flap_up,
-                    )
+                    for col in range(len(self.obstacles)):
+                        if self.obstacles[col] == "c":
+                            if col + 1 <= 44:
+                                self.test_cactus.draw(col + 1, 0, erase=True)
+                            if col <= 44:
+                                self.test_cactus.draw(col, 0, erase=False)
+
+                        if self.obstacles[col] == "p":
+                            if not self.test_pterodactyl.pterodactyl_flap_timer:
+                                self.test_pterodactyl.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
+                                self.test_pterodactyl.flap_up = not self.test_pterodactyl.flap_up
+
+                            if col + 1 <= 44:
+                                self.test_pterodactyl.draw(
+                                    col + 1,
+                                    self.screen.y_height // 2 - 4,
+                                    up=self.test_pterodactyl.flap_up,
+                                    erase=True,
+                                )
+                            if col <= 44:
+                                self.test_pterodactyl.draw(
+                                    col,
+                                    self.screen.y_height // 2 - 4,
+                                    up=self.test_pterodactyl.flap_up,
+                                )
 
                 self.draw_ground()
                 self.screen.push()
