@@ -8,81 +8,13 @@ OBSTACLE_TIMER = 5
 PTERODACTYL_FLAP_TIMER = 10
 SCORE_TIMER = 10
 
+
 class Cactus:
 
     def __init__(self, x, type, screen):
         self.x = x
         self.type = type
         self.screen = screen
-
-    def draw(self, x, type, erase=False):
-        """
-        Draw the cactus on the screen
-
-        Args:
-            x (int): The x coordinate of the cactus
-            type (int): The type of the cactus
-        """
-
-        if not erase:
-            if type == 0:
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x0F)
-            elif type == 1:
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
-            elif type == 2:
-                self.screen.draw_pixel(x, self.screen.y_height // 2, 0x03)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x02)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x09)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
-        else:
-            if type == 0:
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x00)
-            elif type == 1:
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
-            elif type == 2:
-                self.screen.draw_pixel(x, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x00)
-                self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
-
 
 
 class Pterodactyl:
@@ -168,9 +100,11 @@ class Dino:
         self.duck = False
         self.jump = False
 
-        self.obstacles = [" " for i in range(48)]
+        self.obstacles = [{"type": " "} for i in range(48)]
 
-        self.test_pterodactyl = Pterodactyl(10, self.screen.y_height // 2 - 3, self.screen)
+        self.test_pterodactyl = Pterodactyl(
+            10, self.screen.y_height // 2 - 3, self.screen
+        )
         self.test_cactus = Cactus(10, 0, self.screen)
 
     def draw_score(self, score):
@@ -229,6 +163,92 @@ class Dino:
                     self.screen.draw_pixel(i, j, 0x00)
                     self.screen.draw_pixel(i, y + j, 0x00)
 
+    def draw_cactus(self, x, type, erase=False):
+        """
+        Draw the cactus on the screen
+
+        Args:
+            x (int): The x coordinate of the cactus
+            type (int): The type of the cactus
+        """
+
+        if not erase:
+            if type == 0:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x0F)
+            elif type == 1:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
+            elif type == 2:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2, 0x03)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x02)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x09)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
+        else:
+            if type == 0:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x00)
+            elif type == 1:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
+            elif type == 2:
+                if x < 47 and x > 0:
+                    self.screen.draw_pixel(x, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x00)
+                if x + 2 < 45 and x + 2 > 0:
+                    self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
+                if x + 1 < 46 and x + 1 > 0:
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
+
     def draw_ground(self):
         """
         Draw the ground on the screen
@@ -246,7 +266,7 @@ class Dino:
 
         screen.clear()
         self.draw_score(0)
-        self.draw_dino(screen.y_height // 2 - 3)
+        # self.draw_dino(screen.y_height // 2 - 3)
 
     def run(self):
         """Main loop for the demo"""
@@ -302,10 +322,12 @@ class Dino:
                     for keypress in get_all_from_queue(self.input_queue):
                         # If there are directional buttons pressed
                         if keypress == "UP_P" or keypress == "PRI_P":
+                            print("JUMP")
                             self.jump = True
                         if keypress == "UP_R" or keypress == "PRI_R":
                             self.jump = False
                         if keypress == "DOWN_P":
+                            print("DUCK")
                             self.duck = True
                         if keypress == "DOWN_R":
                             self.duck = False
@@ -326,67 +348,127 @@ class Dino:
                     self.score_timer = SCORE_TIMER
                     self.draw_score(self.score)
 
-                if not self.jump_timer and self.is_jumping:
-                    self.jump_timer = DINO_JUMP_TIMER
-                    if self.is_jumping:
-                        self.dino_y_prev = self.dino_y
-                        if self.is_going_up:
-                            if self.dino_y > self.screen.y_height // 2 - 12:
-                                self.dino_y -= 1
-                            elif self.dino_y == self.screen.y_height // 2 - 12:
-                                self.is_going_up = False
-                        else:
-                            if self.dino_y < self.screen.y_height // 2 - 3:
-                                self.dino_y += 1
-                            elif self.dino_y == self.screen.y_height // 2 - 3:
-                                self.is_jumping = False
+                # if not self.jump_timer:
+                #     self.jump_timer = DINO_JUMP_TIMER
+                #     if self.is_jumping:
+                #         self.dino_y_prev = self.dino_y
+                #         if self.is_going_up:
+                #             if self.dino_y > self.screen.y_height // 2 - 12:
+                #                 self.dino_y -= 1
+                #             elif self.dino_y == self.screen.y_height // 2 - 12:
+                #                 self.is_going_up = False
+                #         else:
+                #             if self.dino_y < self.screen.y_height // 2 - 3:
+                #                 self.dino_y += 1
+                #             elif self.dino_y == self.screen.y_height // 2 - 3:
+                #                 self.is_jumping = False
 
-
-                    self.running_timer = DINO_RUNNING_TIMER
-                    self.right_leg = not self.right_leg
-                    self.draw_dino(
-                        self.dino_y_prev,
-                        right=self.right_leg,
-                        erase=True,
-                        duck=self.duck,
-                    )
-                    self.draw_dino(
-                        self.dino_y, right=self.right_leg, duck=self.duck
-                    )
+                #     self.running_timer = DINO_RUNNING_TIMER
+                #     self.right_leg = not self.right_leg
+                #     self.draw_dino(
+                #         self.dino_y_prev,
+                #         right=self.right_leg,
+                #         erase=True,
+                #         duck=self.duck,
+                #     )
+                #     self.draw_dino(
+                #         self.dino_y, right=self.right_leg, duck=self.duck
+                #     )
 
                 if not self.obstacle_timer:
                     self.obstacle_timer = OBSTACLE_TIMER
                     if len(self.obstacles) < 100:
-                        next = random.choice([["p"], ["c"], [" ", " ", " ", " ", " ", " ", " ", " ", " "]]) if self.obstacles[-1] == " " else random.choice([[" ", " ", " ", " ", " ", " ", " ", " ", " "], [" ", " ", " ", " ", " ", " ", " ", " ", " "], [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]])
+                        next = (
+                            random.choice(
+                                [
+                                    [{"type": "p", "flap_up": True}],
+                                    [{"type": "c", "style": random.choice([0, 1, 2])}],
+                                    [
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                    ],
+                                ]
+                            )
+                            if self.obstacles[-1]["type"] == " "
+                            else random.choice(
+                                [
+                                    [
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                    ],
+                                    [
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                    ],
+                                    [
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                        {"type": " "},
+                                    ],
+                                ]
+                            )
+                        )
                         self.obstacles += next
                     self.obstacles = self.obstacles[1:]
-                    print(f"\r{self.obstacles[:48]} {len(self.obstacles)}", end="")
+                    # print(f"\r{self.obstacles[:48]} {len(self.obstacles)}", end="")
 
                     for col in range(len(self.obstacles)):
-                        if self.obstacles[col] == "c":
-                            if col + 1 <= 44:
-                                self.test_cactus.draw(col + 1, 0, erase=True)
-                            if col <= 44:
-                                self.test_cactus.draw(col, 0, erase=False)
+                        if self.obstacles[col]["type"] == "c":
+                            # if col + 1 <= 44:
+                            self.draw_cactus(
+                                col + 1, self.obstacles[col]["style"], erase=True
+                            )
+                            # if col <= 44:
+                            self.draw_cactus(
+                                col, self.obstacles[col]["style"], erase=False
+                            )
 
-                        if self.obstacles[col] == "p":
-                            if not self.test_pterodactyl.pterodactyl_flap_timer:
-                                self.test_pterodactyl.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-                                self.test_pterodactyl.flap_up = not self.test_pterodactyl.flap_up
+                        # if self.obstacles[col] == "p":
+                        #     if not self.test_pterodactyl.pterodactyl_flap_timer:
+                        #         self.test_pterodactyl.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
+                        #         self.test_pterodactyl.flap_up = not self.test_pterodactyl.flap_up
 
-                            if col + 1 <= 44:
-                                self.test_pterodactyl.draw(
-                                    col + 1,
-                                    self.screen.y_height // 2 - 4,
-                                    up=self.test_pterodactyl.flap_up,
-                                    erase=True,
-                                )
-                            if col <= 44:
-                                self.test_pterodactyl.draw(
-                                    col,
-                                    self.screen.y_height // 2 - 4,
-                                    up=self.test_pterodactyl.flap_up,
-                                )
+                        #     if col + 1 <= 44:
+                        #         self.test_pterodactyl.draw(
+                        #             col + 1,
+                        #             self.screen.y_height // 2 - 4,
+                        #             up=self.test_pterodactyl.flap_up,
+                        #             erase=True,
+                        #         )
+                        #     if col <= 44:
+                        #         self.test_pterodactyl.draw(
+                        #             col,
+                        #             self.screen.y_height // 2 - 4,
+                        #             up=self.test_pterodactyl.flap_up,
+                        #         )
 
                 self.draw_ground()
                 self.screen.push()
