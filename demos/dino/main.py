@@ -1,7 +1,8 @@
 import queue
-from demos.utils import get_all_from_queue
 import random
 from pathlib import Path as path
+
+from demos.utils import get_all_from_queue
 
 DINO_JUMP_TIMER = 6
 DINO_RUNNING_TIMER = 15
