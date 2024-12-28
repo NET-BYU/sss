@@ -2,8 +2,8 @@ import queue
 from demos.utils import get_all_from_queue
 import random
 
-DINO_JUMP_TIMER = 3
-DINO_RUNNING_TIMER = 5
+DINO_JUMP_TIMER = 7
+DINO_RUNNING_TIMER = 15
 OBSTACLE_TIMER = 10
 PTERODACTYL_FLAP_TIMER = 5
 SCORE_TIMER = 10
@@ -331,32 +331,32 @@ class Dino:
                     self.score_timer = SCORE_TIMER
                     self.draw_score(self.score)
 
-                # if not self.jump_timer:
-                #     self.jump_timer = DINO_JUMP_TIMER
-                #     if self.is_jumping:
-                #         self.dino_y_prev = self.dino_y
-                #         if self.is_going_up:
-                #             if self.dino_y > self.screen.y_height // 2 - 12:
-                #                 self.dino_y -= 1
-                #             elif self.dino_y == self.screen.y_height // 2 - 12:
-                #                 self.is_going_up = False
-                #         else:
-                #             if self.dino_y < self.screen.y_height // 2 - 3:
-                #                 self.dino_y += 1
-                #             elif self.dino_y == self.screen.y_height // 2 - 3:
-                #                 self.is_jumping = False
+                if not self.jump_timer:
+                    self.jump_timer = DINO_JUMP_TIMER
+                    if self.is_jumping:
+                        self.dino_y_prev = self.dino_y
+                        if self.is_going_up:
+                            if self.dino_y > self.screen.y_height // 2 - 12:
+                                self.dino_y -= 1
+                            elif self.dino_y == self.screen.y_height // 2 - 12:
+                                self.is_going_up = False
+                        else:
+                            if self.dino_y < self.screen.y_height // 2 - 3:
+                                self.dino_y += 1
+                            elif self.dino_y == self.screen.y_height // 2 - 3:
+                                self.is_jumping = False
 
-                #     self.running_timer = DINO_RUNNING_TIMER
-                #     self.right_leg = not self.right_leg
-                #     self.draw_dino(
-                #         self.dino_y_prev,
-                #         right=self.right_leg,
-                #         erase=True,
-                #         duck=self.duck,
-                #     )
-                #     self.draw_dino(
-                #         self.dino_y, right=self.right_leg, duck=self.duck
-                #     )
+                    self.running_timer = DINO_RUNNING_TIMER
+                    self.right_leg = not self.right_leg
+                    self.draw_dino(
+                        self.dino_y_prev,
+                        right=self.right_leg,
+                        erase=True,
+                        duck=self.duck,
+                    )
+                    self.draw_dino(
+                        self.dino_y, right=self.right_leg, duck=self.duck
+                    )
 
                 if not self.obstacle_timer:
                     self.obstacle_timer = OBSTACLE_TIMER
@@ -429,14 +429,14 @@ class Dino:
                     self.obstacles = self.obstacles[1:]
                     # print(f"\r{self.obstacles[:48]} {len(self.obstacles)}", end="")
 
-                    for col in range(len(self.obstacles)):
+                    for col in range(len(self.obstacles[:48])):
                         if self.obstacles[col]["type"] == "c":
                             self.draw_cactus(
-                                col + 1, self.obstacles[col]["style"], erase=True
+                                col - 3, self.obstacles[col]["style"], erase=True
                             )
 
                             self.draw_cactus(
-                                col, self.obstacles[col]["style"], erase=False
+                                col - 4, self.obstacles[col]["style"], erase=False
                             )
 
                         if self.obstacles[col]["type"] == "p":
@@ -448,17 +448,16 @@ class Dino:
                                 self.obstacles[col]["flap_up"] = not self.obstacles[
                                     col
                                 ]["flap_up"]
-                                print(f"{self.obstacles[col]['flap_up']} {col}")
 
                             self.draw_pterodactyl(
-                                col + 1,
+                                col - 3,
                                 self.screen.y_height // 2 - 4,
                                 up=self.obstacles[col]["flap_up"],
                                 erase=True,
                             )
 
                             self.draw_pterodactyl(
-                                col,
+                                col - 4,
                                 self.screen.y_height // 2 - 4,
                                 up=self.obstacles[col]["flap_up"],
                             )
