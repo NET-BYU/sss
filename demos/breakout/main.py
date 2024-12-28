@@ -1,6 +1,6 @@
 import queue
-from random import getrandbits
 from pathlib import Path as path
+from random import getrandbits
 
 from demos.utils import get_all_from_queue
 
