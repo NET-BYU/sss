@@ -1,8 +1,9 @@
 import queue
 from demos.utils import get_all_from_queue
 import random
+from pathlib import Path as path
 
-DINO_JUMP_TIMER = 7
+DINO_JUMP_TIMER = 6
 DINO_RUNNING_TIMER = 15
 OBSTACLE_TIMER = 10
 PTERODACTYL_FLAP_TIMER = 5
@@ -63,8 +64,18 @@ class Dino:
             score (int): The score to be displayed
         """
 
+        hscore = 0
+        if not path.exists(path("demos/dino/high_score.txt")):
+            with open("demos/dino/high_score.txt", "w") as scores:
+                scores.write(str(hscore))
+                scores.close()
+
+        # Fetch high score
+        with open("demos/dino/high_score.txt", "r") as scores:
+            hscore = int(scores.read())
+
         self.screen.draw_text(
-            self.screen.x_width - 20, 2, f"HI 00000 SCORE {score:05}", push=True
+            self.screen.x_width - 20, 2, f"HI {hscore:05} SCORE {score:05}", push=True
         )
 
     def draw_dino(self, y, duck=False, right=False, jump=False, erase=False):
@@ -75,6 +86,8 @@ class Dino:
             y (int): The y coordinate of the dino
         """
 
+        coll_box = set()
+
         if not erase:
             if not duck:
                 self.screen.draw_pixel(3, y, 0x0F)
@@ -84,12 +97,20 @@ class Dino:
                 self.screen.draw_pixel(1, y + 2, 0x03)
                 self.screen.draw_pixel(2, y + 3, 0x0A)
 
+                coll_box.add((3, y))
+                coll_box.add((2, y + 1))
+                coll_box.add((3, y + 2))
+                coll_box.add((2, y + 2))
+                coll_box.add((1, y + 2))
+                coll_box.add((2, y + 3))
+
                 if self.is_jumping:
                     self.screen.draw_pixel(2, y + 4, 0x0A)
                 elif right:
                     self.screen.draw_pixel(2, y + 4, 0x08)
                 else:
                     self.screen.draw_pixel(2, y + 4, 0x02)
+                coll_box.add((2, y + 4))
             else:
                 self.screen.draw_pixel(4, y + 2, 0x0F)
                 self.screen.draw_pixel(3, y + 2, 0x0F)
@@ -99,17 +120,28 @@ class Dino:
                 self.screen.draw_pixel(2, y + 3, 0x0A)
                 self.screen.draw_pixel(4, y + 3, 0x03)
 
+                coll_box.add((4, y + 2))
+                coll_box.add((3, y + 2))
+                coll_box.add((3, y + 2))
+                coll_box.add((2, y + 2))
+                coll_box.add((1, y + 2))
+                coll_box.add((2, y + 3))
+                coll_box.add((4, y + 3))
+
                 if self.is_jumping:
                     self.screen.draw_pixel(2, y + 4, 0x0A)
                 elif right:
                     self.screen.draw_pixel(2, y + 4, 0x08)
                 else:
                     self.screen.draw_pixel(2, y + 4, 0x02)
+                coll_box.add((2, y + 4))
         else:
             for i in [1, 2, 3, 4]:
                 for j in [0, 1, 2, 3, 4]:
                     self.screen.draw_pixel(i, j, 0x00)
                     self.screen.draw_pixel(i, y + j, 0x00)
+
+        return coll_box
 
     def draw_cactus(self, x, type, erase=False):
         """
@@ -120,44 +152,71 @@ class Dino:
             type (int): The type of the cactus
         """
 
+        coll_box = set()
+
         if not erase:
             if type == 0:
                 if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
+                    coll_box.add((x, self.screen.y_height // 2 - 1))
+                    coll_box.add((x, self.screen.y_height // 2 - 2))
                 if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                    coll_box.add((x + 2, self.screen.y_height // 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 2))
                 if (x + 1) <= 46 and (x + 1) >= 0:
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 3, 0x0F)
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 3))
             elif type == 1:
                 if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
+                    coll_box.add((x, self.screen.y_height // 2 - 1))
+                    coll_box.add((x, self.screen.y_height // 2 - 2))
                 if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                    coll_box.add((x + 2, self.screen.y_height // 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 2))
                 if (x + 1) <= 46 and (x + 1) >= 0:
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 2))
             elif type == 2:
                 if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x02)
+                    coll_box.add((x, self.screen.y_height // 2))
+                    coll_box.add((x, self.screen.y_height // 2 + 1))
                 if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x09)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                    coll_box.add((x + 2, self.screen.y_height // 2 - 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 2))
                 if (x + 1) <= 46 and (x + 1) >= 0:
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
+                    coll_box.add((x + 1, self.screen.y_height // 2 + 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 1))
+                    coll_box.add((x + 1, self.screen.y_height // 2 - 2))
         else:
             if type == 0:
                 if x <= 47 and x >= 0:
@@ -196,6 +255,7 @@ class Dino:
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x00)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x00)
                     self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x00)
+        return coll_box
 
     def draw_pterodactyl(self, x, y, up=False, erase=False):
         """
@@ -208,19 +268,34 @@ class Dino:
             erase (bool): Whether to erase the pterodactyl
         """
 
+        coll_box = set()
+
+        if y == 0:
+            y = self.screen.y_height // 2 - 7
+        elif y == 1:
+            y = self.screen.y_height // 2 - 4
+        elif y == 2:
+            y = self.screen.y_height // 2
+
         if not erase:
             if x <= 47 and x >= 0:
                 self.screen.draw_pixel(x, y, 0x0F)
+                coll_box.add((x, y))
             if (x + 1) <= 46 and (x + 1) >= 0:
                 self.screen.draw_pixel((x + 1), y, 0x01)
+                coll_box.add((x + 1, y))
             if x + 2 <= 45 and x + 2 >= 0:
                 self.screen.draw_pixel(x + 2, y, 0x0F)
+                coll_box.add((x + 2, y))
                 if up:
                     self.screen.draw_pixel(x + 2, y - 1, 0x0F)
+                    coll_box.add((x + 2, y - 1))
                 else:
                     self.screen.draw_pixel(x + 2, y + 1, 0x0F)
+                    coll_box.add((x + 2, y + 1))
             if x + 3 <= 44 and x + 3 >= 0:
                 self.screen.draw_pixel(x + 3, y, 0x09)
+                coll_box.add((x + 3, y))
         else:
             if x <= 47 and x >= 0:
                 self.screen.draw_pixel(x, y, 0x00)
@@ -232,6 +307,7 @@ class Dino:
                 self.screen.draw_pixel(x + 2, y + 1, 0x00)
             if x + 3 <= 44 and x + 3 >= 0:
                 self.screen.draw_pixel(x + 3, y, 0x00)
+        return coll_box
 
     def draw_ground(self):
         """
@@ -257,8 +333,6 @@ class Dino:
         # Create generator here
 
         self.score = 0
-        j = self.screen.x_width // 2
-        k = self.screen.x_width * 2 // 3
 
         # Waits for user ready
         self.screen.draw_text(
@@ -306,12 +380,10 @@ class Dino:
                     for keypress in get_all_from_queue(self.input_queue):
                         # If there are directional buttons pressed
                         if keypress == "UP_P" or keypress == "PRI_P":
-                            print("JUMP")
                             self.jump = True
                         if keypress == "UP_R" or keypress == "PRI_R":
                             self.jump = False
                         if keypress == "DOWN_P":
-                            print("DUCK")
                             self.duck = True
                         if keypress == "DOWN_R":
                             self.duck = False
@@ -325,6 +397,8 @@ class Dino:
                 self.jump_timer -= 1
                 self.obstacle_timer -= 1
                 self.score_timer -= 1
+                dino_cells = set()
+                obstacle_cells = set()
 
                 if not self.score_timer:
                     self.score += 1
@@ -354,7 +428,7 @@ class Dino:
                         erase=True,
                         duck=self.duck,
                     )
-                    self.draw_dino(
+                    dino_cells = self.draw_dino(
                         self.dino_y, right=self.right_leg, duck=self.duck
                     )
 
@@ -369,75 +443,36 @@ class Dino:
                                             "type": "p",
                                             "flap_up": True,
                                             "flap_timer": PTERODACTYL_FLAP_TIMER,
+                                            "style": random.choice([0, 1, 2]),
                                         }
                                     ],
                                     [{"type": "c", "style": random.choice([0, 1, 2])}],
-                                    [
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                    ],
+                                    [{"type": " "} for i in range(10)],
                                 ]
                             )
                             if self.obstacles[-1]["type"] == " "
                             else random.choice(
                                 [
-                                    [
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                    ],
-                                    [
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                    ],
-                                    [
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                        {"type": " "},
-                                    ],
+                                    [{"type": " "} for i in range(14)],
+                                    [{"type": " "} for i in range(17)],
+                                    [{"type": " "} for i in range(20)],
                                 ]
                             )
                         )
                         self.obstacles += next
                     self.obstacles = self.obstacles[1:]
-                    # print(f"\r{self.obstacles[:48]} {len(self.obstacles)}", end="")
 
                     for col in range(len(self.obstacles[:48])):
+                        obstacle_cells = set()
                         if self.obstacles[col]["type"] == "c":
                             self.draw_cactus(
                                 col - 3, self.obstacles[col]["style"], erase=True
                             )
 
-                            self.draw_cactus(
+                            cactus_cells = self.draw_cactus(
                                 col - 4, self.obstacles[col]["style"], erase=False
                             )
+                            obstacle_cells = obstacle_cells.union(cactus_cells)
 
                         if self.obstacles[col]["type"] == "p":
                             self.obstacles[col]["flap_timer"] -= 1
@@ -451,20 +486,61 @@ class Dino:
 
                             self.draw_pterodactyl(
                                 col - 3,
-                                self.screen.y_height // 2 - 4,
+                                self.obstacles[col]["style"],
                                 up=self.obstacles[col]["flap_up"],
                                 erase=True,
                             )
 
-                            self.draw_pterodactyl(
+                            pterodactyl_cells = self.draw_pterodactyl(
                                 col - 4,
-                                self.screen.y_height // 2 - 4,
+                                self.obstacles[col]["style"],
                                 up=self.obstacles[col]["flap_up"],
                             )
+                            obstacle_cells = obstacle_cells.union(pterodactyl_cells)
+
+                        if obstacle_cells.intersection(dino_cells):
+                            self.gameover = True
 
                 self.draw_ground()
                 self.screen.push()
                 yield
+
+            # Gameover Logic
+            hscore = 0
+            if not path.exists(path("demos/dino/high_score.txt")):
+                with open("demos/dino/high_score.txt", "w") as scores:
+                    scores.write(str(hscore))
+                    scores.close()
+
+            with open("demos/dino/high_score.txt", "r") as scores:
+                hscore = int(scores.read())
+            if self.score > hscore:
+                with open("demos/dino/high_score.txt", "w") as scores:
+                    scores.write(str(self.score))
+
+            self.screen.clear()
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 8,
+                "GAME OVER",
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 6,
+                "---------",
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 4,
+                "SCORE " + str(self.score),
+            )
+            self.screen.draw_text(
+                (self.screen.x_width // 2) - 4,
+                (self.screen.y_height // 2) - 2,
+                "HISCORE " + str(hscore),
+            )
+            self.screen.push()
+            yield
 
     def stop(self):
         """Reset the state of the demo if needed, else leave blank"""
