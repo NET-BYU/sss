@@ -1,5 +1,6 @@
 import queue
 from random import getrandbits
+from pathlib import Path as path
 
 from demos.utils import get_all_from_queue
 
@@ -254,6 +255,12 @@ class Breakout:
 
             # Game Over
             hscore = 0
+            
+            if not path.exists(path("demos/breakout/high_score.txt")):
+                with open("demos/dino/high_score.txt", "w") as scores:
+                    scores.write(str(hscore))
+                    scores.close()
+            
             with open("demos/breakout/high_score.txt", "r") as scores:
                 hscore = int(scores.read())
             if score > hscore:
