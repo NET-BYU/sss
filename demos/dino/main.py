@@ -4,56 +4,9 @@ import random
 
 DINO_JUMP_TIMER = 3
 DINO_RUNNING_TIMER = 5
-OBSTACLE_TIMER = 5
-PTERODACTYL_FLAP_TIMER = 10
+OBSTACLE_TIMER = 10
+PTERODACTYL_FLAP_TIMER = 5
 SCORE_TIMER = 10
-
-
-class Cactus:
-
-    def __init__(self, x, type, screen):
-        self.x = x
-        self.type = type
-        self.screen = screen
-
-
-class Pterodactyl:
-
-    def __init__(self, x, y, screen):
-        self.x = x
-        self.y = y
-        self.screen = screen
-
-        self.flap_up = True
-        self.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-
-    def draw(self, x, y, up=False, erase=False):
-        """
-        Draw the pterodactyl on the screen
-
-        Args:
-            x (int): The x coordinate of the pterodactyl
-            y (int): The y coordinate of the pterodactyl
-            up (bool): Whether the pterodactyl is going up or down
-            erase (bool): Whether to erase the pterodactyl
-        """
-
-        if not erase:
-            self.screen.draw_pixel(x, y, 0x0F)
-            self.screen.draw_pixel(x + 1, y, 0x01)
-            self.screen.draw_pixel(x + 2, y, 0x0F)
-            if up:
-                self.screen.draw_pixel(x + 2, y - 1, 0x0F)
-            else:
-                self.screen.draw_pixel(x + 2, y + 1, 0x0F)
-            self.screen.draw_pixel(x + 3, y, 0x09)
-        else:
-            self.screen.draw_pixel(x, y, 0x00)
-            self.screen.draw_pixel(x + 1, y, 0x00)
-            self.screen.draw_pixel(x + 2, y, 0x00)
-            self.screen.draw_pixel(x + 2, y - 1, 0x00)
-            self.screen.draw_pixel(x + 2, y + 1, 0x00)
-            self.screen.draw_pixel(x + 3, y, 0x00)
 
 
 class Dino:
@@ -101,11 +54,6 @@ class Dino:
         self.jump = False
 
         self.obstacles = [{"type": " "} for i in range(48)]
-
-        self.test_pterodactyl = Pterodactyl(
-            10, self.screen.y_height // 2 - 3, self.screen
-        )
-        self.test_cactus = Cactus(10, 0, self.screen)
 
     def draw_score(self, score):
         """
@@ -174,80 +122,116 @@ class Dino:
 
         if not erase:
             if type == 0:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 3, 0x0F)
             elif type == 1:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x02)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x09)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
             elif type == 2:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2, 0x03)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x02)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x09)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x0F)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x0F)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x0F)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x0F)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x0F)
         else:
             if type == 0:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 3, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x00)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 3, 0x00)
             elif type == 1:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 1, 0x00)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 - 2, 0x00)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x00)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x00)
             elif type == 2:
-                if x < 47 and x > 0:
+                if x <= 47 and x >= 0:
                     self.screen.draw_pixel(x, self.screen.y_height // 2, 0x00)
                     self.screen.draw_pixel(x, self.screen.y_height // 2 + 1, 0x00)
-                if x + 2 < 45 and x + 2 > 0:
+                if x + 2 <= 45 and x + 2 >= 0:
                     self.screen.draw_pixel(x + 2, self.screen.y_height // 2 - 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 2, 0x00)
-                if x + 1 < 46 and x + 1 > 0:
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 + 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 1, 0x00)
-                    self.screen.draw_pixel(x + 1, self.screen.y_height // 2 - 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 2, 0x00)
+                if (x + 1) <= 46 and (x + 1) >= 0:
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 + 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 1, 0x00)
+                    self.screen.draw_pixel((x + 1), self.screen.y_height // 2 - 2, 0x00)
+
+    def draw_pterodactyl(self, x, y, up=False, erase=False):
+        """
+        Draw the pterodactyl on the screen
+
+        Args:
+            x (int): The x coordinate of the pterodactyl
+            y (int): The y coordinate of the pterodactyl
+            up (bool): Whether the pterodactyl is going up or down
+            erase (bool): Whether to erase the pterodactyl
+        """
+
+        if not erase:
+            if x <= 47 and x >= 0:
+                self.screen.draw_pixel(x, y, 0x0F)
+            if (x + 1) <= 46 and (x + 1) >= 0:
+                self.screen.draw_pixel((x + 1), y, 0x01)
+            if x + 2 <= 45 and x + 2 >= 0:
+                self.screen.draw_pixel(x + 2, y, 0x0F)
+                if up:
+                    self.screen.draw_pixel(x + 2, y - 1, 0x0F)
+                else:
+                    self.screen.draw_pixel(x + 2, y + 1, 0x0F)
+            if x + 3 <= 44 and x + 3 >= 0:
+                self.screen.draw_pixel(x + 3, y, 0x09)
+        else:
+            if x <= 47 and x >= 0:
+                self.screen.draw_pixel(x, y, 0x00)
+            if (x + 1) <= 46 and (x + 1) >= 0:
+                self.screen.draw_pixel((x + 1), y, 0x00)
+            if x + 2 <= 45 and x + 2 >= 0:
+                self.screen.draw_pixel(x + 2, y, 0x00)
+                self.screen.draw_pixel(x + 2, y - 1, 0x00)
+                self.screen.draw_pixel(x + 2, y + 1, 0x00)
+            if x + 3 <= 44 and x + 3 >= 0:
+                self.screen.draw_pixel(x + 3, y, 0x00)
 
     def draw_ground(self):
         """
@@ -340,7 +324,6 @@ class Dino:
                 self.running_timer -= 1
                 self.jump_timer -= 1
                 self.obstacle_timer -= 1
-                self.test_pterodactyl.pterodactyl_flap_timer -= 1
                 self.score_timer -= 1
 
                 if not self.score_timer:
@@ -381,7 +364,13 @@ class Dino:
                         next = (
                             random.choice(
                                 [
-                                    [{"type": "p", "flap_up": True}],
+                                    [
+                                        {
+                                            "type": "p",
+                                            "flap_up": True,
+                                            "flap_timer": PTERODACTYL_FLAP_TIMER,
+                                        }
+                                    ],
                                     [{"type": "c", "style": random.choice([0, 1, 2])}],
                                     [
                                         {"type": " "},
@@ -442,33 +431,37 @@ class Dino:
 
                     for col in range(len(self.obstacles)):
                         if self.obstacles[col]["type"] == "c":
-                            # if col + 1 <= 44:
                             self.draw_cactus(
                                 col + 1, self.obstacles[col]["style"], erase=True
                             )
-                            # if col <= 44:
+
                             self.draw_cactus(
                                 col, self.obstacles[col]["style"], erase=False
                             )
 
-                        # if self.obstacles[col] == "p":
-                        #     if not self.test_pterodactyl.pterodactyl_flap_timer:
-                        #         self.test_pterodactyl.pterodactyl_flap_timer = PTERODACTYL_FLAP_TIMER
-                        #         self.test_pterodactyl.flap_up = not self.test_pterodactyl.flap_up
+                        if self.obstacles[col]["type"] == "p":
+                            self.obstacles[col]["flap_timer"] -= 1
+                            if self.obstacles[col]["flap_timer"] <= 0:
+                                self.obstacles[col][
+                                    "flap_timer"
+                                ] = PTERODACTYL_FLAP_TIMER
+                                self.obstacles[col]["flap_up"] = not self.obstacles[
+                                    col
+                                ]["flap_up"]
+                                print(f"{self.obstacles[col]['flap_up']} {col}")
 
-                        #     if col + 1 <= 44:
-                        #         self.test_pterodactyl.draw(
-                        #             col + 1,
-                        #             self.screen.y_height // 2 - 4,
-                        #             up=self.test_pterodactyl.flap_up,
-                        #             erase=True,
-                        #         )
-                        #     if col <= 44:
-                        #         self.test_pterodactyl.draw(
-                        #             col,
-                        #             self.screen.y_height // 2 - 4,
-                        #             up=self.test_pterodactyl.flap_up,
-                        #         )
+                            self.draw_pterodactyl(
+                                col + 1,
+                                self.screen.y_height // 2 - 4,
+                                up=self.obstacles[col]["flap_up"],
+                                erase=True,
+                            )
+
+                            self.draw_pterodactyl(
+                                col,
+                                self.screen.y_height // 2 - 4,
+                                up=self.obstacles[col]["flap_up"],
+                            )
 
                 self.draw_ground()
                 self.screen.push()
