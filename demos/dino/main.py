@@ -499,7 +499,11 @@ class Dino:
                             )
                             obstacle_cells = obstacle_cells.union(pterodactyl_cells)
 
-                        print(obstacle_cells.intersection(dino_cells)) if len(obstacle_cells.intersection(dino_cells)) > 0 else None
+                        (
+                            print(obstacle_cells.intersection(dino_cells))
+                            if len(obstacle_cells.intersection(dino_cells)) > 0
+                            else None
+                        )
                         if obstacle_cells.intersection(dino_cells):
                             self.gameover = True
 
