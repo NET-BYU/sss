@@ -434,7 +434,7 @@ class Dino:
                     )
 
                 if not self.obstacle_timer:
-                    self.obstacle_timer = OBSTACLE_TIMER
+                    self.obstacle_timer = max(5, OBSTACLE_TIMER - self.score // 1000)
                     if len(self.obstacles) < 100:
                         next = (
                             random.choice(
@@ -454,9 +454,18 @@ class Dino:
                             if self.obstacles[-1]["type"] == " "
                             else random.choice(
                                 [
-                                    [{"type": " "} for i in range(14)],
-                                    [{"type": " "} for i in range(17)],
-                                    [{"type": " "} for i in range(20)],
+                                    [
+                                        {"type": " "}
+                                        for i in range(max(4, 14 - self.score // 500))
+                                    ],
+                                    [
+                                        {"type": " "}
+                                        for i in range(max(7, 17 - self.score // 500))
+                                    ],
+                                    [
+                                        {"type": " "}
+                                        for i in range(max(9, 20 - self.score // 500))
+                                    ],
                                 ]
                             )
                         )
@@ -499,7 +508,11 @@ class Dino:
                             )
                             obstacle_cells = obstacle_cells.union(pterodactyl_cells)
 
-                        print(obstacle_cells.intersection(dino_cells)) if len(obstacle_cells.intersection(dino_cells)) > 0 else None
+                        (
+                            print(obstacle_cells.intersection(dino_cells))
+                            if len(obstacle_cells.intersection(dino_cells)) > 0
+                            else None
+                        )
                         if obstacle_cells.intersection(dino_cells):
                             self.gameover = True
 
