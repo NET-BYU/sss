@@ -1,0 +1,2 @@
+spidev==3.5
+sysv-ipc==1.1.0
