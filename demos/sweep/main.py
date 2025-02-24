@@ -45,7 +45,7 @@ class Sweep:
 
         Args:
             x (int): x location of the line
-            val (int): value of the line
+            value (int): value of the line
         """
         for y in range(self.screen.y_height // 2):
             self.screen.draw_raw(x, y, value)

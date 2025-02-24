@@ -8,6 +8,7 @@ def start_inputs(system_queue, demo_input_queue, simulated):
     Args:
         system_queue (Queue): The system queue.
         demo_input_queue (Queue): The demo input queue.
+        simulated (Bool): if the screen is simulated (True) or on hardware (False)
     """
     try:
         logger.info("Loading MQTT input...")
