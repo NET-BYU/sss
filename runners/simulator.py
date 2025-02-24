@@ -80,7 +80,7 @@ class Simulator:
             return mod
         except ModuleNotFoundError:
             logger.info(f"Could not load {module}")
-            return module     
+            return module
 
     @staticmethod
     def _reload_module(module):
@@ -94,7 +94,7 @@ class Simulator:
         """
         # Hot reload the demo module
         logger.info(f"Reloading {module}")
-        if isinstance(module,types.ModuleType):
+        if isinstance(module, types.ModuleType):
             return reload(module)
         logger.info(f"Module {module} is not Moduletype")
         return module
@@ -316,7 +316,9 @@ class Simulator:
 
     def start(self):
         """Start the main loop."""
-        handle_input = controllers.start_inputs(self.system_q, self.input_q,simulated=True)
+        handle_input = controllers.start_inputs(
+            self.system_q, self.input_q, simulated=True
+        )
         tick = self.screen.create_tick(self.game.frame_rate)
 
         try:
