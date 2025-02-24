@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path,PurePath
 from queue import Queue
 
 
@@ -33,7 +33,7 @@ def get_demos(demo_dir="demos"):
     demos = (d for d in demos if (d / "main.py").exists())
 
     # Convert to module notation
-    demos = ((d.name, str(d).replace("/", ".") + ".main") for d in demos)
+    demos = ((d.name, ".".join(PurePath(d).parts) + ".main") for d in demos)
 
     return demos
 
