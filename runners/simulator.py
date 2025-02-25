@@ -1,8 +1,8 @@
 import sys
+import types
 from importlib import import_module, reload
 from pathlib import Path
 from queue import Queue
-import types
 
 import pygame
 from loguru import logger
