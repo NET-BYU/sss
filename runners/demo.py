@@ -19,20 +19,23 @@ def run(demo_name, simulate, new_hardware, testing):
     """
 
     if simulate:
-        from display.virtual_screen import \
-            VirtualScreen  # pylint: disable=import-outside-toplevel
+        from display.virtual_screen import (
+            VirtualScreen,
+        )  # pylint: disable=import-outside-toplevel
 
         logger.debug("Starting virtual screen...")
         screen = VirtualScreen()
     elif new_hardware:
-        from display.physical_screen_v2 import \
-            PhysicalScreen  # pylint: disable=import-outside-toplevel
+        from display.physical_screen_v2 import (
+            PhysicalScreen,
+        )  # pylint: disable=import-outside-toplevel
 
         logger.debug("Starting new physical screen...")
         screen = PhysicalScreen()
     else:
-        from display.physical_screen import \
-            PhysicalScreen  # pylint: disable=import-outside-toplevel
+        from display.physical_screen import (
+            PhysicalScreen,
+        )  # pylint: disable=import-outside-toplevel
 
         logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
