@@ -181,19 +181,39 @@ class Maze:
                     self.player_x, (self.player_y * 2) + 1, self.screen_player_bottom
                 )
 
+    def is_wall(self, x, y):
+        return (
+            self.maze[y][x] == self.wall
+            or (x < 0 or y < 0 or x >= len(self.maze[0]) or y >= len(self.maze))
+            or (self.maze[y][x] == self.exit_point and not self.all_coins_collected)
+        )
+
+    def is_exit(self, x, y):
+        return self.maze[y][x] == self.exit_point and self.all_coins_collected
+
     def move_player(self, direction):
-        
-        
+
         # Move the player in the maze
         if direction == "u":
+            new_x, new_y = self.player_x, self.player_y - 1
+        elif direction == "d":
+            new_x, new_y = self.player_x, self.player_y + 1
+        elif direction == "l":
+            new_x, new_y = self.player_x - 1, self.player_y
+        elif direction == "r":
+            new_x, new_y = self.player_x + 1, self.player_y
+
             if (
                 self.player_y > 0
                 and self.maze[self.player_y - 1][self.player_x] != self.wall
             ):
-                if self.maze[self.player_y - 1][self.player_x] == self.exit_point and not self.all_coins_collected:
+                if (
+                    self.maze[self.player_y - 1][self.player_x] == self.exit_point
+                    and not self.all_coins_collected
+                ):
                     self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
                     return
-                    
+
                 self.draw_player(erase=True)
                 self.player_y -= 1
         elif direction == "d":
@@ -201,10 +221,13 @@ class Maze:
                 self.player_y < len(self.maze) - 1
                 and self.maze[self.player_y + 1][self.player_x] != self.wall
             ):
-                if self.maze[self.player_y + 1][self.player_x] == self.exit_point and not self.all_coins_collected:
+                if (
+                    self.maze[self.player_y + 1][self.player_x] == self.exit_point
+                    and not self.all_coins_collected
+                ):
                     self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
                     return
-                
+
                 self.draw_player(erase=True)
                 self.player_y += 1
         elif direction == "l":
@@ -212,10 +235,13 @@ class Maze:
                 self.player_x > 0
                 and self.maze[self.player_y][self.player_x - 1] != self.wall
             ):
-                if self.maze[self.player_y][self.player_x - 1] == self.exit_point and not self.all_coins_collected:
+                if (
+                    self.maze[self.player_y][self.player_x - 1] == self.exit_point
+                    and not self.all_coins_collected
+                ):
                     self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
                     return
-                
+
                 self.draw_player(erase=True)
                 self.player_x -= 1
         elif direction == "r":
@@ -223,10 +249,13 @@ class Maze:
                 self.player_x < len(self.maze[0]) - 1
                 and self.maze[self.player_y][self.player_x + 1] != self.wall
             ):
-                if self.maze[self.player_y][self.player_x + 1] == self.exit_point and not self.all_coins_collected:
+                if (
+                    self.maze[self.player_y][self.player_x + 1] == self.exit_point
+                    and not self.all_coins_collected
+                ):
                     self.output_queue.put("SOUND " + sss_sounds.BEEP_14)
                     return
-                
+
                 self.draw_player(erase=True)
                 self.player_x += 1
 
@@ -245,7 +274,7 @@ class Maze:
         # Check to see if player has reached the exit
         if self.player_y == self.exit_y and self.player_x == self.exit_x:
             if self.all_coins_collected:
-                self.output_queue.put("SOUND " + sss_sounds.WIN_01)
+                self.output_queue.put("SOUND " + sss_sounds.COLLECTED_ITEM)
                 self.output_queue.put("WIN")
             self.stop()
 
