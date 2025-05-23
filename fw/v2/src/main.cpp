@@ -23,6 +23,11 @@
 #define LCS 21
 #define RCS 13
 
+// DHCP Control Panel
+#if (USE_DHCP)
+    #define DHCP_HOSTNAME "hermes"
+#endif 
+
 SPISettings spisettings(DEFAULT_BAUDRATE, MSBFIRST, SPI_MODE0);
 uint8_t txL[TOTAL_MAX_CHIPS];
 uint8_t txR[TOTAL_MAX_CHIPS];
@@ -237,11 +242,22 @@ void setup()
   SerialDebug.begin(9600);
 
   Ethernet.init (USE_THIS_SS_PIN);
+  
+  #if (USE_DHCP)
+    Ethernet.setHostname(DHCP_HOSTNAME);
+  #endif
+  
   Ethernet.setRstPin(20);
   Ethernet.hardreset();
 
   byte mac[6] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0x01 };
-  Ethernet.begin(mac, ip);
+  
+  #if (USE_DHCP)
+    Ethernet.begin(mac);
+  #else
+    Ethernet.begin(mac, ip);
+  #endif
+  
   Udp.begin(localPort);
 
   pinMode(LCS, OUTPUT);
