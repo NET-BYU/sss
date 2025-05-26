@@ -4,7 +4,7 @@ import pygame
 class VirtualSevenSegment:
     """Virtual seven segment display."""
 
-    def __init__(self, start_x, start_y, display):
+    def __init__(self, start_x, start_y, display, color):
         """
         Constructor
 
@@ -12,13 +12,26 @@ class VirtualSevenSegment:
             start_x (int): The starting x position of the display.
             start_y (int): The starting y position of the display.
             display (pygame.Surface): The display surface.
+            color (tuple): RGB color tuple for digits
         """
+        self.color = color
         self.digits = [
-            [Digit(display, start_x + j * 25, start_y + i * 30) for j in range(16)]
+            [Digit(display, start_x + j * 25, start_y + i * 30,self.color) for j in range(16)]
             for i in range(6)
         ]
         self.x = start_x
         self.y = start_y
+
+    def update_color(self, new_color):
+        """Updates the colors for the digits.
+        Args:
+            new_color (tuple): new color tuple for the digits
+        """
+        self.color = new_color
+        for row in self.digits:
+            for digit in row:
+                digit.color = new_color
+                digit.redraw()
 
     @staticmethod
     def flush():
@@ -49,7 +62,7 @@ class VirtualSevenSegment:
 class Digit:
     """Digit class for the seven segment display."""
 
-    def __init__(self, display, x, y):
+    def __init__(self, display, x, y, color):
         """
         Constructor
 
@@ -57,10 +70,12 @@ class Digit:
             display (pygame.Surface): The display surface.
             x (int): The x position of the digit.
             y (int): The y position of the digit.
+            color (tuple): RGB color tuple
         """
         self.display = display
         self.x = x
         self.y = y
+        self.color = color
         self.draw_line = pygame.draw.line
         self.start_x_pos = [
             self.x + 4,
@@ -105,7 +120,7 @@ class Digit:
         for i in range(8):
             self.draw_line(
                 self.display,
-                (255, 0, 0),
+                self.color,
                 (self.start_x_pos[i], self.start_y_pos[i]),
                 (self.end_x_pos[i], self.end_y_pos[i]),
                 2,
@@ -128,9 +143,23 @@ class Digit:
             if diff & offset:
                 self.draw_line(
                     self.display,
-                    (255, 0, 0) if value & offset else (0, 0, 0),
+                    self.color if value & offset else (0, 0, 0),
                     (self.start_x_pos[i], self.start_y_pos[i]),
                     (self.end_x_pos[i], self.end_y_pos[i]),
                     2,
                 )
         self.state = value
+
+    def redraw(self):
+        """
+        Redraw the digit, useful if changing color
+        """
+        for i in range(8):
+            offset = 1 << i
+            self.draw_line(
+                    self.display,
+                    self.color if self.state & offset else (0, 0, 0),
+                    (self.start_x_pos[i], self.start_y_pos[i]),
+                    (self.end_x_pos[i], self.end_y_pos[i]),
+                    2,
+                )

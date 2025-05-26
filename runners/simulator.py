@@ -28,7 +28,12 @@ class Simulator:
         self.height = height
         self.demo_dir = demo_dir
 
-        self.screen = VirtualScreen()
+        self.colors = {"RED":(255,0,0),"GREEN":(0,255,0),
+                       "BLUE":(0,0,255),"WHITE":(255,255,255),
+                       "PURPLE":(0xa0,0,0xc8), "ORANGE": (255,165,0)}
+        self.grey_button_color = (0xa6,0xa6,0xa6)
+
+        self.screen = VirtualScreen(self.colors["RED"])
 
         # input and output queues
         self.system_q = Queue(10)
@@ -45,8 +50,8 @@ class Simulator:
         )
         self.lives_prev = ""
         self.score_prev = ""
-        self.screen.window.blit(self.lives_text, (0, 720))
-        self.screen.window.blit(self.score_text, (300, 720))
+        self.screen.window.blit(self.lives_text, (0, 720+50))
+        self.screen.window.blit(self.score_text, (300, 720+50))
 
         # variables for hot loadable demos
         self.demo_lst = []
@@ -67,7 +72,7 @@ class Simulator:
     def _import_module(module):
         """Import the module for the first time.
 
-        Args:
+        Args:+
             module (str): Name of the module to import.
 
         Returns:
@@ -135,11 +140,11 @@ class Simulator:
         self.lives_text = self.text_font.render(
             "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
         )
-        self.screen.window.blit(self.lives_text, (0, 720))
+        self.screen.window.blit(self.lives_text, (0, 720+50))
         self.score_text = self.text_font.render(
             "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
         )
-        self.screen.window.blit(self.score_text, (300, 720))
+        self.screen.window.blit(self.score_text, (300, 720+50))
 
         # stop the current game
         self.game.stop()
@@ -196,12 +201,8 @@ class Simulator:
                 text=str(text_str),  # Text to display
                 fontSize=20,  # Size of font
                 margin=20,  # Minimum distance between text/image and edge of button
-                inactiveColour=(
-                    200,
-                    50,
-                    0,
-                ),  # Colour of button when not being interacted with
-                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                inactiveColour=self.grey_button_color,  # Colour of button when not being interacted with
+                hoverColour=(self.grey_button_color[0]/2, self.grey_button_color[1]/2, self.grey_button_color[2]/2),  # Colour of button when being hovered over
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
                 onClick=lambda a: self._load_game(
@@ -234,12 +235,8 @@ class Simulator:
                 text=str(text_str),  # Text to display
                 fontSize=20,  # Size of font
                 margin=20,  # Minimum distance between text/image and edge of button
-                inactiveColour=(
-                    200,
-                    50,
-                    0,
-                ),  # Colour of button when not being interacted with
-                hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                inactiveColour=self.grey_button_color,  # Colour of button when not being interacted with
+                hoverColour=(self.grey_button_color[0]/2, self.grey_button_color[1]/2, self.grey_button_color[2]/2),  # Colour of button when being hovered over
                 pressedColour=(0, 200, 20),  # Colour of button when being clicked
                 radius=20,  # Radius of border corners (leave empty for not curved)
                 onClick=lambda a: self._load_game(
@@ -248,8 +245,41 @@ class Simulator:
                 onClickParams=[key],
             )
 
+    def _update_colors(self, new_color):
+        """Updates the colors for the digits.
+        Args:
+            new_color (tuple): new color tuple for the digits
+        """
+        self.screen.update_color(new_color)
+
+
     def _generate_buttons(self):
         """Generate the buttons for the screen."""
+        # color Buttons
+        self.color_buttons = [
+            Button(
+                # Mandatory Parameters
+                self.screen.window,  # Surface to place button on
+                index*152,  # X-coordinate of top left corner
+                0,  # Y-coordinate of top left corner
+                150,  # Width
+                50,  # Height
+                # Optional Parameters
+                text=key,  # Text to display
+                fontSize=20,  # Size of font
+                margin=20,  # Minimum distance between text/image and edge of button
+                inactiveColour=self.colors[key],  # Colour of button when not being interacted with
+                hoverColour=(self.colors[key][0]/2,
+                             self.colors[key][1]/2,
+                               self.colors[key][2]/2),  # Colour of button when being hovered over
+                pressedColour=self.colors[key],  # Colour of button when being clicked
+                radius=20,  # Radius of border corners (leave empty for not curved)
+                onClick=lambda a: self._update_colors(a),  # Function to call when clicked on
+                onClickParams=[self.colors[key]]
+            ) for index, key in enumerate(self.colors.keys())
+        ]
+        
+
         self.buttons = [
             Button(
                 # Mandatory Parameters
@@ -283,9 +313,9 @@ class Simulator:
                     50,
                     fontSize=50,
                     margin=20,
-                    inactiveColour=(200, 50, 0),
+                    inactiveColour=self.grey_button_color,
                     # Colour of button when not being interacted with
-                    hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+                    hoverColour=(self.grey_button_color[0]/2, self.grey_button_color[1]/2, self.grey_button_color[2]/2),  # Colour of button when being hovered over
                     pressedColour=(0, 200, 20),  # Colour of button when being clicked
                     radius=20,
                 )
@@ -346,22 +376,22 @@ class Simulator:
                         self.lives_text = self.text_font.render(
                             "LIVES: " + self.lives_prev, False, (0, 0, 0), (0, 0, 0)
                         )
-                        self.screen.window.blit(self.lives_text, (0, 720))
+                        self.screen.window.blit(self.lives_text, (0, 720+50))
                         self.lives_text = self.text_font.render(
                             "LIVES: " + msg_content, False, (255, 165, 0), (0, 0, 0)
                         )
                         self.lives_prev = msg_content
-                        self.screen.window.blit(self.lives_text, (0, 720))
+                        self.screen.window.blit(self.lives_text, (0, 720+50))
                     if msg_type == "SCORE":
                         self.score_text = self.text_font.render(
                             "SCORE: " + self.score_prev, False, (0, 0, 0), (0, 0, 0)
                         )
-                        self.screen.window.blit(self.score_text, (300, 720))
+                        self.screen.window.blit(self.score_text, (300, 720+50))
                         self.score_text = self.text_font.render(
                             "SCORE: " + msg_content, False, (255, 165, 0), (0, 0, 0)
                         )
                         self.score_prev = msg_content
-                        self.screen.window.blit(self.score_text, (300, 720))
+                        self.screen.window.blit(self.score_text, (300, 720+50))
 
                 next(tick)
         except KeyboardInterrupt:
@@ -373,7 +403,7 @@ class Simulator:
 
 def run():
     """Run the simulator."""
-    sim = Simulator(25 * 48 + 150, 30 * 24 + 30, "demos")
+    sim = Simulator(25 * 48 + 150, 30 * 24 + 30 + 50, "demos")
     sim.start()
 
 
