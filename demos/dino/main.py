@@ -272,9 +272,9 @@ class Dino:
         coll_box = set()
 
         if y == 0:
-            y = self.screen.y_height // 2 - 7
+            y = self.screen.y_height // 2 - 6
         elif y == 1:
-            y = self.screen.y_height // 2 - 4
+            y = self.screen.y_height // 2 - 3
         elif y == 2:
             y = self.screen.y_height // 2
 
@@ -327,7 +327,6 @@ class Dino:
 
         screen.clear()
         self.draw_score(0)
-        # self.draw_dino(screen.y_height // 2 - 3)
 
     def run(self):
         """Main loop for the demo"""
@@ -432,6 +431,7 @@ class Dino:
                     dino_cells = self.draw_dino(
                         self.dino_y, right=self.right_leg, duck=self.duck
                     )
+                    print(f"DI:\t{dino_cells}")
 
                 if not self.obstacle_timer:
                     self.obstacle_timer = max(5, OBSTACLE_TIMER - self.score // 1000)
@@ -507,9 +507,10 @@ class Dino:
                                 up=self.obstacles[col]["flap_up"],
                             )
                             obstacle_cells = obstacle_cells.union(pterodactyl_cells)
+                            print(f"OB:\t{obstacle_cells}")
 
                         (
-                            print(obstacle_cells.intersection(dino_cells))
+                            print(f"IN:\t{obstacle_cells.intersection(dino_cells)}")
                             if len(obstacle_cells.intersection(dino_cells)) > 0
                             else None
                         )
@@ -519,42 +520,42 @@ class Dino:
                 self.draw_ground()
                 self.screen.push()
                 yield
+                
+            # # Gameover Logic
+            # hscore = 0
+            # if not path.exists(path("demos/dino/high_score.txt")):
+            #     with open("demos/dino/high_score.txt", "w") as scores:
+            #         scores.write(str(hscore))
+            #         scores.close()
 
-            # Gameover Logic
-            hscore = 0
-            if not path.exists(path("demos/dino/high_score.txt")):
-                with open("demos/dino/high_score.txt", "w") as scores:
-                    scores.write(str(hscore))
-                    scores.close()
+            # with open("demos/dino/high_score.txt", "r") as scores:
+            #     hscore = int(scores.read())
+            # if self.score > hscore:
+            #     with open("demos/dino/high_score.txt", "w") as scores:
+            #         scores.write(str(self.score))
 
-            with open("demos/dino/high_score.txt", "r") as scores:
-                hscore = int(scores.read())
-            if self.score > hscore:
-                with open("demos/dino/high_score.txt", "w") as scores:
-                    scores.write(str(self.score))
-
-            self.screen.clear()
-            self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 8,
-                "GAME OVER",
-            )
-            self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 6,
-                "---------",
-            )
-            self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 4,
-                "SCORE " + str(self.score),
-            )
-            self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 2,
-                "HISCORE " + str(hscore),
-            )
-            self.screen.push()
+            # self.screen.clear()
+            # self.screen.draw_text(
+            #     (self.screen.x_width // 2) - 4,
+            #     (self.screen.y_height // 2) - 8,
+            #     "GAME OVER",
+            # )
+            # self.screen.draw_text(
+            #     (self.screen.x_width // 2) - 4,
+            #     (self.screen.y_height // 2) - 6,
+            #     "---------",
+            # )
+            # self.screen.draw_text(
+            #     (self.screen.x_width // 2) - 4,
+            #     (self.screen.y_height // 2) - 4,
+            #     "SCORE " + str(self.score),
+            # )
+            # self.screen.draw_text(
+            #     (self.screen.x_width // 2) - 4,
+            #     (self.screen.y_height // 2) - 2,
+            #     "HISCORE " + str(hscore),
+            # )
+            # self.screen.push()
             yield
 
     def stop(self):
