@@ -54,8 +54,8 @@ class Prusa:
         self.minutes_left = "N/A"
         self.display_filename = "N/A"
         self.display_status = "N/A"
-        self.display_time_elapsed = "N/A"
-        self.display_time_left = "N/A"
+        self.display_time_elapsed = "0"
+        self.display_time_left = "0"
         self.display_progress = 0
 
 
@@ -113,9 +113,9 @@ class Prusa:
             "state": "IDLE",
             "filename": "N/A",
             "progress": 0,
-            "time_elapsed": "N/A",
-            "time_left": "N/A",
-            "minutes_left": "N/A",
+            "time_elapsed": "0",
+            "time_left": "0",
+            "minutes_left": "0",
         }
 
     def run(self):
