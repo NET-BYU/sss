@@ -12,3 +12,4 @@ PyYAML==6.0.2
 spidev==3.5
 urllib3==1.26.19
 sysv-ipc==1.1.0
+requests==2.31.0
