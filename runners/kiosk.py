@@ -64,6 +64,41 @@ def get_random_demo(demos):
         for demo in demos:
             yield demo
 
+def get_presentation_demo(demos):
+    """
+    Generator that gets a random demo. It makes sure all demos have been
+    provided before it repeats a demo, so it's not truly random.
+
+    Args:
+        demos (dict): Dictionary with the demos.
+    """
+
+    # Filter out demos that can't be shown without input
+    # print(demos)
+    demos = {k: v for k, v in demos.items() if v.demo_time is not None}
+
+    order = [
+        demos["welcome_y"],
+        demos["sine"],
+        demos["cube"],
+        demos["breakout_ai"],
+        demos["snake_ai"],
+        demos["video"]
+    ]
+
+    # Set shorter demo times
+    demos["welcome_y"].demo_time = 10
+    demos["sine"].demo_time = 10
+    demos["cube"].demo_time = 10
+    demos["breakout_ai"].demo_time = 20
+    demos["snake_ai"].demo_time = 30
+    demos["video"].demo_time = 10
+
+    while True:
+        for demo in order:
+            yield demo
+
+
 
 def get_demo_from_user(system_queue, demos):
     """Receives input from user and returns the selected demo.
@@ -188,7 +223,7 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
         screen.refresh()
 
 
-def run_loop(screen, user_input_timeout=300, demo_time_override=None):
+def run_loop(screen, user_input_timeout=300, demo_time_override=None, presentation=False):
     """Runs the event loop that takes care of input and running the demos.
 
     Args:
@@ -201,7 +236,12 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
     queues = utils.Queues()
 
     demos = load_demos()
-    random_demos = get_random_demo(demos)
+
+    if presentation:
+        random_demos = get_presentation_demo(demos)
+    else:
+        random_demos = get_random_demo(demos)
+
     handle_input = controllers.start_inputs(
         queues.system_queue, queues.demo_input_queue
     )
@@ -251,7 +291,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
             screen.clear()
 
 
-def run(simulate, testing=False, new_hardware=False):
+def run(simulate, testing=False, new_hardware=False, presentation=False):
     """Runs the kiosk
 
     Args:
@@ -299,9 +339,9 @@ def run(simulate, testing=False, new_hardware=False):
     logger.info("-=:___________/")
 
     if testing:
-        run_loop(screen, user_input_timeout=5, demo_time_override=5)
+        run_loop(screen, user_input_timeout=5, demo_time_override=5, presentation=presentation)
     else:
-        run_loop(screen)
+        run_loop(screen, presentation=presentation)
 
 
 if __name__ == "__main__":
