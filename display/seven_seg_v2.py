@@ -1,6 +1,8 @@
 import socket
 import struct
 
+from loguru import logger
+
 from display import symbols as sy  # get_char2
 
 MAX72XX_DIGITS = 8
@@ -58,6 +60,7 @@ class SevenSegment:
         self.dataSerialer = struct.Struct("B" * (self.num_digits + 2))
 
         # Setup the display
+        logger.debug(f"Sending setup commands to {self.addr}")
         self.command(MAX72XX_REG_SHUTDOWN, 1)  # 1 enables the display
         self.command(
             MAX72XX_REG_DECODEMODE, 0
@@ -291,10 +294,12 @@ class SevenSegment:
 
     # Write data buffer to panel through socket
     def _write_data(self):
+        logger.debug(f"Writing data {self._buf} to {self.addr}")
         self.panel_sock.sendto(self.dataSerialer.pack(*self._buf), self.addr)
 
     # Write command buffer to panel through socket
     def _write_command(self):
+        logger.debug(f"Writing command {self._command_buf} to {self.addr}")
         self.panel_sock.sendto(
             self.commandSerializer.pack(*self._command_buf), self.addr
         )
