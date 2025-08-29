@@ -37,7 +37,7 @@ class WelcomeY:
             screen (Screen): Screen object
         """
         # Provide the framerate in frames/seconds and the amount of time of the demo in seconds
-        self.frame_rate = 10
+        self.frame_rate = 15
 
         self.input_queue = input_queue
         self.output_queue = output_queue
