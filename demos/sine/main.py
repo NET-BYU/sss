@@ -24,7 +24,7 @@ class Sine:
             screen (Screen): Surface to draw on
 
         """
-        self.frame_rate = 10
+        self.frame_rate = 20
 
         self.input_queue = input_queue
         self.output_queue = output_queue
