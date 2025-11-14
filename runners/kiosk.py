@@ -183,11 +183,12 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
             if not queues.system_queue.empty():
                 logger.info("Got input from the system...")
 
-                if queues.system_queue.queue[0] == "SEL":
+                if queues.system_queue.queue[0] == "SEL_P":
                     logger.info("Select was pressed—bring up menu")
 
                     # Capture that item from the queue
-                    queues.system_queue.get()
+                    queues.system_queue.get() # Captures SEL_P
+                    queues.system_queue.get() # Captures SEL_R
 
                     current_demo = demos["menu"](
                         queues.demo_input_queue,
