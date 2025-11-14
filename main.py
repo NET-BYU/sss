@@ -5,7 +5,7 @@ from loguru import logger
 
 from runners import demo, kiosk, test, utils
 
-logger_level = ["ERROR", "WARNING", "SUCCESS", "INFO", "DEBUG", "TRACE"]
+logger_level = ["INFO", "DEBUG", "TRACE"]
 
 
 @click.group()
