@@ -264,22 +264,6 @@ def run(simulate, testing=False, new_hardware=False):
         logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
 
-    # Start up logger
-    logger.add(
-        "logs/sss.log",
-        rotation="00:00",
-        retention="1 week",
-        enqueue=True,
-        backtrace=True,
-        diagnose=True,
-    )
-    logger.info("             ____")
-    logger.info("            / . .\\")
-    logger.info("            \\  ---<   Starting SSS")
-    logger.info("             \\  /")
-    logger.info("   __________/ /")
-    logger.info("-=:___________/")
-
     if testing:
         run_loop(screen, user_input_timeout=5, demo_time_override=5)
     else:
