@@ -79,11 +79,6 @@ class BreakoutAi:
 
         while True:
             while not gameover:
-                if not self.input_queue.empty():
-                    input_ = self.input_queue.get(block=False)
-                else:
-                    input_ = ""
-
                 if self.ball[1] <= self.level + 2:
                     row = self.ball[1]
                     if row in self.bricks.keys():

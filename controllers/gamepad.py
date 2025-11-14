@@ -98,9 +98,9 @@ def start_processing_input(system_queue, demo_input_queue):
                         demo_input_queue.put("START_R")
                 elif event.code == "BTN_BASE3":
                     if event.state:
-                        demo_input_queue.put("SEL_P")
+                        system_queue.put("SEL_P")
                     else:
-                        demo_input_queue.put("SEL_R")
+                        system_queue.put("SEL_R")
                 elif event.code == "BTN_THUMB":
                     if event.state:
                         demo_input_queue.put("PRI_P")

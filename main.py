@@ -18,7 +18,24 @@ def cli(verbose):
         exit()
 
     logger.remove()  # Remove default logger
-    logger.add(sys.stderr, level=logger_level[verbose])  # Add new logger back
+
+    # Start up logger
+    logger.add(
+        "logs/sss.log",
+        rotation="00:00",
+        retention="1 week",
+        enqueue=True,
+        backtrace=True,
+        diagnose=True,
+        level=logger_level[verbose],
+    )
+
+    logger.info("             ____")
+    logger.info("            / . .\\")
+    logger.info("            \\  ---<   Starting SSS")
+    logger.info("             \\  /")
+    logger.info("   __________/ /")
+    logger.info("-=:___________/")
 
 
 @cli.command(name="simulator")
