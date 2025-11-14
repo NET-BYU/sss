@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from pathlib import Path, PurePath
 from importlib import import_module
+from pathlib import Path, PurePath
 from queue import Queue
 
 from loguru import logger
