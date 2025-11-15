@@ -23,7 +23,7 @@ class Sound:
             output_queue (Queue): Queue to send messages to the main thread
             screen (Screen): Surface to draw on
         """
-        self.frame_rate = 10
+        self.frame_rate = 30
 
         self.input_queue = input_queue
         self.output_queue = output_queue
