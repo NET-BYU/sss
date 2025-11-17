@@ -118,8 +118,8 @@ class Doom:
         # In case memory cannot be initialized correctly or game is not found
         if not self.game_installed or not self.shared_mem_init:
             self.screen.draw_text(
-                self.screen.x_width // 2 - 10,
-                self.screen.y_height // 2 - 4,
+                self.screen.width // 2 - 10,
+                self.screen.height // 2 - 4,
                 "ERROR INITIALIZING DOOM",
                 push=True,
             )

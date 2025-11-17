@@ -51,8 +51,8 @@ class GameOfLife:
             board (list): The board to display
 
         """
-        for x in range(self.screen.x_width):
-            for y in range(self.screen.y_height):
+        for x in range(self.screen.width):
+            for y in range(self.screen.height):
                 self.screen.draw_pixel(x, y, 0xF if board[y][x] else 0x0)
         self.screen.push()
 
@@ -128,7 +128,7 @@ class GameOfLife:
             # Set up the initial state
             self.screen.clear()
             old_boards.clear()
-            board = self._create_board(self.screen.x_width, self.screen.y_height)
+            board = self._create_board(self.screen.width, self.screen.height)
 
             # Display the board
             self._display_board(board)

@@ -55,7 +55,7 @@ class Menu:
 
             if i >= self.max_demos_per_column:
                 self.screen.draw_text(
-                    self.screen.x_width // 2,
+                    self.screen.width // 2,
                     4 + ((i - self.max_demos_per_column) * 2),
                     f"{i + 1:2}. {demo.upper()}",
                 )
@@ -63,7 +63,7 @@ class Menu:
     def _update_menu(self, selected, show_text=True):
         if selected >= self.max_demos_per_column:
             selected_v_offset = selected - self.max_demos_per_column
-            selected_h_offset = self.screen.x_width // 2
+            selected_h_offset = self.screen.width // 2
         else:
             selected_v_offset = selected
             selected_h_offset = 0
@@ -85,10 +85,8 @@ class Menu:
         count = 0
 
         # Set up initial screen
-        self.screen.draw_text(
-            (self.screen.x_width - len(self.title)) // 2, 0, self.title
-        )
-        self.screen.draw_hline(0, 2, self.screen.x_width)
+        self.screen.draw_text((self.screen.width - len(self.title)) // 2, 0, self.title)
+        self.screen.draw_hline(0, 2, self.screen.width)
         self._draw_menu()
         self._update_menu(old_selected, selected)
         self.screen.push()

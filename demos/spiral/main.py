@@ -28,8 +28,8 @@ class Spiral:
 
     def run(self):
         """Main loop for the demo"""
-        width = self.screen.x_width
-        height = self.screen.y_height
+        width = self.screen.width
+        height = self.screen.height
         across = width
         down = height
         x_in = 0

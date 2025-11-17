@@ -26,8 +26,8 @@ class Circle:
     def run(self):
         """Runs the simulation loop"""
         # Create generator here
-        width = self.screen.x_width
-        height = self.screen.y_height
+        width = self.screen.width
+        height = self.screen.height
         while True:
             for x in range(1, width):
                 self.screen.draw_pixel(x - 1, 0, 0x0, push=True)

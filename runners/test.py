@@ -22,8 +22,8 @@ def test_demo(demo_name, demo_module_name):
     """
     logger.info(f"Testing {demo_name}...")
     display = MagicMock()
-    display.y_height = 48
-    display.x_width = 48
+    display.height = 48
+    display.width = 48
 
     input_q = Queue()
     output_q = Queue()
