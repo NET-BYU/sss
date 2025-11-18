@@ -33,8 +33,8 @@ class Template:
         # Create generator here
         while True:
             self.screen.draw_text(
-                self.screen.x_width // 2 - 5,
-                self.screen.y_height // 2 - 4,
+                self.screen.width // 2 - 5,
+                self.screen.height // 2 - 4,
                 "HELLO THERE",
                 push=True,
             )

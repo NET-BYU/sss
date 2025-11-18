@@ -20,8 +20,8 @@ class SegmentDisplay:
 
         self.screen = screen
 
-        self.screen_width = screen.x_width - 1
-        self.screen_height = screen.y_height // 2
+        self.screen_width = screen.width - 1
+        self.screen_height = screen.height // 2
 
         self.width = 2 * self.screen_width
         self.height = 3 * self.screen_height

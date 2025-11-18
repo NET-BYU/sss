@@ -624,7 +624,7 @@ class Tetris:
             )
             self.screen.draw_pixel(
                 x + self.x_offset,
-                self.screen.y_height - self.y_offset - 1,
+                self.screen.height - self.y_offset - 1,
                 full_pixel,
                 combine=True,
                 push=False,
@@ -651,14 +651,14 @@ class Tetris:
         """Draw the game over screen."""
         self.screen.clear()
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 8, "GAME OVER"
+            (self.screen.width // 2) - 4, (self.screen.height // 2) - 8, "GAME OVER"
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 6, "---------"
+            (self.screen.width // 2) - 4, (self.screen.height // 2) - 6, "---------"
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 4,
-            (self.screen.y_height // 2) - 4,
+            (self.screen.width // 2) - 4,
+            (self.screen.height // 2) - 4,
             "SCORE " + str(self.score),
         )
 
@@ -666,18 +666,18 @@ class Tetris:
         """Draw the high score screen."""
         self.screen.clear()
         self.screen.draw_text(
-            (self.screen.x_width // 3),
-            (self.screen.y_height // 2) - 8,
+            (self.screen.width // 3),
+            (self.screen.height // 2) - 8,
             "NEW hIGh SCORE",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 3) - 2,
-            (self.screen.y_height // 2) - 6,
+            (self.screen.width // 3) - 2,
+            (self.screen.height // 2) - 6,
             "--------------------",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 3) - 4,
-            (self.screen.y_height // 2) - 4,
+            (self.screen.width // 3) - 4,
+            (self.screen.height // 2) - 4,
             "ENTER YOuR INITIALS: " + "AA",
         )
 
@@ -685,18 +685,18 @@ class Tetris:
         """Display the high scores."""
         self.screen.clear()
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 3) - 4,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 3) - 4,
             "hIGh SCORES",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 12,
-            (self.screen.y_height // 3) + 26,
+            (self.screen.width // 2) - 12,
+            (self.screen.height // 3) + 26,
             "PRESS START TO PLAY AGAIN",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 3) - 2,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 3) - 2,
             "-----------",
         )
         with open(self.high_score_file_path, "r") as scores:
@@ -704,8 +704,8 @@ class Tetris:
             for score in scores:
                 score = score.strip()
                 self.screen.draw_text(
-                    (self.screen.x_width // 2) - (len(score) // 2),
-                    (self.screen.y_height // 3) + offset,
+                    (self.screen.width // 2) - (len(score) // 2),
+                    (self.screen.height // 3) + offset,
                     score,
                 )
                 offset += 4

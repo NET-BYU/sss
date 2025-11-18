@@ -27,11 +27,11 @@ class Sweep:
         """Run the demo"""
         # Create generator here
         while True:
-            for column in range(0, self.screen.x_width):
+            for column in range(0, self.screen.width):
                 self.draw_vline_loc(column, 0xFF)
                 yield
 
-            for column in range(self.screen.x_width - 1, -1, -1):
+            for column in range(self.screen.width - 1, -1, -1):
                 self.draw_vline_loc(column, 0x0)
                 yield
 
@@ -47,7 +47,7 @@ class Sweep:
             x (int): x location of the line
             value (int): value of the line
         """
-        for y in range(self.screen.y_height // 2):
+        for y in range(self.screen.height // 2):
             self.screen.draw_raw(x, y, value)
             # self.screen.draw_pixel(x, pix, val)
         self.screen.push()
