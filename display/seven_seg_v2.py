@@ -30,8 +30,8 @@ class SevenSegment:
     def __init__(
         self,
         baudrate=DEFAULT_BAUDRATE,
-        ip_address="172.0.0.3",
-        port=1883,
+        ip_address="172.16.0.3",
+        port=2018,
         brightness=7,
         clear=True,
     ):
