@@ -22,6 +22,7 @@
 #define TOTAL_MAX_CHIPS NUM_MAX_CHIPS_PER_SIDE*2
 #define LCS 21
 #define RCS 13
+#define BOARD_ID 3
 
 // DHCP Control Panel
 #if (USE_DHCP)
@@ -226,14 +227,14 @@ void digits(SPIClassRP2040 spi, uint8_t *digitBuffer, int length,bool clear=fals
 #define SHIELD_TYPE           "W5x00 using Ethernet_Generic Library"
 #include "Ethernet_Generic.h" 
 
-unsigned int localPort = 1883;    //10002;  // local port to listen on
+unsigned int localPort = 2018;   // Local port NET Lab est 2018
 
 uint8_t packetBuffer[255];          // buffer to hold incoming packet
 char ReplyBuffer[] = "ACK";      // a string to send back
 
 // A UDP instance to let us send and receive packets over UDP
 EthernetUDP Udp;
-IPAddress ip(172, 0, 0, 3); 
+IPAddress ip(172, 16, 0, BOARD_ID); 
 
 #define SerialDebug   Serial
 
@@ -250,7 +251,7 @@ void setup()
   Ethernet.setRstPin(20);
   Ethernet.hardreset();
 
-  byte mac[6] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0x01 };
+  byte mac[6] = { 0xEB, 0x22, 0x80, 0x00, 0x00, 0x03};
   
   #if (USE_DHCP)
     Ethernet.begin(mac);
