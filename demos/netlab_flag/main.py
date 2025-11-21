@@ -1,7 +1,7 @@
 class NetlabFlag:
     """This demo puts a cool netlab logo along with some checker pattern on the screen"""
 
-    demo_time = 15
+    demo_time = None
 
     # User input is passed through input_queue
     # Game output is passed through output_queue

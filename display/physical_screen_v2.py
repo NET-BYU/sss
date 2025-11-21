@@ -6,17 +6,37 @@ from .seven_seg_v2 import SevenSegment
 
 
 class PhysicalScreen:
-    def __init__(self, brightness=3):
+    def __init__(self, brightness=5):
         self.brightness = brightness
-        self.num_segs_across = 1
-        self.num_segs_down = 1
+        self.num_segs_across = 3
+        self.num_segs_down = 4
+
+        self.addresses = [
+            # First row
+            "172.16.0.5",
+            "172.16.0.4",
+            "172.16.0.3",
+            # Second row
+            "172.16.0.8",
+            "172.16.0.7",
+            "172.16.0.6",
+            # Third row
+            "172.16.0.11",
+            "172.16.0.10",
+            "172.16.0.9",
+            # Fourth row
+            "172.16.0.14",
+            "172.16.0.13",
+            "172.16.0.12",
+        ]
         self._create_display()
 
     def _create_display(self):
         # need to have an array of ip addresses if more panels
         panel_array = [
             [
-                SevenSegment(ip_address="172.0.0.3", brightness=self.brightness)
+                SevenSegment(ip_address=self.addresses[i * self.num_segs_across + j], 
+                             brightness=self.brightness)
                 for j in range(self.num_segs_across)
             ]
             for i in range(self.num_segs_down)

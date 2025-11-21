@@ -1,0 +1,15 @@
+[Unit]
+Description=Prusa Printer Status Demo
+After=network.target
+
+[Service]
+Type=simple
+User=<USER>
+WorkingDirectory=<PATH TO SSS>
+Environment=PATH=<PATH TO venv/bin>
+ExecStart=<PATH TO VENV>/python <PATH TO>/main.py demo -n prusa
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

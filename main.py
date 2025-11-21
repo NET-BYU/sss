@@ -71,9 +71,16 @@ def run_simulator():
     help="Run in test mode. This shortens the demo time and user input time "
     "for testing purposes.",
 )
-def run_kiosk(simulate, new_hardware, testing):
+@click.option(
+    "presentation",
+    "--presentation",
+    is_flag=True,
+    default=False,
+    help="Run for a presentation. Pick the best demos to show.",
+)
+def run_kiosk(simulate, new_hardware, testing, presentation):
     """CLI command to run kiosk."""
-    kiosk.run(simulate, testing=testing, new_hardware=new_hardware)
+    kiosk.run(simulate, testing=testing, new_hardware=new_hardware, presentation=presentation)
 
 
 @cli.command("demo")

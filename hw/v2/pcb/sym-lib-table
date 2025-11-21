@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "raspberryPiPico")(type "KiCad")(uri "${KIPRJMOD}/SC0918/SC0918.kicad_sym")(options "")(descr ""))
+  (lib (name "parts")(type "KiCad")(uri "C:/Users/pista/Documents/ybadge/parts/SamacSys_Parts.kicad_sym")(options "")(descr ""))
+)

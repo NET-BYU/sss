@@ -1,0 +1,16 @@
+[Unit]
+Description=SSS Kiosk Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/netlab/sss
+ExecStart=/home/netlab/sss/.venv/bin/python main.py kiosk -n --presentation
+Restart=always
+RestartSec=5
+User=netlab
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

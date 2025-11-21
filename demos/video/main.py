@@ -38,7 +38,7 @@ class Video:
         self.path = "./demos/video/resources/pre-processed/"
         self.targets = os.listdir(self.path)
         self.address = random.randint(0, len(self.targets) - 1)
-        self.target = self.targets[self.address]
+        self.target = "Rick.npz"
         self.pause = False
         self.new_video = False
         self.next_frame = False
