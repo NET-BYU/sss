@@ -1,7 +1,6 @@
 import random
 import sys
 import time
-from importlib import import_module
 from queue import Empty
 
 from loguru import logger
@@ -9,42 +8,6 @@ from loguru import logger
 import broadcasters
 import controllers
 from runners import utils
-
-
-def load_demo(module_name):
-    """
-    Given a module name it will load the module and get the modules demo
-    class.
-
-    Args:
-        module_name (str): Name of the module to load.
-
-    Returns:
-        class: The demo class.
-    """
-    logger.debug(f"Loading {module_name}")
-    return utils.get_demo_cls(import_module(module_name))
-
-
-def load_demos(demo_dir="demos"):
-    """
-    Loads all demos for a given directory. It returns the demos in a dictionary
-    with the name of the demo as key and the demo module as the value.
-
-    Args:
-        demo_dir (str): Directory where the demos are located.
-
-    Returns:
-        dict: Dictionary with the name of the demo as key and the demo module
-    """
-    logger.debug("Loading demos...")
-
-    demos = utils.get_demos(demo_dir)
-
-    # Load the module
-    demos = {name: load_demo(module) for name, module in demos}
-
-    return demos
 
 
 def get_random_demo(demos):
@@ -128,6 +91,7 @@ def play_demo_from_user(
         if not queues.demo_input_queue.empty() and demo.demo_time is None:
             last_input_time = time.time()
 
+        # TODO: Should this also handle output?
         next(handle_input)
         next(runner)
         next(frame_tick)
@@ -164,12 +128,13 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
     while demo_time > (time.time() - start_time):
         # We have received input from the user, so we need to stop the demo
         if not queues.system_queue.empty():
-            logger.info("User input has been received. Exiting demo...")
+            logger.info("User input has been received on system queue. Exiting demo...")
             demo.stop()
             screen.clear()
             break
 
         try:
+            # TODO: Should there also be handle output?
             next(handle_input)
             next(runner)
             next(frame_tick)
@@ -188,7 +153,7 @@ def play_demo_from_idle(demo, handle_input, queues, screen, demo_time_override):
         screen.refresh()
 
 
-def run_loop(screen, user_input_timeout=300, demo_time_override=None):
+def run_loop(screen, user_input_timeout=300, demo_time_override=None, simulated=False):
     """Runs the event loop that takes care of input and running the demos.
 
     Args:
@@ -200,30 +165,47 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
 
     queues = utils.Queues()
 
-    demos = load_demos()
+    demos = utils.load_demos()
     random_demos = get_random_demo(demos)
     handle_input = controllers.start_inputs(
-        queues.system_queue, queues.demo_input_queue
+        queues.system_queue, queues.demo_input_queue, simulated=simulated
     )
     handle_output = broadcasters.start_outputs(
-        queues.system_queue, queues.demo_input_queue
+        queues.system_queue, queues.demo_output_queue
     )
     current_demo = None
 
     try:
         while True:
-            while not queues.system_queue.empty():
-                logger.info("Got input from the user...")
+            next(handle_input)
+            next(handle_output)
 
-                next(handle_input)
-                next(handle_output)
+            if not queues.system_queue.empty():
+                logger.info("Got input from the system...")
 
-                demo_cls = get_demo_from_user(queues.system_queue, demos)
-                if demo_cls is None:
-                    continue
-                current_demo = demo_cls(
-                    queues.demo_input_queue, queues.demo_output_queue, screen.display
-                )
+                if queues.system_queue.queue[0] == "SEL_P":
+                    logger.info("Select was pressed—bring up menu")
+
+                    queues.system_queue.get()  # Captures SEL_P
+                    queues.system_queue.get()  # Captures SEL_R
+
+                    current_demo = demos["menu"](
+                        queues.demo_input_queue,
+                        queues.demo_output_queue,
+                        screen.display,
+                        system_input_queue=queues.system_queue,
+                    )
+
+                else:
+                    demo_cls = get_demo_from_user(queues.system_queue, demos)
+                    if demo_cls is None:
+                        continue
+
+                    current_demo = demo_cls(
+                        queues.demo_input_queue,
+                        queues.demo_output_queue,
+                        screen.display,
+                    )
 
                 play_demo_from_user(
                     current_demo,
@@ -233,7 +215,7 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None):
                     user_input_timeout,
                 )
 
-            while queues.system_queue.empty():
+            else:
                 logger.info("No input from user...")
 
                 current_demo = next(random_demos)(
@@ -261,8 +243,8 @@ def run(simulate, testing=False, new_hardware=False):
     """
 
     if simulate:
-        from display.virtual_screen import (  # pylint: disable=import-outside-toplevel
-            VirtualScreen,
+        from display.virtual_screen import (
+            VirtualScreen,  # pylint: disable=import-outside-toplevel
         )
 
         logger.debug("Starting virtual screen")
@@ -275,33 +257,17 @@ def run(simulate, testing=False, new_hardware=False):
         logger.debug("Starting new physical screen...")
         screen = PhysicalScreen()
     else:
-        from display.physical_screen import (  # pylint: disable=import-outside-toplevel
-            PhysicalScreen,
+        from display.physical_screen import (
+            PhysicalScreen,  # pylint: disable=import-outside-toplevel
         )
 
         logger.debug("Starting physical screen...")
         screen = PhysicalScreen()
 
-    # Start up logger
-    logger.add(
-        "logs/sss.log",
-        rotation="00:00",
-        retention="1 week",
-        enqueue=True,
-        backtrace=True,
-        diagnose=True,
-    )
-    logger.info("             ____")
-    logger.info("            / . .\\")
-    logger.info("            \\  ---<   Starting SSS")
-    logger.info("             \\  /")
-    logger.info("   __________/ /")
-    logger.info("-=:___________/")
-
     if testing:
-        run_loop(screen, user_input_timeout=5, demo_time_override=5)
+        run_loop(screen, user_input_timeout=5, demo_time_override=5, simulated=simulate)
     else:
-        run_loop(screen)
+        run_loop(screen, simulated=simulate)
 
 
 if __name__ == "__main__":

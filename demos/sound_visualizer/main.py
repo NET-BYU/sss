@@ -15,9 +15,9 @@ def sound_visualizer(display, queue, sound_frames, fps):
         fps (int): Frames per second to display
     """
     tick = utils.frameRate(fps)
-    bottom = display.y_height - 1
+    bottom = display.height - 1
     # Display first frame
-    for x in range(display.x_width):
+    for x in range(display.width):
         display.draw_shape_line(x, bottom, x, bottom - sound_frames[0][x], 15)
     display.push()
     next(tick)
@@ -30,7 +30,7 @@ def sound_visualizer(display, queue, sound_frames, fps):
                 display.clear()
                 return
 
-        for x in range(display.x_width):
+        for x in range(display.width):
             if sound_frames[frame_num][x] > sound_frames[frame_num - 1][x]:
                 display.draw_shape_line(
                     x,
@@ -113,7 +113,7 @@ class SoundVisualizer:
 #         display,
 #         queue,
 #         [
-#             [random.randint(0, display.y_height - 1) for x in range(display.x_width)]
+#             [random.randint(0, display.height - 1) for x in range(display.width)]
 #             for frames in range(1000)
 #         ],
 #         10,

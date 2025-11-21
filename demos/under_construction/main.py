@@ -34,8 +34,8 @@ class UnderConstruction:
     def run(self):
         """Main loop of the demo"""
         # Create generator here
-        xmax = self.screen.x_width
-        ymax = self.screen.y_height
+        xmax = self.screen.width
+        ymax = self.screen.height
         line = self.screen.draw_shape_line
         dot = self.screen.draw_pixel
 
