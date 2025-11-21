@@ -15,3 +15,5 @@ __pycache__
 *high_score*
 chocolate-doom
 site
+*.pio
+*.vscode
