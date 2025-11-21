@@ -89,12 +89,12 @@ class FlappyPixel:
             if -2.5 < x < 45.5:
                 for i in range(y):
                     self.screen.draw_pixel(round(x) + 2, i, 0x0)
-                for i in range(y + 11, self.screen.y_height):
+                for i in range(y + 11, self.screen.height):
                     self.screen.draw_pixel(round(x) + 2, i, 0x0)
             if -5.5 < x < 42.5:
                 for i in range(y):
                     self.screen.draw_pixel(round(x) + 4, i, 0x0)
-                for i in range(y + 11, self.screen.y_height):
+                for i in range(y + 11, self.screen.height):
                     self.screen.draw_pixel(round(x) + 4, i, 0x0)
                 # self.screen.draw_pixel(round(x)+2,y-1,0x0)
                 # self.screen.draw_pixel(round(x)+2,y+11,0x0)
@@ -106,12 +106,12 @@ class FlappyPixel:
             if 0 <= x < 47.5:
                 # top pipe
                 self.screen.draw_hline(
-                    round(x), y, 5 if x < 42.5 else self.screen.x_width - round(x)
+                    round(x), y, 5 if x < 42.5 else self.screen.width - round(x)
                 )
                 self.screen.draw_hline(
                     round(x),
                     y,
-                    5 if x < 42.5 else self.screen.x_width - round(x),
+                    5 if x < 42.5 else self.screen.width - round(x),
                     False,
                 )
                 self.screen.draw_pixel(round(x), y, 0x2)
@@ -124,12 +124,12 @@ class FlappyPixel:
 
                 # bottom pipe
                 self.screen.draw_hline(
-                    round(x), y + 10, 5 if x < 42.5 else self.screen.x_width - round(x)
+                    round(x), y + 10, 5 if x < 42.5 else self.screen.width - round(x)
                 )
                 self.screen.draw_hline(
                     round(x),
                     y + 10,
-                    5 if x < 42.5 else self.screen.x_width - round(x),
+                    5 if x < 42.5 else self.screen.width - round(x),
                     False,
                 )
                 self.screen.draw_pixel(round(x), y + 10, 0x2)
@@ -137,11 +137,11 @@ class FlappyPixel:
                     self.screen.draw_pixel(round(x) + 4, y + 10, 0x8)
                 if x < 46.5:
                     self.screen.draw_vline(
-                        round(x) + 1, y + 11, self.screen.y_height - (y + 11)
+                        round(x) + 1, y + 11, self.screen.height - (y + 11)
                     )
                 if x < 43.5:
                     self.screen.draw_vline(
-                        round(x) + 3, y + 11, self.screen.y_height - (y + 11), False
+                        round(x) + 3, y + 11, self.screen.height - (y + 11), False
                     )
             if x < 0:
                 # left side of the screen now
@@ -159,14 +159,14 @@ class FlappyPixel:
                     self.screen.draw_vline(round(x) + 1, 0, y)
                     # bottom
                     self.screen.draw_vline(
-                        round(x) + 1, y + 11, self.screen.y_height - (y + 11)
+                        round(x) + 1, y + 11, self.screen.height - (y + 11)
                     )
                 if x > -3.5:
                     # top
                     self.screen.draw_vline(round(x) + 3, 0, y)
                     # bottom
                     self.screen.draw_vline(
-                        round(x) + 3, y + 11, self.screen.y_height - (y + 11), False
+                        round(x) + 3, y + 11, self.screen.height - (y + 11), False
                     )
 
     def run(self):

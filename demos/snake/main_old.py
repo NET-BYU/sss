@@ -98,7 +98,7 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     game_over = False
     display.clear()
     tick = frameRate(fps)
-    current_location = (display.x_width // 2, display.y_height // 2)
+    current_location = (display.width // 2, display.height // 2)
     snek_list = [current_location]
     snek_length = 1
     h_score = 0
@@ -114,13 +114,13 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
 
         """
         food_location = (
-            round(random.randrange(0, display.x_width - 1)),
-            round(random.randrange(4, display.y_height - 1)),
+            round(random.randrange(0, display.width - 1)),
+            round(random.randrange(4, display.height - 1)),
         )
         while food_location in snek_list:
             food_location = (
-                round(random.randrange(0, display.x_width - 1)),
-                round(random.randrange(4, display.y_height - 1)),
+                round(random.randrange(0, display.width - 1)),
+                round(random.randrange(4, display.height - 1)),
             )
         # print(food_location)
         return food_location
@@ -131,10 +131,10 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     if ai:
         logger.info("Run snake AI")
         # game_state = generate_game_state(
-        #     display.x_width, display.y_height, current_location, current_food_location
+        #     display.width, display.height, current_location, current_food_location
         # )
         game_state = generate_game_state2(
-            display.x_width, display.y_height, current_location, current_food_location
+            display.width, display.height, current_location, current_food_location
         )
         direction = "ai"
         snek_path = snek_ai.run_Search2(
@@ -154,11 +154,11 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
     )
 
     # draw banner at the top
-    display.draw_hline(0, 2, display.x_width, push=True)
-    display.draw_hline(0, 3, display.x_width, push=True)
+    display.draw_hline(0, 2, display.width, push=True)
+    display.draw_hline(0, 3, display.width, push=True)
     display.draw_text(0, 0, "SCORE 000")
-    display.draw_text(display.x_width - 3 - 8, 0, "H-SCORE " + str(h_score).zfill(3))
-    display.draw_text(display.x_width // 2 - 2, 0, "SNAKE", push=True)
+    display.draw_text(display.width - 3 - 8, 0, "H-SCORE " + str(h_score).zfill(3))
+    display.draw_text(display.width // 2 - 2, 0, "SNAKE", push=True)
 
     while True:
         # if not ai:
@@ -299,9 +299,9 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                 # print(direction, current_location)
                 # check to make sure snek isn't in the weeds
                 if (
-                    current_location[0] >= display.x_width
+                    current_location[0] >= display.width
                     or current_location[0] < 0
-                    or current_location[1] >= display.y_height
+                    or current_location[1] >= display.height
                     or current_location[1] < 4
                     or current_location in snek_list[:-1]
                 ):
@@ -342,23 +342,21 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
         for i in snek_list[:-1]:
             display.draw_pixel(i[0], i[1], 0)
         display.draw_pixel(current_food_location[0], current_food_location[1], 0)
-        display.draw_text(
-            display.x_width // 2 - 4, display.y_height // 2 - 2, "GAME OVER"
-        )
+        display.draw_text(display.width // 2 - 4, display.height // 2 - 2, "GAME OVER")
         if snek_length > h_score:
             display.draw_text(
-                display.x_width // 2 - 6,
-                display.y_height // 2,
+                display.width // 2 - 6,
+                display.height // 2,
                 "H-SCORE " + str(snek_length).zfill(3),
             )
             h_score = snek_length
             with open("games/snake/ai_high_score.txt", "w") as scores:
                 scores.write(str(h_score))
-            display.draw_text(display.x_width - 3, 0, str(snek_length).zfill(3))
+            display.draw_text(display.width - 3, 0, str(snek_length).zfill(3))
         else:
             display.draw_text(
-                display.x_width // 2 - 6,
-                display.y_height // 2,
+                display.width // 2 - 6,
+                display.height // 2,
                 "SCORE " + str(snek_length).zfill(3),
             )
         display.push()
@@ -366,16 +364,16 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
         #     return
         time.sleep(5)
         print("\n\n\nNEW GAME")
-        start_sweep_x = display.x_width // 2 - 1
+        start_sweep_x = display.width // 2 - 1
         for i in range(start_sweep_x + 1):
             display.draw_shape_line(
-                start_sweep_x - i, 4, start_sweep_x - i, display.y_height - 1, 15
+                start_sweep_x - i, 4, start_sweep_x - i, display.height - 1, 15
             )
             display.draw_shape_line(
                 start_sweep_x + i + 1,
                 4,
                 start_sweep_x + i + 1,
-                display.y_height - 1,
+                display.height - 1,
                 15,
             )
             if i > 0:
@@ -383,41 +381,41 @@ def snek_game(display, queue, mqtt_client, fps=10, ai=False):
                     start_sweep_x - i + 1,
                     4,
                     start_sweep_x - i + 1,
-                    display.y_height - 1,
+                    display.height - 1,
                     0,
                 )
                 display.draw_shape_line(
                     start_sweep_x + i,
                     4,
                     start_sweep_x + i,
-                    display.y_height - 1,
+                    display.height - 1,
                     0,
                 )
             display.push()
             next(tick)
-        display.draw_shape_line(0, 4, 0, display.y_height - 1, 0)
+        display.draw_shape_line(0, 4, 0, display.height - 1, 0)
         display.draw_shape_line(
-            display.x_width - 1,
+            display.width - 1,
             4,
-            display.x_width - 1,
-            display.y_height - 1,
+            display.width - 1,
+            display.height - 1,
             0,
         )
         game_over = False
         snek_length = 1
         current_food_location = get_new_food_location()
-        current_location = (display.x_width // 2, display.y_height // 2)
+        current_location = (display.width // 2, display.height // 2)
         snek_list = [current_location]
         if ai:
             # game_state = generate_game_state(
-            #     display.x_width,
-            #     display.y_height,
+            #     display.width,
+            #     display.height,
             #     current_location,
             #     current_food_location,
             # )
             game_state = generate_game_state2(
-                display.x_width,
-                display.y_height,
+                display.width,
+                display.height,
                 current_location,
                 current_food_location,
             )

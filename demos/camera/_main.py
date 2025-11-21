@@ -201,8 +201,8 @@ class Camera:
                     logger.debug("Printing on screen")
                     self.screen.clear()
                     self.screen.draw_text(
-                        (self.screen.x_width // 2) - 4,
-                        (self.screen.y_height // 2) - 6,
+                        (self.screen.width // 2) - 4,
+                        (self.screen.height // 2) - 6,
                         "NO CAMERA",
                     )
                     self.screen.push()
@@ -232,8 +232,8 @@ class Camera:
 
                 if self.url_rets["ret"]:  # Found the url
                     self.screen.draw_text(
-                        (self.screen.x_width // 2) - 4,
-                        (self.screen.y_height // 2) - 6,
+                        (self.screen.width // 2) - 4,
+                        (self.screen.height // 2) - 6,
                         "         ",
                     )
                     self.screen.push()
@@ -250,8 +250,8 @@ class Camera:
                         logger.debug("Printing on screen")
                         self.screen.clear()
                         self.screen.draw_text(
-                            (self.screen.x_width // 2) - 4,
-                            (self.screen.y_height // 2) - 6,
+                            (self.screen.width // 2) - 4,
+                            (self.screen.height // 2) - 6,
                             "NO CAMERA",
                         )
                         self.screen.push()

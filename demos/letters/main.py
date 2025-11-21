@@ -32,14 +32,14 @@ class Letters:
         while True:
             for _ in range(4):
                 self.screen.draw_text(
-                    random.randint(0, self.screen.x_width - 1),
-                    random.randint(0, self.screen.y_height - 2),
+                    random.randint(0, self.screen.width - 1),
+                    random.randint(0, self.screen.height - 2),
                     chr(random.randint(33, 126)),
                 )
             for _ in range(4):
                 self.screen.draw_text(
-                    random.randint(0, self.screen.x_width - 1),
-                    random.randint(0, self.screen.y_height - 2),
+                    random.randint(0, self.screen.width - 1),
+                    random.randint(0, self.screen.height - 2),
                     " ",
                 )
             self.screen.push()
