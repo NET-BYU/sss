@@ -28,8 +28,8 @@ class Checkerboard:
         """Runs the simulation loop"""
         # Create generator here
         while True:
-            for x in range(self.screen.x_width):
-                for y in range(self.screen.y_height):
+            for x in range(self.screen.width):
+                for y in range(self.screen.height):
                     if y % 2 == 0:
                         if x % 2:
                             self.screen.draw_pixel(x, y, 0xF, combine=False, push=False)
@@ -39,8 +39,8 @@ class Checkerboard:
             self.screen.push()
             yield
 
-            for x in range(self.screen.x_width):
-                for y in range(self.screen.y_height):
+            for x in range(self.screen.width):
+                for y in range(self.screen.height):
                     if y % 2:
                         if x % 2:
                             self.screen.draw_pixel(x, y, 0xF, combine=False, push=False)

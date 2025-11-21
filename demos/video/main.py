@@ -42,7 +42,7 @@ class Video:
         self.pause = False
         self.new_video = False
         self.next_frame = False
-        self.previous_frame = np.zeros((self.screen.x_width, self.screen.y_height))
+        self.previous_frame = np.zeros((self.screen.width, self.screen.height))
 
     # Get the next video in the list
     def get_next_video(self):
@@ -74,8 +74,8 @@ class Video:
         # Get frame of which pixels need to get updated
         diff_frame = np.not_equal(frame, self.previous_frame)
 
-        for r in range(self.screen.x_width):
-            for c in range(self.screen.y_height):
+        for r in range(self.screen.width):
+            for c in range(self.screen.height):
                 # If pixel is different from last frame, update
                 if diff_frame[r, c]:
                     self.screen.draw_pixel(c, r, int(frame[r, c]))

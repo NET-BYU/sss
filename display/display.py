@@ -4,20 +4,20 @@ from display import symbols
 class Display:
     """Game Display is a class that abstracts different S^3 panels into one display"""
 
-    def __init__(self, board_objects, x_width, y_height):
+    def __init__(self, board_objects, width, height):
         """
         Constructor
 
         Args:
             board_objects (int[][]): 2d array of seven segment objects oriented how the sign is put together, i.e. [[panel0, panel1],[panel2,panel3]]
-            x_width (int): number of digits in the display on the x axis
-            y_height (int): number of pixels on the y axis (each vertical digit is split into two pixels)
+            width (int): number of digits in the display on the x axis
+            height (int): number of pixels on the y axis (each vertical digit is split into two pixels)
         """
         self.board_objects = board_objects
-        self.x_width = int(x_width)
-        self.y_height = int(y_height)
+        self.width = int(width)
+        self.height = int(height)
         self.display_buf = [
-            [0 for x in range(self.x_width)] for y in range(self.y_height // 2)
+            [0 for x in range(self.width)] for y in range(self.height // 2)
         ]
         self.changed_list = []
 
@@ -141,7 +141,7 @@ class Display:
     def clear(self):
         """Clear all the panels on the display"""
         self.display_buf = [
-            [0 for x in range(self.x_width)] for y in range(self.y_height // 2)
+            [0 for x in range(self.width)] for y in range(self.height // 2)
         ]
         for row in self.board_objects:
             for board in row:
@@ -275,7 +275,7 @@ class Display:
 
     def draw_text(self, x, y, msg, combine=True, push=False):
         """
-        Print a message to the screen, y_height-2 is lowest y value accepted
+        Print a message to the screen, height-2 is lowest y value accepted
         without error. If the message is too long for the given x position, it
         will throw a ValueError. This function does not provide any wrapping.
 
@@ -290,7 +290,7 @@ class Display:
         """
 
         # Check to make sure the message is not too big
-        if len(msg) + x > self.x_width:
+        if len(msg) + x > self.width:
             raise ValueError(
                 "Message is too long for the display at the given x position"
             )

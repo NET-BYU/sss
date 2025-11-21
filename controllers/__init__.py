@@ -1,13 +1,14 @@
 from loguru import logger
 
 
-def start_inputs(system_queue, demo_input_queue):
+def start_inputs(system_queue, demo_input_queue, simulated):
     """
     Start the input processing.
 
     Args:
         system_queue (Queue): The system queue.
         demo_input_queue (Queue): The demo input queue.
+        simulated (Bool): if the screen is simulated (True) or on hardware (False)
     """
     try:
         logger.info("Loading MQTT input...")
@@ -43,21 +44,22 @@ def start_inputs(system_queue, demo_input_queue):
         logger.warning("Unable to import modules necessary to run gamepad input.")
         logger.warning("Program will continue to run without this input.")
 
-    try:
-        logger.info("Loading keyboard input...")
-        from . import keyboard
+    keyboard_runner = None
+    if simulated:
+        try:
+            logger.info("Loading keyboard input...")
+            from . import keyboard
 
-        keyboard_runner = None
-        if keyboard.check_if_sim():
-            keyboard_runner = keyboard.start_processing_input(
-                system_queue, demo_input_queue
-            )
-        logger.info("...done")
-    except (ImportError, ModuleNotFoundError) as e:
-        keyboard_runner = None
-        logger.warning(e)
-        logger.warning("Unable to import modules necessary to run keyboard input.")
-        logger.warning("Program will continue to run without this input.")
+            if keyboard.check_if_sim():
+                keyboard_runner = keyboard.start_processing_input(
+                    system_queue, demo_input_queue
+                )
+            logger.info("...done")
+        except (ImportError, ModuleNotFoundError) as e:
+            keyboard_runner = None
+            logger.warning(e)
+            logger.warning("Unable to import modules necessary to run keyboard input.")
+            logger.warning("Program will continue to run without this input.")
 
     while True:
         if mqtt_runner:

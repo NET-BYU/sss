@@ -66,15 +66,11 @@ class Breakout:
         restart_cnt = 10
 
         # Waits for user ready
+        screen.draw_text((screen.width // 2) - 4, (screen.height // 2) - 8, "BREAKOUT")
         screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "BREAKOUT"
+            (screen.width // 2) - 5, (screen.height // 2) - 4, "PRESS START"
         )
-        screen.draw_text(
-            (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "PRESS START"
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "TO BEGIN"
-        )
+        screen.draw_text((screen.width // 2) - 4, (screen.height // 2) - 2, "TO BEGIN")
         screen.push()
 
         # Don't start until user presses start
@@ -87,15 +83,11 @@ class Breakout:
             yield
 
         # Erase startup text and initialize screen
+        screen.draw_text((screen.width // 2) - 4, (screen.height // 2) - 8, "        ")
         screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "        "
+            (screen.width // 2) - 5, (screen.height // 2) - 4, "           "
         )
-        screen.draw_text(
-            (screen.x_width // 2) - 5, (screen.y_height // 2) - 4, "           "
-        )
-        screen.draw_text(
-            (screen.x_width // 2) - 4, (screen.y_height // 2) - 2, "        "
-        )
+        screen.draw_text((screen.width // 2) - 4, (screen.height // 2) - 2, "        ")
         screen.push()
         self.init_screen(self.screen)
 
@@ -117,8 +109,8 @@ class Breakout:
                         # Pause and unpause routine
                         if keypress == "START_P":
                             screen.draw_text(
-                                (screen.x_width // 2) - 3,
-                                (screen.y_height // 2) - 8,
+                                (screen.width // 2) - 3,
+                                (screen.height // 2) - 8,
                                 "PAUSED",
                                 push=True,
                             )
@@ -133,8 +125,8 @@ class Breakout:
                                     ):
                                         if keypress == "START_P":
                                             screen.draw_text(
-                                                (screen.x_width // 2) - 3,
-                                                (screen.y_height // 2) - 8,
+                                                (screen.width // 2) - 3,
+                                                (screen.height // 2) - 8,
                                                 "      ",
                                                 push=True,
                                             )
@@ -180,14 +172,14 @@ class Breakout:
                     is_down = True
 
                 # Checks to see if ball hits paddle
-                if self.ball[1] == screen.y_height - 2:
+                if self.ball[1] == screen.height - 2:
                     if self.ball[0] in self.paddle:
                         spin, is_left = self.get_angle(self.paddle)
                         self.frame_rate = 20 + (spin // (1 + spin // 2))
                         is_down = False
 
                 # Checks to see if ball falls out of screen
-                if self.ball[1] >= screen.y_height - 1:
+                if self.ball[1] >= screen.height - 1:
                     is_down = True
                     lives -= 1
                     self.frame_rate = 20
@@ -200,7 +192,7 @@ class Breakout:
                     if lives == 0:
                         self.gameover = True
                         break
-                    self.ball = [screen.x_width // 2, screen.y_height // 2]
+                    self.ball = [screen.width // 2, screen.height // 2]
 
                 # Calculates ball path
                 is_left, is_down = self.ball_travel(is_left, is_down, spin, screen)
@@ -208,7 +200,7 @@ class Breakout:
                 # Quick pause to reorient if life lost
                 if restart:
                     restart_cnt -= 1
-                    self.ball = [screen.x_width // 2, screen.y_height // 2]
+                    self.ball = [screen.width // 2, screen.height // 2]
                     if restart_cnt == 0:
                         restart_cnt = 10
                         restart = False
@@ -220,13 +212,13 @@ class Breakout:
                             self.paddle[val] -= 1
                         screen.draw_pixel(
                             self.paddle[0],
-                            screen.y_height - 1,
+                            screen.height - 1,
                             PIXEL_ON,
                             combine=False,
                         )
                         screen.draw_pixel(
                             self.paddle[-1] + 1,
-                            screen.y_height - 1,
+                            screen.height - 1,
                             PIXEL_OFF,
                             combine=False,
                         )
@@ -236,13 +228,13 @@ class Breakout:
                             self.paddle[val] += 1
                         screen.draw_pixel(
                             self.paddle[0] - 1,
-                            screen.y_height - 1,
+                            screen.height - 1,
                             PIXEL_OFF,
                             combine=False,
                         )
                         screen.draw_pixel(
                             self.paddle[-1],
-                            screen.y_height - 1,
+                            screen.height - 1,
                             PIXEL_ON,
                             combine=False,
                         )
@@ -262,19 +254,19 @@ class Breakout:
 
             screen.clear()
             screen.draw_text(
-                (screen.x_width // 2) - 4, (screen.y_height // 2) - 8, "GAME OVER"
+                (screen.width // 2) - 4, (screen.height // 2) - 8, "GAME OVER"
             )
             screen.draw_text(
-                (screen.x_width // 2) - 4, (screen.y_height // 2) - 6, "---------"
+                (screen.width // 2) - 4, (screen.height // 2) - 6, "---------"
             )
             screen.draw_text(
-                (screen.x_width // 2) - 4,
-                (screen.y_height // 2) - 4,
+                (screen.width // 2) - 4,
+                (screen.height // 2) - 4,
                 "SCORE " + str(score),
             )
             screen.draw_text(
-                (screen.x_width // 2) - 4,
-                (screen.y_height // 2) - 2,
+                (screen.width // 2) - 4,
+                (screen.height // 2) - 2,
                 "HISCORE " + str(hscore),
             )
             screen.push()
@@ -295,22 +287,22 @@ class Breakout:
         self.paddle = [24]
 
         if self.level == 1:
-            self.line_right = screen.x_width - ARENA_START
+            self.line_right = screen.width - ARENA_START
             self.line_left = ARENA_START - 1
 
-        self.ball = [screen.x_width // 2, screen.y_height // 2]
+        self.ball = [screen.width // 2, screen.height // 2]
 
         if self.level % 2 == 0:
-            for pix in range(screen.y_height):
+            for pix in range(screen.height):
                 screen.draw_pixel(self.line_left, pix, 0x0)
                 screen.draw_pixel(self.line_right, pix, 0x0)
             self.line_left = 13 - self.level
-            self.line_right = (screen.x_width - ARENA_START) + self.level
+            self.line_right = (screen.width - ARENA_START) + self.level
         else:
             self.rows = self.level + 2
 
-        screen.draw_vline(self.line_left, 0, screen.y_height, left=False)
-        screen.draw_vline(self.line_right, 0, screen.y_height)
+        screen.draw_vline(self.line_left, 0, screen.height, left=False)
+        screen.draw_vline(self.line_right, 0, screen.height)
 
         for row in range(self.rows):
             self.bricks[row] = []
@@ -331,10 +323,10 @@ class Breakout:
             self.paddle.append(self.paddle[-1] + 1)
 
         for val in range(self.line_left + 1, self.line_right):
-            screen.draw_pixel(val, screen.y_height - 1, PIXEL_OFF)
+            screen.draw_pixel(val, screen.height - 1, PIXEL_OFF)
 
         for val in self.paddle:
-            screen.draw_pixel(val, screen.y_height - 1, PIXEL_ON, combine=False)
+            screen.draw_pixel(val, screen.height - 1, PIXEL_ON, combine=False)
 
         screen.push()
 
@@ -401,10 +393,10 @@ class Breakout:
 
         if is_down:
             # A possible conflict with ball trying to jump paddle
-            if (screen.y_height - 1) - (self.ball[1] + spin) <= 0 and spin > 1:
+            if (screen.height - 1) - (self.ball[1] + spin) <= 0 and spin > 1:
                 for block in collide_field:
                     if block[0] in self.paddle:
-                        self.ball[1] = screen.y_height - 2
+                        self.ball[1] = screen.height - 2
                         is_down = False
                         if self.paddle.index(block[0]) > len(self.paddle) // 2:
                             is_left = False
@@ -433,7 +425,7 @@ class Breakout:
 
         if self.ball[1] < 0:
             self.ball[1] = 0
-        elif self.ball[1] > screen.y_height - 1:
-            self.ball[1] = screen.y_height - 1
+        elif self.ball[1] > screen.height - 1:
+            self.ball[1] = screen.height - 1
 
         return is_left, is_down

@@ -1,4 +1,5 @@
 import sys
+import types
 from importlib import import_module, reload
 from pathlib import Path
 from queue import Queue
@@ -74,7 +75,12 @@ class Simulator:
         """
         # First time loading of the demo module
         logger.info(f"Loading {module}")
-        return import_module(module)
+        try:
+            mod = import_module(module)
+            return mod
+        except ModuleNotFoundError:
+            logger.info(f"Could not load {module}")
+            return module
 
     @staticmethod
     def _reload_module(module):
@@ -88,7 +94,10 @@ class Simulator:
         """
         # Hot reload the demo module
         logger.info(f"Reloading {module}")
-        return reload(module)
+        if isinstance(module, types.ModuleType):
+            return reload(module)
+        logger.info(f"Module {module} is not Moduletype")
+        return module
 
     def _reload_demos(self):
         """Reload all the demos in the demo folder."""
@@ -307,7 +316,9 @@ class Simulator:
 
     def start(self):
         """Start the main loop."""
-        handle_input = controllers.start_inputs(self.system_q, self.input_q)
+        handle_input = controllers.start_inputs(
+            self.system_q, self.input_q, simulated=True
+        )
         tick = self.screen.create_tick(self.game.frame_rate)
 
         try:

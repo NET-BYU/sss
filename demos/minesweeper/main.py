@@ -54,17 +54,17 @@ class Minesweeper:
         """Runs the game loop"""
         # Waits for user ready
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 2) - 8,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 2) - 8,
             "MINESWEEPER",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 2) - 4,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 2) - 4,
             "PRESS START",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 2, "TO BEGIN"
+            (self.screen.width // 2) - 4, (self.screen.height // 2) - 2, "TO BEGIN"
         )
         self.screen.push()
 
@@ -79,17 +79,17 @@ class Minesweeper:
 
         # Erase startup text and initialize screen
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 2) - 8,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 2) - 8,
             "           ",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 5,
-            (self.screen.y_height // 2) - 4,
+            (self.screen.width // 2) - 5,
+            (self.screen.height // 2) - 4,
             "           ",
         )
         self.screen.draw_text(
-            (self.screen.x_width // 2) - 4, (self.screen.y_height // 2) - 2, "        "
+            (self.screen.width // 2) - 4, (self.screen.height // 2) - 2, "        "
         )
         self.screen.push()
         self.init_screen()
@@ -564,23 +564,23 @@ class Minesweeper:
 
             self.screen.clear()
             self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 8,
+                (self.screen.width // 2) - 4,
+                (self.screen.height // 2) - 8,
                 "GAME OVER",
             )
             self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 6,
+                (self.screen.width // 2) - 4,
+                (self.screen.height // 2) - 6,
                 "---------",
             )
             self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 4,
+                (self.screen.width // 2) - 4,
+                (self.screen.height // 2) - 4,
                 "SCORE " + str(diff).split(".")[0],
             )
             self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 2,
+                (self.screen.width // 2) - 4,
+                (self.screen.height // 2) - 2,
                 "HISCORE " + str(hscore).split(".")[0],
             )
             self.screen.push()
@@ -599,8 +599,8 @@ class Minesweeper:
 
             self.screen.clear()
             self.screen.draw_text(
-                (self.screen.x_width // 2) - 4,
-                (self.screen.y_height // 2) - 8,
+                (self.screen.width // 2) - 4,
+                (self.screen.height // 2) - 8,
                 "GAME OVER",
                 push=True,
             )
