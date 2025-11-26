@@ -2,6 +2,7 @@ import os
 import yaml
 import requests
 
+
 class Prusa:
     """
     This is not a game, but a demo that shows the status of a Prusa printer
@@ -35,11 +36,11 @@ class Prusa:
         self.screen = screen
 
         # init demo/game specific variables here
-        config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
-        with open(config_path, 'r') as f:
+        config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
+        with open(config_path, "r") as f:
             config = yaml.safe_load(f)
-        self.prusalink_ip = config.get('prusalink_ip')
-        self.api_key = config.get('api_key')
+        self.prusalink_ip = config.get("prusalink_ip")
+        self.api_key = config.get("api_key")
         self.URL = f"http://{self.prusalink_ip}/api/v1/job"
         self.HEADERS = {
             "X-Api-Key": self.api_key,
@@ -58,7 +59,6 @@ class Prusa:
         self.display_time_left = "0"
         self.display_progress = 0
 
-
     def get_stats(self):
         """
         Returns static information.
@@ -73,8 +73,8 @@ class Prusa:
                 return self._get_default_stats()
 
             # Check content type
-            content_type = self.response.headers.get('content-type', '')
-            if 'application/json' not in content_type:
+            content_type = self.response.headers.get("content-type", "")
+            if "application/json" not in content_type:
                 print(f"Unexpected content type: {content_type}")
                 print(f"Response body: {self.response.text[:200]}")  # First 200 chars
                 return self._get_default_stats()
@@ -86,7 +86,9 @@ class Prusa:
             self.progress = self.data.get("progress", 0)
             self.time_elapsed = self.data.get("time_printing", "N/A")
             self.time_left = self.data.get("time_remaining", "N/A")
-            self.minutes_left = self.time_left // 60 if isinstance(self.time_left, int) else "N/A"
+            self.minutes_left = (
+                self.time_left // 60 if isinstance(self.time_left, int) else "N/A"
+            )
 
         except requests.RequestException as e:
             # print(f"Request failed: {e}")
@@ -123,21 +125,23 @@ class Prusa:
         # Create generator here
         while True:
             self.stats = self.get_stats()
-            
+
             # print("=== Printer Status ===")
             # print(f"time left: {self.stats['time_left']}")
             # print(f"Stats: {self.stats}")
             # draw the filename
-            self.display_status = self.stats['state']
+            self.display_status = self.stats["state"]
             # print(f"Status: {self.display_status}")
-            if self.stats['state'] == "IDLE" and int(self.display_time_elapsed[0:8].strip()) > 0:
+            if (
+                self.stats["state"] == "IDLE"
+                and int(self.display_time_elapsed[0:8].strip()) > 0
+            ):
                 self.display_progress = 0
                 self.display_time_elapsed = "0"
                 self.display_time_left = "0"
                 self.display_filename = "N/A"
                 self.screen.clear()
                 print("hit")
-                
 
             self.screen.draw_text(
                 self.screen.x_width // 2 - 8,
@@ -145,12 +149,12 @@ class Prusa:
                 self.display_status,
                 push=True,
             )
-            
-            if self.stats['state'] == "IDLE":
+
+            if self.stats["state"] == "IDLE":
                 yield
                 continue
 
-            self.display_filename = self.stats['filename'][:16].upper()
+            self.display_filename = self.stats["filename"][:16].upper()
             # print(f"Filename: {self.display_filename}")
             self.screen.draw_text(
                 self.screen.x_width // 2 - 8,
@@ -159,9 +163,10 @@ class Prusa:
                 push=True,
             )
 
-
             # print(f"Time left: {self.stats['minutes_left']} minutes")
-            self.display_time_elapsed = f"{str(self.stats['time_elapsed']):>5}   ELAPSED"
+            self.display_time_elapsed = (
+                f"{str(self.stats['time_elapsed']):>5}   ELAPSED"
+            )
             self.screen.draw_text(
                 self.screen.x_width // 2 - 8,
                 self.screen.y_height // 2 - 2,
@@ -179,7 +184,7 @@ class Prusa:
             )
 
             # Map progress (0-100) to a value between 0 and 16
-            percentage_complete = int((self.stats['progress'] / 100) * 16)
+            percentage_complete = int((self.stats["progress"] / 100) * 16)
             percentage_complete = max(0, min(percentage_complete, 16))
             # print(f"Progress: {self.stats['progress']}%, (mapped to {percentage_complete})")
             self.display_progress = f"{int(self.stats['progress']):>5}   PROGRESS"

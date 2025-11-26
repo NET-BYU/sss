@@ -28,7 +28,7 @@ class AllOn:
         # Create generator here
         for column in range(0, self.screen.x_width):
             for row in range(0, self.screen.y_height):
-                self.screen.draw_pixel(column, row, 0xf, combine=True)
+                self.screen.draw_pixel(column, row, 0xF, combine=True)
 
         self.screen.push()
         while True:
@@ -37,4 +37,3 @@ class AllOn:
     def stop(self):
         """Reset the state of the demo if needed, else leave blank"""
         pass
-

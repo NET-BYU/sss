@@ -35,8 +35,10 @@ class PhysicalScreen:
         # need to have an array of ip addresses if more panels
         panel_array = [
             [
-                SevenSegment(ip_address=self.addresses[i * self.num_segs_across + j], 
-                             brightness=self.brightness)
+                SevenSegment(
+                    ip_address=self.addresses[i * self.num_segs_across + j],
+                    brightness=self.brightness,
+                )
                 for j in range(self.num_segs_across)
             ]
             for i in range(self.num_segs_down)

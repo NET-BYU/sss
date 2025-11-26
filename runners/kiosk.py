@@ -27,6 +27,7 @@ def get_random_demo(demos):
         for demo in demos:
             yield demo
 
+
 def get_presentation_demo(demos):
     """
     Generator that gets a random demo. It makes sure all demos have been
@@ -46,7 +47,7 @@ def get_presentation_demo(demos):
         demos["cube"],
         demos["breakout_ai"],
         demos["snake_ai"],
-        demos["video"]
+        demos["video"],
     ]
 
     # Set shorter demo times
@@ -60,7 +61,6 @@ def get_presentation_demo(demos):
     while True:
         for demo in order:
             yield demo
-
 
 
 def get_demo_from_user(system_queue, demos):
