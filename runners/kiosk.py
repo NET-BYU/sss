@@ -1,3 +1,4 @@
+import json
 import random
 import sys
 import time
@@ -254,8 +255,13 @@ def run(simulate, testing=False, new_hardware=False):
             PhysicalScreen,
         )
 
+        # Read in screen configuration
+        with open("config.yaml", "r") as f:
+            config = json.load(f)
+            screen_config = config.get("screen_v2", {})
+
         logger.debug("Starting new physical screen...")
-        screen = PhysicalScreen()
+        screen = PhysicalScreen(screen_config)
     else:
         from display.physical_screen import (
             PhysicalScreen,  # pylint: disable=import-outside-toplevel

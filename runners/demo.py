@@ -1,3 +1,4 @@
+import json
 import time
 from importlib import import_module
 
@@ -30,8 +31,13 @@ def run(demo_name, simulate, new_hardware, testing):
             PhysicalScreen,
         )
 
+        # Read in screen configuration
+        with open("config.json", "r") as f:
+            config = json.load(f)
+            screen_config = config.get("screen_v2", {})
+
         logger.debug("Starting new physical screen...")
-        screen = PhysicalScreen()
+        screen = PhysicalScreen(screen_config)
     else:
         from display.physical_screen import (  # pylint: disable=import-outside-toplevel
             PhysicalScreen,
