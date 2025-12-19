@@ -71,9 +71,19 @@ def run_simulator():
     help="Run in test mode. This shortens the demo time and user input time "
     "for testing purposes.",
 )
-def run_kiosk(simulate, new_hardware, testing):
+@click.option(
+    "config_file",
+    "-c",
+    "--config_file",
+    type=click.Path(exists=True),
+    default="config.json",
+    help="Path to configuration file.",
+)
+def run_kiosk(simulate, new_hardware, testing, config_file):
     """CLI command to run kiosk."""
-    kiosk.run(simulate, testing=testing, new_hardware=new_hardware)
+    kiosk.run(
+        simulate, testing=testing, new_hardware=new_hardware, config_file=config_file
+    )
 
 
 @cli.command("demo")
@@ -106,9 +116,17 @@ def run_kiosk(simulate, new_hardware, testing):
     help="Run in test mode. This provides feedback for if your demo is "
     "running fast enough relative to the set frame rate.",
 )
-def run_demo(name, simulate, new_hardware, testing):
+@click.option(
+    "config_file",
+    "-c",
+    "--config_file",
+    type=click.Path(exists=True),
+    default="config.json",
+    help="Path to configuration file.",
+)
+def run_demo(name, simulate, new_hardware, testing, config_file):
     """CLI command to run demo."""
-    demo.run(name, simulate, new_hardware, testing=testing)
+    demo.run(name, simulate, new_hardware, testing=testing, config_file=config_file)
 
 
 @cli.command("test")
