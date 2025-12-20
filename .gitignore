@@ -1,4 +1,5 @@
 mqtt_config.json
+config.json
 
 .idea/
 *venv

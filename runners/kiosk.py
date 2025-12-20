@@ -1,3 +1,4 @@
+import json
 import random
 import sys
 import time
@@ -233,12 +234,14 @@ def run_loop(screen, user_input_timeout=300, demo_time_override=None, simulated=
             screen.clear()
 
 
-def run(simulate, testing=False, new_hardware=False):
+def run(simulate, testing=False, new_hardware=False, config_file="config.json"):
     """Runs the kiosk
 
     Args:
         simulate (bool): If True, the kiosk will run in simulation mode.
         testing (bool): If True, the kiosk will run in testing mode.
+        new_hardware (bool): If True, the kiosk will run on the new hardware.
+        config_file (str): Path to configuration file.
 
     """
 
@@ -254,8 +257,13 @@ def run(simulate, testing=False, new_hardware=False):
             PhysicalScreen,
         )
 
+        # Read in screen configuration
+        with open(config_file, "r") as f:
+            config = json.load(f)
+            screen_config = config.get("screen_v2", {})
+
         logger.debug("Starting new physical screen...")
-        screen = PhysicalScreen()
+        screen = PhysicalScreen(screen_config)
     else:
         from display.physical_screen import (
             PhysicalScreen,  # pylint: disable=import-outside-toplevel

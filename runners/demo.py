@@ -1,3 +1,4 @@
+import json
 import time
 from importlib import import_module
 
@@ -8,14 +9,15 @@ import controllers
 from runners import utils
 
 
-def run(demo_name, simulate, new_hardware, testing):
+def run(demo_name, simulate, new_hardware, testing, config_file):
     """Main function that runs the demo.
 
     Args:
         demo_name (str): Name of the demo to run.
         simulate (bool): Whether to simulate the screen or use the physical screen.
         testing (bool): Whether to run the demo in testing mode.
-
+        new_hardware (bool): Whether to use the new hardware configuration.
+        config_file (str): Path to configuration file.
     """
 
     if simulate:
@@ -30,8 +32,13 @@ def run(demo_name, simulate, new_hardware, testing):
             PhysicalScreen,
         )
 
+        # Read in screen configuration
+        with open(config_file, "r") as f:
+            config = json.load(f)
+            screen_config = config.get("screen_v2", {})
+
         logger.debug("Starting new physical screen...")
-        screen = PhysicalScreen()
+        screen = PhysicalScreen(screen_config)
     else:
         from display.physical_screen import (  # pylint: disable=import-outside-toplevel
             PhysicalScreen,
