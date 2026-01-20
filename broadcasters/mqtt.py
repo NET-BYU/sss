@@ -10,8 +10,8 @@ def start_processing_output(system_queue, mqtt_q):
     Called by the broadcaster module to initialize a connection to the desired MQTT broker.
 
     Args:
-        system_queue (Queue): The queue to put system output events in.
-        mqtt_q (Queue): The queue to put MQTT messages in.
+        system_queue (Queue): The queue to put system output events out.
+        mqtt_q (Queue): The queue to put MQTT messages out.
     """
 
     def on_connect(client, userdata, flags, rc):
@@ -67,6 +67,7 @@ def start_processing_output(system_queue, mqtt_q):
                     client.loop(timeout=0.01)
 
                     for item in utils.get_all_from_queue(mqtt_q):
+                        # TODO: Only publish messages that this broadcaster cares about
                         client.publish(
                             "byu_sss/output",
                             payload=str(item),

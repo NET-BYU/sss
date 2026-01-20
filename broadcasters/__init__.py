@@ -20,6 +20,7 @@ def start_outputs(system_queue, demo_output_queue):
 
         mqtt_q = Queue()
 
+        # TODO: Why do we pass system_queue to start_processing_output?
         mqtt_runner = mqtt.start_processing_output(system_queue, mqtt_q)
         logger.info("...done")
     except ValueError as e:
@@ -38,10 +39,23 @@ def start_outputs(system_queue, demo_output_queue):
         logger.warning("Unable to import modules necessary to run MQTT output.")
         logger.warning("Program will continue to run without this output.")
 
+    logger.info("Loading sound output...")
+    from . import sound
+
+    sound_q = Queue()
+
+    # TODO: Why do we pass system_queue to start_processing_output?
+    sound_runner = sound.start_processing_output(system_queue, sound_q)
+    logger.info("...done")
+
     while True:
         for payload in utils.get_all_from_queue(demo_output_queue):
             if mqtt_runner:
                 mqtt_q.put(payload)
                 next(mqtt_runner)
+
+            if sound_runner:
+                sound_q.put(payload)
+                next(sound_runner)
 
         yield
